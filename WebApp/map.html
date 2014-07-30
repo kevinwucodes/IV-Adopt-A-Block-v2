@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>A simple map</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.js'></script>
+<script src='https://code.jquery.com/jquery-1.11.0.min.js'></script> 
+<script src="./global.js"></script>
+<script src="./blocks.js"></script>
+<script src="./geolocation.js"></script>
+<script src="./objectToJson.js"></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
+<style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+</style>
+</head>
+
+<body>
+
+<!-- MAP -->
+<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
+<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
+
+<!-- LABEL -->
+<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
+
+<!-- POINT IN SHAPE -->
+<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-pip/v0.0.2/leaflet-pip.js'></script>
+
+<div id='map'></div>
+<script>
+
+
+map = L.mapbox.map('map', 'examples.map-i86nkdio').setView([34.4141859, -119.859201], 18);
+drawnItems = new L.FeatureGroup(); // Initialise the FeatureGroup to store editable layers
+map.addLayer(drawnItems);
+readAndLoadBlocks(); //reads blocks from db
+
+var options = 
+  {
+    position: 'topright',
+    draw: 
+      { // https://github.com/Leaflet/Leaflet.draw/blob/master/README.md
+        polyline: false,
+        polygon: 
+        	{
+	            allowIntersection: false, // Restricts shapes to simple polygons
+	            drawError: {
+	                color: '#bada55', // Color the shape will turn when intersects
+	                showArea:true,
+	                message: 'you can\'t draw that!' // Message when intersect
+                           },
+		        shapeOptions: 
+		         {
+		            stroke: true,
+					color: BLOCK_COLOR,
+					weight: 4,
+					opacity: BLOCK_STROKE_OPACITY,
+					fill: true,
+					fillColor: null, //same as color by default
+					fillOpacity: BLOCK_FILL_OPACITY,
+					clickable: true
+				 }
+             },
+        circle: false, // Turns off this drawing tool
+        marker: true      }  
+  };
+
+var drawControl = new L.Control.Draw(options);
+map.addControl(drawControl);
+
+
+
+// when a shape has been just created
+ map.on('draw:created', function(e) 
+ 	{
+ 	  drawnItems.addLayer(e.layer); // add the block to the featureGroup
+ 	  if (e.layerType == 'marker') 
+ 	  	{
+ 	  	 // I HAVE PUT A MARKER ON THE MAP
+	 	  var marker = 	e.layer;
+	 	  var db = "";
+	 	  // is it inside any block?
+	 	  for (j=0; j<blocks.length; j++)
+		    {   
+		     //db += JSON.stringify(blocks[j].toGeoJSON());
+		     var layer = leafletPip.pointInLayer(marker.getLatLng(), L.geoJson(blocks[j].toGeoJSON()), true);
+			 if (layer.length) 
+			   { 	 	  
+			     for (m=0; m<vertex[j].length; m++)
+			     	{
+				     	vertex_json_properties = vertex[j][m].toGeoJSON();
+				     	marker_latlng = marker.getLatLng();
+				     	vertex_latlng = L.latLng(vertex_json_properties.features[0].geometry.coordinates[1],
+				     							 vertex_json_properties.features[0].geometry.coordinates[0]);
+				     	
+				     	var distance = (marker_latlng.distanceTo(vertex_latlng).toFixed(0));
+				     	if (distance < proximity)
+				     	 {
+				     	  vertex[j][m].setStyle( {fillColor: COVERED_SHAPE_COLOR} );
+				     	  vertex[j][m].setStyle( {color: COVERED_SHAPE_COLOR} );
+				     	  vertex[j].splice(m, 1); // remove the vertex covered
+				     	  if (vertex[j].length==0)
+				     	  	{ // all the vertex have been covered
+					     	 blocks[j].setStyle( {fillColor: COVERED_SHAPE_COLOR} );
+					     	 blocks[j].setStyle( {color: COVERED_SHAPE_COLOR} );
+					     	 completed_blocks.push(blocks[j]);
+					     	 alert('compliments, you have completed '+completed_blocks.length+' blocks');
+				     	  	}
+				     	 }
+			     	}
+			   }
+			}
+		  if (lastPosition!=false)  // if it's false, it's the first relevation 
+		     {  addCoveredPath(marker.getLatLng().lng, marker.getLatLng().lat);  }
+			lastPosition = marker.getLatLng();
+			//alert((db));
+ 	  	}
+ 	  else
+ 	    {// I HAVE DRAWN A POLYGON ON THE MAP
+
+	 	  currentBlock = e.layer;
+	 	  blocks.push(currentBlock);
+	 	  currentBlockIndex = blocks.length-1;
+	 	  vertex[currentBlockIndex] = [];
+	 	  var circles_to_draw = currentBlock.getLatLngs();
+	 	  for (i=0; i<circles_to_draw.length; i++)
+		 	  { 
+		 	    var point = circles_to_draw[i];
+		 	    addVertex(point.lng, point.lat);
+			   }
+	 	  
+	      currentBlock.on('click', function(e)
+	      						 {
+	      						  currentBlockIndex = currentBlockIndex;
+	      						 });
+	      
+	      currentBlock.bindPopup(getHTML_block_popup(currentBlockIndex));
+	    
+	    currentBlock.openPopup();
+	    $('#map').on('click', '#add-button'+p, function(e) 
+	         {
+			  message = L.DomUtil.get('block_name_popup'+currentBlockIndex).value;
+	          blocks[currentBlockIndex].bindLabel(message); 
+	          blocks[currentBlockIndex].closePopup();
+	         });
+	     }
+    });
+    
+  
+</script>
+</body>
+</html>
