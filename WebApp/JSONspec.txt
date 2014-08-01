@@ -5,18 +5,17 @@ each polygon has a #name#, an array of gps points #pacman# that specifies the do
 
 
 {"polygons": [
-			  {"polygon": {"name":"Embarcadero del Mare north", 
-			  			   "pacman":[
-			  			             {"lat":"xxx", "lng":"yyy"},
-			  						 {"lat":"xxx","lng":"yyy"}
-			  						], 
-			  			    "coordinates": [ 
-			  			                     {"lat":"xxx", "lng":"yyy"}, 
-			  			    			     {"lat":"xxx", "lng":"yyy"}
-			  			    			   ]
-			  			   }
-			   }
-			  ]
+		{"polygon": {"name":"Embarcadero del Mare north", 
+		             "pacman":[
+			               {"lat":"xxx", "lng":"yyy"},
+			  	       {"lat":"xxx","lng":"yyy"}
+			  	      ], 
+			     "coordinates": [ 
+			                       {"lat":"xxx", "lng":"yyy"}, 
+			       		       {"lat":"xxx", "lng":"yyy"}]
+			    }
+	         }
+	    ]
 }
 
 
