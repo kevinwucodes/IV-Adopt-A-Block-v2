@@ -23,6 +23,7 @@ server.use(restify.bodyParser());
 // POST request
 //
 
+// users route
 server.post({
   path: '/users',
   version: '1.0.0'
@@ -104,6 +105,39 @@ server.post({
   });
 
   return next();
+});
+
+
+// waypoints route
+server.post({
+  path: '/users/waypoints',
+  version: '1.0.0'
+}, function(req, res, next) {
+
+  /*
+  expecting:
+  {
+    tripID: "a23e5bed-658c-4d0d-8622-8ea8a6e9c8ae",
+    point: {
+      "lat": 34.409094,
+      "long": -119.854158,
+      "epoch": 1405659960723
+    }
+  }
+  */
+
+  var now = new Date().getTime();
+
+  var payload = {
+    tripID: req.body.tripID,
+    point: {
+      lat: req.body.lat,
+      long: req.body.long,
+      epoch: req.body.epoch,
+      received: now
+    }
+  }
+
 });
 
 
