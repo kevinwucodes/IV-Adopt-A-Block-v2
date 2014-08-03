@@ -18,7 +18,8 @@
   "dependencies": {
     "restify": ">= 2.8.1",
     "mongojs": ">= 0.13.1",
-    "node-uuid": ">= 1.4.1"
+    "node-uuid": ">= 1.4.1",
+    "underscore": ">= 1.6.0"
   },
   "homepage": "https://github.com/ginxwar/IV-Adopt-A-Block-v2"
 }
