@@ -23,7 +23,10 @@ server.use(restify.bodyParser());
 // POST request
 //
 
-server.post('/users', function(req, res, next) {
+server.post({
+  path: '/users',
+  version: '1.0.0'
+}, function(req, res, next) {
 
   /*
   expecting:
