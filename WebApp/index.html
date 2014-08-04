@@ -2,10 +2,23 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>blocks editor</title>
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<title>IV a-a-b Admin Page</title>
+<!-- iPhone, iOS 7, retina -->
+ 	<link href="http://www.ivparks.org/images/logo_home.png" sizes="120x120" rel="apple-touch-icon">
+	<meta name="apple-mobile-web-app-capable" content="yes" />  
+	<meta name="apple-mobile-web-app-status-bar-style" content="default" /> 
+	<meta name="viewport" content="width=device-width, initial-scale=1">	
+<!-- MapBox-->	
 <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.js'></script>
+<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
+<!-- JQUERY-->
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script> 
+<script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
+<link rel="stylesheet" href="./theme.css" />
+<link rel="stylesheet" href="./jquery.mobile.icons.min.css"/>
+
+
 <!-- tool do draw polygons-->
 <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
@@ -14,21 +27,98 @@
 <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-label/v0.2.1/leaflet.label.css' rel='stylesheet' />
 <!-- is a point in a shape -->
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-pip/v0.0.2/leaflet-pip.js'></script>
-<! -- my js functions --!>
+<!-- my js functions -->
 <script src="./global.js"></script>
 <script src="./blocks.js"></script>
 <script src="./geolocation.js"></script>
 <script src="./objectToJson.js"></script>
 <script src="./db_handler.js"></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.4/mapbox.css' rel='stylesheet' />
+<script src="./init_pages.js"></script>
+
 <style>
   body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
+  html, body, {height: 100%;}
+  #map { position:absolute; left:0px; top:0px; bottom:0; width: 100%; height:100%;}
+  #real-time { width: 100%; height: 100%;padding: 0px; margin-top: 44px; margin-bottom: 44px;}
 </style>
 </head>
 
+
+
+
+
 <body>
-	<div id='map'></div>
-	<script> initialize_map();</script>
+
+<!-- header -->
+  <div data-role="header" data-position="fixed" data-fullscreen="false"> 
+       <h1 id="sitename">IV A-a-B</h1>
+	   <a href="#left-panel" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all 
+	                                ui-btn-icon-right ui-icon-bullets">menu</a>
+  </div><!-- /header -->
+
+<!-- ## PAGE1 ## -->
+<div data-role="page" data-title="real-time" id="real-time" data-url="real-time" style="backgrond-color:grey;">
+	<!-- popup -->
+	<div data-role="popup" id="popupAddress" data-theme="a" class="ui-corner-all" 
+	     style="width:300px; padding:10px;" >
+      <form>
+        <div style="padding:10px 20px;">
+            <h3>address</h3>
+            <input type="text" id="address"  value=""  data-theme="a" style="width:80%;">
+            <button type="submit"  class="ui-btn ui-corner-all ui-shadow ui-btn-b 
+                                         ui-btn-icon-left ui-icon-check"
+                                  onclick="">Ok
+	        </button>
+        </div>
+      </form>
+   </div><!-- /popup -->
+   
+   <!-- map -->
+   <div class="ui-content" role="main">
+       <div id='map'></div>
+   </div>
+
+</div><!-- /page1 -->
+
+
+
+
+
+
+<!-- LEFT PANEL -->
+<div data-role="panel" id="left-panel" data-position="left" data-theme="a" 
+     data-display="push"
+     style="box-shadow: 3px 4px 5px #555555; z-index:2000;">
+     <div>
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;" onclick="init_page_realTime();">REAL TIME</button>
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;"onclick="init_page_editor();">EDITOR</button>
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;"onclick="init_page_PacMan();">PAC MAN</button>              
+     </div>
+</div>
+
+<script>	 
+        initialize_map();
+	    //Because external toolbars are not within the page they will not auto initalize. 
+	    // You must call the toolbar plugin yourself and stylyze it
+	   $( "[data-role='header'], [data-role='footer']" ).toolbar(); 
+	   $( "[data-role='header']" ).toolbar({ theme: "a" });
+	   // same thing for the external left panel (menu)	            
+       $("#left-panel").panel();
+         // open it also with a swipe to right
+	    $("#left-panel").panel().enhanceWithin();
+	    	    
+	   $( document ).on( "swiperight", "body", function( e ) 
+	         	{ $( "#left-panel" ).panel( "open" );}
+	         	           );	 
+	    
+       //$( '#real-time' ).on( "pagebeforeshow", function() {initialize_map();});	  
+       $( '#real-time' ).on( "pageshow", function() 
+         {
+           //force the graphical map regresh. with Jquery it's needed       	           
+           map.invalidateSize(); 
+           $('.ui-panel-wrapper')[0].height();
+         });	        	           
+ </script>
+
 </body>
 </html>
