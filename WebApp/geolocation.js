@@ -28,7 +28,7 @@ function handleError(error)
 			console.log('POSITION_UNAVAILABLE, I try again');
 			break;
 		case error.TIMEOUT:
-			alert("request geolocalization timeout");
+			console.log("geolocalization timeout");
 			break;
 		case error.UNKNOWN_ERROR:
 			alert("geolocalization UNKNOWN_ERROR");
@@ -68,37 +68,46 @@ function handle_gps(pos)
 				     	  	{
 					     	 blocks[j].setStyle( {fillColor: '#00FF00'} );
 					     	 blocks[j].setStyle( {color: '#00FF00'} );
+					     	 blocks[j].setStyle( {fillOpacity: 0.8} );					     	 
 					     	 completed_blocks.push(blocks[j]);
 				     	  	}
 				     	 }
 			     	}
+			     	
+			     if (lastPosition!=false)
+				     {
+					  var line_json  = 
+					 	    	{
+								      type: 'Feature',
+								      geometry: 
+								         {
+								          type: 'LineString',
+								          coordinates: [
+								                         [lastPosition.lng, lastPosition.lat],
+								                         [currentPoint.lng, currentPoint.lat]
+								                       ]
+								         },
+								      properties: 
+								         {
+									       color: '#5F9EA0',
+									       weight: 8,
+									       opacity: 0.4,
+									       clickable: false
+								         }
+								  };
+					  var line = L.geoJson(line_json, {style: function(feature) { return feature.properties; }});	
+					  drawnPath.addLayer(line);
+					 }
+	       
+	            lastPosition = currentPoint;
+			     	
+			     	
+			     	
 			   }
-			}
-		  if (lastPosition!=false)
-		     {
-			  var line_json  = 
-			 	    	{
-						      type: 'Feature',
-						      geometry: 
-						         {
-						          type: 'LineString',
-						          coordinates: [
-						                         [lastPosition.lng, lastPosition.lat],
-						                         [currentPoint.lng, currentPoint.lat]
-						                       ]
-						         },
-						      properties: 
-						         {
-							       color: '#5F9EA0',
-							       weight: 8,
-							       opacity: 0.4,
-							       clickable: false
-						         }
-						  };
-			  var line = L.geoJson(line_json, {style: function(feature) { return feature.properties; }});	
-			  drawnItems.addLayer(line);
-			 }
-			lastPosition = currentPoint;
+			}			 
+			 
+			     
+			 
 }	
 
 
