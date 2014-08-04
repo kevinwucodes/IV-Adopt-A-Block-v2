@@ -22,12 +22,12 @@ for (p=0; p<polygons_json.polygons.length; p++)
 	   	
 	addBlock(latlng_coordinates, polygons_json.polygons[p].polygon.name);
     
-    if (polygons_json.polygons[p].polygon.pacman.length > 0)
-	    {  addPacManLine(polygons_json.polygons[currentBlockIndex].polygon.pacman);	 }
+    // if (polygons_json.polygons[p].polygon.pacman.length > 0)
+	//    {  addPacManLine(polygons_json.polygons[currentBlockIndex].polygon.pacman);	 }
 		  
-       //alert( JSON.stringify((poly.geometry.coordinates)));
+       
 
-    timer = setInterval(function(){set_position();},5000);
+    timer = setInterval(function(){set_position();},1000);
   }
   
 
@@ -51,21 +51,21 @@ function addVertex(lat, lng)
 					      properties: 
 					         {
 					           radius:VERTEX_RADIUS,
-						       stroke: true,
-						       color: '#f06eaa',
-						       weight: 4,
-						       opacity: 0.4,
+						       stroke: false,
+						       color: VERTEX_STROKE_COLOR,
+						       weight: VERTEX_STROKE_WEIGHT,
+						       opacity: VERTEX_STROKE_OPACITY,
 						       fill: true,
-						       fillColor: null, //same as color by default
-						       fillOpacity: 0.1,
-						       clickable: true
+						       fillColor: VERTEX_FILL_COLOR, //same as color by default
+						       fillOpacity: VERTEX_FILL_OPACITY,
+						       clickable: false
 					         }
 					  };
 		var circle = L.geoJson(circle_json, 
 						      {pointToLayer: function(feature, latlng) 
 						      				    {return L.circleMarker(latlng, {radius: feature.properties.radius})},
 						       style: function(feature) { return feature.properties; }});			  
-		 drawnItems.addLayer(circle);
+		 drawnVertexes.addLayer(circle);
 	     vertex[currentBlockIndex].push(circle);
 
 
@@ -89,18 +89,18 @@ function addBlock(latlng_coordinates, name)
 						properties: 
 						 {
 						    stroke: true,
-							color: BLOCK_COLOR,
-							weight: 4,
+							color: BLOCK_STROKE_COLOR,
+							weight: BLOCK_STROKE_WEIGHT,
 							opacity: BLOCK_STROKE_OPACITY,
 							fill: true,
-							fillColor: null, //same as color by default
+							fillColor: BLOCK_FILL_COLOR, //same as color by default
 							fillOpacity: BLOCK_FILL_OPACITY,
 							clickable: true
 						 }
     				   };
 	var shape = L.mapbox.featureLayer();
 	shape = L.geoJson(shape_json, {style: function(feature) { return feature.properties; }});
-    drawnItems.addLayer(shape);
+    drawnBlocks.addLayer(shape);
     shape.bindLabel(name);
     shape.bindPopup(getHTML_block_popup());
 
@@ -155,7 +155,7 @@ function addPacManLine(pacman)
 							  };
 			 pacman_line = L.geoJson(pacman_json, {style: function(feature) { return feature.properties; }});
 			 pacman_lines.push(pacman_line);
-			 drawnItems.addLayer(pacman_line);
+			 drawnPath.addLayer(pacman_line);
 }
 
 
@@ -180,11 +180,16 @@ function addCoveredPath(current_lng, current_lat)
 						      properties: 
 						         {
 							       color: USER_PATH_COLOR,
-							       weight: 8,
+							       weight: USER_PATH_WEIGHT,
 							       opacity: USER_PATH_OPACITY,
 							       clickable: false,
+							       smoothFactor:20
 						         }
 						  };
   var line = L.geoJson(line_json, {style: function(feature) { return feature.properties; }});	
-  drawnItems.addLayer(line);
+  drawnPath.addLayer(line);
+  drawnPath.bringToBack();
 }
+
+
+//alert( JSON.stringify((poly.geometry.coordinates)));
