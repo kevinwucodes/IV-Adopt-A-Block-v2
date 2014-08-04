@@ -75,7 +75,7 @@ server.post({
     // returns the modified document instead of the original
     new: true,
 
-    // if it doesn't find, then create a new object
+    // if it doesn't find, then create a new object of the query
     upsert: true
   }, function(err, doc, lastErrorObject) {
 
@@ -131,13 +131,39 @@ server.post({
   var payload = {
     tripID: req.body.tripID,
     point: {
-      lat: req.body.lat,
-      long: req.body.long,
-      epoch: req.body.epoch,
+      lat: req.body.point.lat,
+      long: req.body.point.long,
+      epoch: req.body.point.epoch,
       received: now
     }
   }
 
+  db.collection('users').findAndModify({
+    query: {
+      "trips.tripID": payload.tripID
+    },
+
+    update: {
+      // add new point to points array
+      $push: {
+        "trips.$.points": payload.point
+      }
+    },
+
+    fields: {
+      trips: 1
+    }
+  }, function(err, doc, lastErrorObject) {
+
+    if (err) {
+      return next(err);
+    }
+
+    console.log(doc);
+
+  });
+
+  return next();
 });
 
 
@@ -150,7 +176,7 @@ server.get('/', function(req, res, next) {
   db.collection('users').find(function(err, docs) {
     console.log(docs);
   });
-  q
+  //   q
   res.send(200, "get");
   return next();
 });
