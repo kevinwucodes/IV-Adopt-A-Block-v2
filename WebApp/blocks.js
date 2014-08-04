@@ -1,195 +1,207 @@
-/**
-* reads blocks, draws them on the map as polygons, and adds them at blocks[] array.
-* for each vertex of the polygons, a circle it's created
-*/
-function readAndLoadBlocks()
+// ====== VARIABLES ======
+var currentBlockIndex = -1; //blocks[] index of the block clicked
+var proximity = 46;  // distance between a vertex and user position, to become visited
+var lastPosition = false;
+
+// ====== ARRAYS ======
+var blocks=[]; //array of all the blocks
+var pacman_lines=[]; //dotted line of each block, pacman style [TODO]
+var completed_blocks=[];
+var vertex=[]; // array of array.  vertex[j] is an array of all the circles of blocks[j]
+
+// ====== LAYERS ======
+var mapTile; // mapTile used. now is the WaterColor   L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', 
+var drawControl; // controls to draw polygons and put markers
+var drawnPath; 
+var drawnBlocks; //layer hat owns all the shapes (circles, polygons, markers)
+var drawnVertexes; 
+var drawnMarkers;
+
+var pacman_layer; //MapTie with yellow dotted streets
+
+// ====== OBJECETS ======
+var map; //MapBox map. to be initialized. drawnItems should be added to this map
+var timer;  // timer that checks current user position
+
+
+// ====== SHAPE ATTRIBUTES ======
+var BLOCK_STROKE_COLOR = '#0033FF';
+var BLOCK_STROKE_OPACITY = 1;
+var BLOCK_STROKE_WEIGHT = 5;
+var BLOCK_FILL_COLOR = '#000000';
+var BLOCK_FILL_OPACITY = 0;
+
+var VERTEX_STROKE_COLOR = '#FF9900';
+var VERTEX_STROKE_OPACITY = 0.8;
+var VERTEX_STROKE_WEIGHT = 6;
+var VERTEX_FILL_COLOR = '#FF9900';
+var VERTEX_FILL_OPACITY = 0.8;
+var VERTEX_RADIUS = "6";
+
+
+
+var COVERED_BLOCK_STROKE_COLOR = '#006633';
+var COVERED_BLOCK_FILL_COLOR = '#00FF00';
+var USER_PATH_COLOR = '#08265b';
+var USER_PATH_OPACITY = 1;
+var USER_PATH_WEIGHT = 18;
+
+
+
+
+
+
+
+
+function initialize_map()
 {
-polygons_json = db_read_blocks();
+ map = L.mapbox.map('map', null,{minZoom: 15,maxZoom: 19}).setView([34.4141859, -119.859201], 18);
+ mapTile = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
+  attribution: 'Map tiles by <a href="http://stamen.com">Stamen</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>'
+}).addTo(map);
+mapTile.setZIndex(0);
+ pacman_layer = L.mapbox.tileLayer('de-lac.OSMBright'); 
+ pacman_layer.setZIndex(1);
+
+  drawnPath = new L.FeatureGroup(); // Initialise the FeatureGroup to store editable layers   
+  drawnBlocks = new L.FeatureGroup();
+  drawnVertexes = new L.FeatureGroup();
+  drawnMarkers = new L.FeatureGroup();
+
+ readAndLoadBlocks(); //reads blocks from db
+ 
+ drawnPath.addTo(map).setZIndex(0); // Initialise the FeatureGroup to store editable layers 
+ drawnBlocks.addTo(map).setZIndex(1);   
+ drawnVertexes.addTo(map).setZIndex(2);   
+ drawnMarkers.addTo(map).setZIndex(3);
 
 
-for (p=0; p<polygons_json.polygons.length; p++)
+
+
+ // add the Leaf tool to draw shapes on the map
+ var options = 
   {
-   poly_coord = polygons_json.polygons[p].polygon.coordinates;
-   vertex[p] = [];
-   currentBlockIndex=p;
-   var latlng_coordinates=[]; //contains the points of the polygon
-   for (c=0; c<poly_coord.length; c++)
-	   	{ 
-	   	 var point = L.latLng(poly_coord[c].lng, poly_coord[c].lat);
-	   	 latlng_coordinates.push([poly_coord[c].lng, poly_coord[c].lat]);
-	   	 addVertex(point.lat, point.lng);
-	   	}
-	   	
-	addBlock(latlng_coordinates, polygons_json.polygons[p].polygon.name);
-    
-    // if (polygons_json.polygons[p].polygon.pacman.length > 0)
-	//    {  addPacManLine(polygons_json.polygons[currentBlockIndex].polygon.pacman);	 }
+    position: 'topright',
+    draw: 
+      { // https://github.com/Leaflet/Leaflet.draw/blob/master/README.md
+        polyline: false,
+        polygon: 
+        	{
+	            allowIntersection: false, // Restricts shapes to simple polygons
+	            drawError: {
+	                color: '#bada55', // Color the shape will turn when intersects
+	                showArea:true,
+	                message: 'you can\'t draw that!' // Message when intersect
+                           },
+		        shapeOptions: 
+		         {
+		            stroke: true,
+					color: BLOCK_STROKE_COLOR,
+					weight: BLOCK_STROKE_WEIGHT,
+					opacity: BLOCK_STROKE_OPACITY,
+					fill: true,
+					fillColor: BLOCK_FILL_COLOR, //same as color by default
+					fillOpacity: BLOCK_FILL_OPACITY,
+					clickable: true
+				 }
+             },
+        circle: false, // Turns off this drawing tool
+        marker: true      }  
+  };
+
+ drawControl = new L.Control.Draw(options);
+
+
+
+
+// when a shape has been just created
+ map.on('draw:created', function(e) 
+ 	{
+ 	  if (e.layerType == 'marker') 
+ 	  	{
+ 	  	 // I HAVE PUT A MARKER ON THE MAP
+ 	  	 drawnMarkers.addLayer(e.layer); // add the block to the featureGroup
+	 	  var marker = 	e.layer;
+	 	  var db = "";
+	 	  // is it inside any block?
+	 	  for (j=0; j<blocks.length; j++)
+		    {   
+		     //db += JSON.stringify(blocks[j].toGeoJSON());
+		     var layer = leafletPip.pointInLayer(marker.getLatLng(), L.geoJson(blocks[j].toGeoJSON()), true);
+			 if (layer.length) 
+			   {
+			     if (lastPosition!=false)  // if it's false, it's the first relevation 
+			     	{  addCoveredPath(marker.getLatLng().lng, marker.getLatLng().lat);  }
+			     lastPosition = marker.getLatLng(); 	 	 
+			     for (m=0; m<vertex[j].length; m++)
+			     	{
+				     	vertex_json_properties = vertex[j][m].toGeoJSON();
+				     	marker_latlng = marker.getLatLng();
+				     	vertex_latlng = L.latLng(vertex_json_properties.features[0].geometry.coordinates[1],
+				     							 vertex_json_properties.features[0].geometry.coordinates[0]);
+				     	
+				     	var distance = (marker_latlng.distanceTo(vertex_latlng));
+				     	if (distance < proximity)
+				     	 {
+				     	  vertex[j][m].setStyle( {fillColor: COVERED_BLOCK_STROKE_COLOR} );
+				     	  vertex[j][m].setStyle( {color: COVERED_BLOCK_FILL_COLOR} );
+				     	  vertex[j][m].setStyle( {fillOpacity: 0.8} );				     	  
+				     	  vertex[j].splice(m, 1); // remove the vertex covered
+				     	  m--;
+				     	  if (vertex[j].length==0)
+				     	  	{ // all the vertex have been covered
+					     	 blocks[j].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
+					     	 blocks[j].setStyle( {color: COVERED_BLOCK_STROKE_COLOR} );
+					     	 blocks[j].setStyle( {fillOpacity: 1} );					     	 
+					     	 completed_blocks.push(blocks[j]);
+					     	 alert('compliments, you have completed '+completed_blocks.length+' blocks');
+				     	  	}
+				     	 }
+			     	}
+			   }
+			}
+			//alert((db));
+ 	  	}
+ 	  else
+ 	    {// I HAVE DRAWN A POLYGON ON THE MAP
+          drawnBlocks.addLayer(e.layer); // add the block to the featureGroup
+	 	  currentBlock = e.layer;
+	 	  blocks.push(currentBlock);
+	 	  currentBlockIndex = blocks.length-1;
+	 	  vertex[currentBlockIndex] = [];
+	 	  var circles_to_draw = currentBlock.getLatLngs();
+	 	  for (i=0; i<circles_to_draw.length; i++)
+		 	  { 
+		 	    var point = circles_to_draw[i];
+		 	    addVertex(point.lng, point.lat);
+			   }
 		  
-       
-
-    timer = setInterval(function(){set_position();},1000);
-  }
-  
-
-}
-
-
-
-/**
-* adds a circle on the map, and at the vertex[] array	
-*/
-function addVertex(lat, lng)
-{
-	   	 
-	   	 var circle_json  = {
-					      type: 'Feature',
-					      geometry: 
-					         {
-					          type: 'Point',
-					          coordinates: [lat, lng]
-					         },
-					      properties: 
-					         {
-					           radius:VERTEX_RADIUS,
-						       stroke: false,
-						       color: VERTEX_STROKE_COLOR,
-						       weight: VERTEX_STROKE_WEIGHT,
-						       opacity: VERTEX_STROKE_OPACITY,
-						       fill: true,
-						       fillColor: VERTEX_FILL_COLOR, //same as color by default
-						       fillOpacity: VERTEX_FILL_OPACITY,
-						       clickable: false
-					         }
-					  };
-		var circle = L.geoJson(circle_json, 
-						      {pointToLayer: function(feature, latlng) 
-						      				    {return L.circleMarker(latlng, {radius: feature.properties.radius})},
-						       style: function(feature) { return feature.properties; }});			  
-		 drawnVertexes.addLayer(circle);
-	     vertex[currentBlockIndex].push(circle);
-
-
-}
-
-
-
-/**
-* adds a polygon on the map, and at the blocks[] array.
-* polygons have binded popup with their name	
-*/
-function addBlock(latlng_coordinates, name)
-{
- var shape_json  = {
-					   type: "Feature",
-					   geometry: 
-					   	 {
-						 type: "Polygon",
-						 coordinates: [latlng_coordinates]
-						 },
-						properties: 
-						 {
-						    stroke: true,
-							color: BLOCK_STROKE_COLOR,
-							weight: BLOCK_STROKE_WEIGHT,
-							opacity: BLOCK_STROKE_OPACITY,
-							fill: true,
-							fillColor: BLOCK_FILL_COLOR, //same as color by default
-							fillOpacity: BLOCK_FILL_OPACITY,
-							clickable: true
-						 }
-    				   };
-	var shape = L.mapbox.featureLayer();
-	shape = L.geoJson(shape_json, {style: function(feature) { return feature.properties; }});
-    drawnBlocks.addLayer(shape);
-    shape.bindLabel(name);
-    shape.bindPopup(getHTML_block_popup());
-
-    blocks.push(shape);
-    
-    //when click on a polygon, save it as currentBlock
-    shape.on('click', function(e)
+	      currentBlock.on('click', function(e)
 	      						 {
-	      						  for (b=0; b<blocks.length;b++)
-	      						   {if (blocks[b]==e.target)
-		      						 {currentBlockIndex = b;}
-	      						   }
+	      						  currentBlockIndex = currentBlockIndex;
 	      						 });
-	      						 
-	  //once clicked on a polygon, its popup automatically opens up.
-	  //anyway I can't refer directly to the content of its popup because it doesn't exist yet    		
-	  //so I refer to #map and then #add-buttonX			 
-	 $('#map').on('click', '#add-button'+currentBlockIndex, function(e) 
+	      
+	      currentBlock.bindPopup(getHTML_block_popup());
+	    
+	    currentBlock.openPopup();
+	    $('#map').on('click', '#add-button'+p, function(e) 
 	         {
 			  message = L.DomUtil.get('block_name_popup'+currentBlockIndex).value;
 	          blocks[currentBlockIndex].bindLabel(message); 
 	          blocks[currentBlockIndex].closePopup();
-	         });     						 
-}
-
-
-/**
-* adds a dotted line pacman-style the follows coordinates specified within the polygon
-* [TODO], it's still a draft
-*/
-function addPacManLine(pacman)
-{
- var pacman_points=[];
-	         for (pp=0; pp < pacman.length; pp++)
-		         {  pacman_points.push([pacman[pp].lng, pacman[pp].lat]); }
-		     var pacman_json  = 
-				 	    	{
-							      type: 'Feature',
-							      geometry: 
-							         {
-							          type: 'LineString',
-							          coordinates: pacman_points
-							         },
-							      properties: 
-							         {
-								       color: '#FFCC00',
-								       weight: 8,
-								       opacity: 1,
-								       clickable: false,
-								       dashArray: [1, 30] 
-							         }
-							  };
-			 pacman_line = L.geoJson(pacman_json, {style: function(feature) { return feature.properties; }});
-			 pacman_lines.push(pacman_line);
-			 drawnPath.addLayer(pacman_line);
+	         });
+	     }
+    });
 }
 
 
 
 
 /**
-* draws a line between the current user's GPS position and the last one
+* gives the code to put into a block's popup to store its name.
+* currentBlockIndex   should be already set with the right blocks[] index.
 */
-function addCoveredPath(current_lng, current_lat)
+function getHTML_block_popup()
 {
- var line_json  = 
-			 	    	{
-						      type: 'Feature',
-						      geometry: 
-						         {
-						          type: 'LineString',
-						          coordinates: [
-						                         [lastPosition.lng, lastPosition.lat],
-						                         [current_lng, current_lat]
-						                       ]
-						         },
-						      properties: 
-						         {
-							       color: USER_PATH_COLOR,
-							       weight: USER_PATH_WEIGHT,
-							       opacity: USER_PATH_OPACITY,
-							       clickable: false,
-							       smoothFactor:20
-						         }
-						  };
-  var line = L.geoJson(line_json, {style: function(feature) { return feature.properties; }});	
-  drawnPath.addLayer(line);
-  drawnPath.bringToBack();
+ return '<fieldset class="clearfix input-pill pill mobile-cols"><input type="text" id="block_name_popup'+currentBlockIndex+'" class="col9" /><button id="add-button'+currentBlockIndex+'" class="col3">Add Name</button></fieldset>';
 }
-
-
-//alert( JSON.stringify((poly.geometry.coordinates)));
