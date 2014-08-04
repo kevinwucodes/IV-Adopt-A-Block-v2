@@ -1,5 +1,12 @@
-to create a new MapTile, follow this guide:
-https://www.mapbox.com/tilemill/docs/guides/osm-bright-mac-quickstart/
+This page, for now, mix the Admin view and a Volunteer view, for testing reasons.
+Right now there is menu on the left panel with:
 
-It explain how to export data (streets, cities, everything) from openSourceStreet, import data in TileMill, stilyze it 
-update it on MapBox, ready to be used by MB API
+- Real Time 
+    should show where volunteers are. (TO DO)
+
+- Editor
+    allows to define blocks drawing them on the map. Putting markers instead I simulate the volunteers movement
+  
+- PacMan
+    add the pacmanized streets. It's a MapTile I created with TileMill, importing Isla Vista streets from OpenStreets.
+    note: the MapTile has been created with the help of this guide: https://www.mapbox.com/tilemill/docs/guides/osm-bright-mac-quickstart/
