@@ -38,6 +38,26 @@ server.post({
   }
   */
 
+  // do we have a firstname?  if not, we need to get out of here
+  if (req.body.firstname === undefined || req.body.firstname.length === 0) {
+    res.send(500, "firstname cannot be blank");
+    return next();
+  }
+
+  // do we have a lastname?  if not, we need to get out of here
+  if (req.body.lastname === undefined || req.body.lastname.length === 0) {
+    res.send(500, "lastname cannot be blank");
+    return next();
+  }
+
+  // do we have a tripCategory?  if not, we need to get out of here
+  if (req.body.tripCategory === undefined || req.body.tripCategory.length === 0) {
+    res.send(500, "tripCategory cannot be blank");
+    return next();
+  }
+
+
+
   var now = new Date().getTime();
 
   // uuid v4 generation
@@ -125,6 +145,30 @@ server.post({
     }
   }
   */
+
+  // do we have a tripID?  if not, we need to get out of here
+  if (req.body.tripID === undefined || req.body.tripID.length !== 36) {
+    res.send(500, "tripID cannot be blank");
+    return next();
+  }
+
+  // do we have a lat?  if not, we need to get out of here
+  if (req.body.point.lat === undefined || req.body.point.lat.length === 0) {
+    res.send(500, "lat cannot be blank");
+    return next();
+  }
+
+  // do we have a long?  if not, we need to get out of here
+  if (req.body.point.long === undefined || req.body.point.long.length === 0) {
+    res.send(500, "long cannot be blank");
+    return next();
+  }
+
+  // do we have a epoch?  if not, we need to get out of here
+  if (req.body.point.epoch === undefined || req.body.point.epoch.length === 0) {
+    res.send(500, "epoch cannot be blank");
+    return next();
+  }
 
   var now = new Date().getTime();
 
