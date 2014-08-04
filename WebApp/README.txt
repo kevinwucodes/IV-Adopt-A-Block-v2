@@ -1,4 +1,4 @@
-This page, for now, mix the Admin view and a Volunteer view, for testing reasons.
+This page, for now, mixes the Admin view and a Volunteer view, for testing reasons.
 Right now there is menu on the left panel with:
 
 - Real Time 
