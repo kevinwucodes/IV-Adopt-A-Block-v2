@@ -1,0 +1,154 @@
+.pacman { 
+    width:32px; height:30px;
+  /*  background-image:url('http://www.maptags.de/wp-content/uploads/2014/07/minime.png'); */
+    background-image:url('http://danielefani.altervista.org/cleanItUp/CITRIX/pacmanprites.png');     
+	background-position:  0px 0px;
+}
+
+
+
+/*
+*From http://jsfiddle.net/simurai/CGmCe/
+      http://codepen.io/jkneb/pen/smtHA
+*     http://codepen.io/maptagsde/pen/CJDym
+*     http://designmodo.com/steps-css-animations/
+*/
+
+
+/*STEPS = NUMBER OF FRAMES*/
+
+.down { 
+   -webkit-animation: down 0.5s steps(2) infinite;
+   -moz-animation: down 0.5s steps(2) infinite;
+   -ms-animation: down 0.5s steps(2) infinite;
+   -o-animation: down 0.5s steps(2) infinite;
+   animation: down 0.5s steps(2) infinite; 
+
+}
+
+@-webkit-keyframes down {
+   from { background-position: 0px 95px; }
+     to { background-position: 70px 95px; }
+}
+
+@-moz-keyframes down {
+   from { background-position: 0px 95px; }
+     to { background-position: 70px 95px; }
+}
+
+@-ms-keyframes down {
+   from { background-position: 0px 95px; }
+     to { background-position: 70px 95px; }
+}
+
+@-o-keyframes down {
+   from { background-position: 0px 95px; }
+     to { background-position: 70px 95px; }
+}
+
+@keyframes down {
+   from { background-position: 0px 95px; }
+     to { background-position: 70px 95px; }
+}
+
+
+
+.left { 
+   -webkit-animation: left 0.5s steps(2) infinite;
+   -moz-animation: left 0.5s steps(2) infinite;
+   -ms-animation: left 0.5s steps(2) infinite;
+   -o-animation: left 0.5s steps(2) infinite;
+   animation: left 0.5s steps(2) infinite; 
+}
+
+@-webkit-keyframes left {
+   from { background-position: 0px 60px; }
+     to { background-position: 63px 60px; }
+}
+@-moz-keyframes left {
+   from { background-position: 0px 60px; }
+     to { background-position: 63px 60px; }
+}
+
+@-ms-keyframes left {
+   from { background-position: 0px 60px; }
+     to { background-position: 63px 60px; }
+}
+
+@-o-keyframes left {
+   from { background-position: 0px 60px; }
+     to { background-position: 63px 60px; }
+}
+
+@keyframes left {
+   from { background-position: 0px 60px; }
+     to { background-position: 63px 60px; }
+}
+
+
+
+.up { 
+   -webkit-animation: up 0.5s steps(2) infinite;
+   -moz-animation: up 0.5s steps(2) infinite;
+   -ms-animation: up 0.5s steps(2) infinite;
+   -o-animation: up 0.5s steps(2) infinite;
+   animation: up 0.5s steps(2) infinite; 
+}
+
+@-webkit-keyframes up {
+   from { background-position:  0px 33px; }
+     to { background-position: 69px 33px; }
+}
+@-moz-keyframes up {
+   from { background-position:  0px 33px; }
+     to { background-position: 69px 33px; }
+}
+
+@-ms-keyframes up {
+   from { background-position:  0px 33px; }
+     to { background-position: 69px 33px; }
+}
+
+@-o-keyframes up {
+   from { background-position:  0px 33px; }
+     to { background-position: 69px 33px; }
+}
+
+@keyframes up {
+   from { background-position:  0px 33px; }
+     to { background-position: 69px 33px; }
+}
+
+
+
+.right { 
+   -webkit-animation: right 0.5s steps(2) infinite;
+   -moz-animation: right 0.5s steps(2) infinite;
+   -ms-animation: right 0.5s steps(2) infinite;
+   -o-animation: right 0.5s steps(2) infinite;
+   animation: right 0.5s steps(2) infinite; 
+}
+
+@-webkit-keyframes right {
+   from { background-position:   0px 0px; }
+     to { background-position: 69px 0px; }
+}
+@-moz-keyframes right {
+   from { background-position:   0px 0px; }
+     to { background-position: 69px 0px;}
+}
+
+@-ms-keyframes right {
+   from { background-position:   0px 0px; }
+     to { background-position: 69px 0px;}
+}
+
+@-o-keyframes right {
+   from { background-position:   0px 0px; }
+     to { background-position: 69px 0px;}
+}
+
+@keyframes right {
+   from { background-position:   0px 0px; }
+     to { background-position: 69px 0px;}
+}
