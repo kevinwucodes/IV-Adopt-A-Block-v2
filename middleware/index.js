@@ -203,7 +203,18 @@ server.post({
       return next(err);
     }
 
-    console.log(doc);
+    // can we find the tripID at all?
+    if (lastErrorObject.n === 0) {
+      // no, lets tell the user that we couldn't find anything to update/insert
+      res.send(500, "there was no such tripID");
+      return next();
+    }
+
+    // did mongo report back a single updated document?
+    if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
+      res.send(201, "added a point to tripID " + payload.tripID);
+      return next();
+    }
 
   });
 
