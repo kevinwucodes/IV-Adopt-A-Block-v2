@@ -40,19 +40,28 @@ server.post({
 
   // do we have a firstname?  if not, we need to get out of here
   if (req.body.firstname === undefined || req.body.firstname.length === 0) {
-    res.send(500, "firstname cannot be blank");
+    res.send(500, {
+      status: "error",
+      message: "firstname cannot be blank"
+    });
     return next();
   }
 
   // do we have a lastname?  if not, we need to get out of here
   if (req.body.lastname === undefined || req.body.lastname.length === 0) {
-    res.send(500, "lastname cannot be blank");
+    res.send(500, {
+      status: "error",
+      message: "lastname cannot be blank"
+    });
     return next();
   }
 
   // do we have a tripCategory?  if not, we need to get out of here
   if (req.body.tripCategory === undefined || req.body.tripCategory.length === 0) {
-    res.send(500, "tripCategory cannot be blank");
+    res.send(500, {
+      status: "error",
+      message: "tripCategory cannot be blank"
+    });
     return next();
   }
 
@@ -116,11 +125,15 @@ server.post({
     if (doc.firstname === payload.name.firstname && doc.lastname === payload.name.lastname && wasTripInserted.length) {
       // yup, lets tell the user it's a-ok    
       res.send(201, {
+        status: "success",
         UUID: wasTripInserted[0].tripID
       });
     } else {
       // uh oh, we couldn't save this in the db
-      res.send(500, "something went horribly wrong");
+      res.send(500, {
+        status: "error",
+        message: "something went horribly wrong"
+      });
     }
   });
 
@@ -148,25 +161,37 @@ server.post({
 
   // do we have a tripID?  if not, we need to get out of here
   if (req.body.tripID === undefined || req.body.tripID.length !== 36) {
-    res.send(500, "tripID cannot be blank and must be in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
+    res.send(500, {
+      status: "error",
+      message: "tripID cannot be blank and must be in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    });
     return next();
   }
 
   // do we have a lat?  if not, we need to get out of here
   if (req.body.point.lat === undefined || req.body.point.lat.length === 0) {
-    res.send(500, "lat cannot be blank");
+    res.send(500, {
+      status: "error",
+      message: "lat cannot be blank"
+    });
     return next();
   }
 
   // do we have a long?  if not, we need to get out of here
   if (req.body.point.long === undefined || req.body.point.long.length === 0) {
-    res.send(500, "long cannot be blank");
+    res.send(500, {
+      status: "error",
+      message: "long cannot be blank"
+    });
     return next();
   }
 
   // do we have a epoch?  if not, we need to get out of here
   if (req.body.point.epoch === undefined || req.body.point.epoch <= 1000000000000) {
-    res.send(500, "epoch cannot be blank and must be in milliseconds");
+    res.send(500, {
+      status: "error",
+      message: "epoch cannot be blank and must be in milliseconds"
+    });
     return next();
   }
 
@@ -206,13 +231,19 @@ server.post({
     // can we find the tripID at all?
     if (lastErrorObject.n === 0) {
       // no, lets tell the user that we couldn't find anything to update/insert
-      res.send(500, "there was no such tripID");
+      res.send(500, {
+        status: "error",
+        message: "there was no such tripID"
+      });
       return next();
     }
 
     // did mongo report back a single updated document?
     if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
-      res.send(201, "added a point to tripID " + payload.tripID);
+      res.send(201, {
+        status: "success",
+        message: "added a point to tripID " + payload.tripID
+      });
       return next();
     }
 
