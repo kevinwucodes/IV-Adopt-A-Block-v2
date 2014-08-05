@@ -16,6 +16,8 @@ var db = mongojs(MONGO_URI);
 // restify
 var server = restify.createServer();
 server.use(restify.bodyParser());
+server.use(restify.gzipResponse());
+
 
 /////////////////////////////
 
