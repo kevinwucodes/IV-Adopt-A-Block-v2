@@ -148,7 +148,7 @@ server.post({
 
   // do we have a tripID?  if not, we need to get out of here
   if (req.body.tripID === undefined || req.body.tripID.length !== 36) {
-    res.send(500, "tripID cannot be blank");
+    res.send(500, "tripID cannot be blank and must be in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
     return next();
   }
 
