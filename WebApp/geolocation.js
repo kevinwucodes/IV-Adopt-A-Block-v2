@@ -22,7 +22,7 @@ function handleError(error)
 		case error.PERMISSION_DENIED:
 			console.log("geolocalization not allowed");
 			//alert("geolocalization not allowed");
-			window.clearInterval(timer);
+			clearInterval(timer);
 			break;
 		case error.POSITION_UNAVAILABLE:
 			console.log('POSITION_UNAVAILABLE, I try again');
@@ -74,30 +74,7 @@ function handle_gps(pos)
 				     	 }
 			     	}
 			     	
-			     if (lastPosition!=false)
-				     {
-					  var line_json  = 
-					 	    	{
-								      type: 'Feature',
-								      geometry: 
-								         {
-								          type: 'LineString',
-								          coordinates: [
-								                         [lastPosition.lng, lastPosition.lat],
-								                         [currentPoint.lng, currentPoint.lat]
-								                       ]
-								         },
-								      properties: 
-								         {
-									       color: '#5F9EA0',
-									       weight: 8,
-									       opacity: 0.4,
-									       clickable: false
-								         }
-								  };
-					  var line = L.geoJson(line_json, {style: function(feature) { return feature.properties; }});	
-					  drawnPath.addLayer(line);
-					 }
+			     addCoveredPath(currentPoint.lng, currentPoint.lat);
 	       
 	            lastPosition = currentPoint;
 			     	
