@@ -165,8 +165,8 @@ server.post({
   }
 
   // do we have a epoch?  if not, we need to get out of here
-  if (req.body.point.epoch === undefined || req.body.point.epoch.length === 0) {
-    res.send(500, "epoch cannot be blank");
+  if (req.body.point.epoch === undefined || req.body.point.epoch <= 1000000000000) {
+    res.send(500, "epoch cannot be blank and must be in milliseconds");
     return next();
   }
 
