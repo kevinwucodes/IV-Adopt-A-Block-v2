@@ -3,9 +3,13 @@
 // config
 var MONGO_URI = process.env.MONGO_URI;
 var NODEPORT = process.env.NITROUS_PORT || process.env.OPENSHIFT_PORT || 3000;
+var SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
+var SSL_KEY_PATH = process.env.SSL_KEY_PATH;
+
 
 // includes
 var restify = require('restify');
+var fs = require('fs');
 var mongojs = require('mongojs');
 var uuid = require('node-uuid');
 var _ = require('underscore');
@@ -13,8 +17,18 @@ var _ = require('underscore');
 // collections config
 var db = mongojs(MONGO_URI);
 
-// restify
-var server = restify.createServer();
+// restify, setting up with SSL certs
+var server = restify.createServer(
+  /*
+  {
+  certificate: fs.readFileSync(SSL_CERTIFICATE_PATH),
+  key: fs.readFileSync(SSL_KEY_PATH),
+  name: "IV Adopt-a-Block"
+  }
+  */
+);
+
+// restify options
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
 
@@ -261,9 +275,9 @@ server.post({
 
 
 server.get('/', function(req, res, next) {
-  db.collection('users').find(function(err, docs) {
-    console.log(docs);
-  });
+//   db.collection('users').find(function(err, docs) {
+//     console.log(docs);
+//   });
   //   q
   res.send(200, "get");
   return next();
