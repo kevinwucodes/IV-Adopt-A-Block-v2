@@ -17,5 +17,8 @@ IV Adopt-a-Block is an application and platform in which mobile users are tracke
  * admin screen
    * weekly aggregations
 
+ #### developer notes ####
  
+Deploy to heroku requires git subtree deployment:  git subtree push --prefix middleware heroku master
+
    
