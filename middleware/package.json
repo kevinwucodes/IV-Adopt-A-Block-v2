@@ -4,7 +4,8 @@
   "description": "REST layer for iv-aab",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,9 @@
     "node-uuid": ">= 1.4.1",
     "underscore": ">= 1.6.0"
   },
-  "homepage": "https://github.com/ginxwar/IV-Adopt-A-Block-v2"
+  "homepage": "https://github.com/ginxwar/IV-Adopt-A-Block-v2",
+  "subdomain": "iv-adopt-a-block-v2",
+  "engines": {
+    "node": "0.10.x"
+  }
 }
