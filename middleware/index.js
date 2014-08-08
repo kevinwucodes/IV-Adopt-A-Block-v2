@@ -2,7 +2,7 @@
 
 // config
 var MONGO_URI = process.env.MONGO_URI;
-var NODEPORT = process.env.NITROUS_PORT || process.env.OPENSHIFT_PORT || process.env.PORT || 3000;
+var NODEPORT = process.env.NITROUS_PORT || process.env.JITSU_PORT || process.env.OPENSHIFT_PORT || 3000;
 var SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 var SSL_KEY_PATH = process.env.SSL_KEY_PATH;
 
