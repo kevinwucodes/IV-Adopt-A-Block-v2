@@ -10,7 +10,7 @@
 			  "MBtileDesc" : "base map tile, like ’examples.map-i86nkdio’ ",
 			  
                           "extraTile" : "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg",
-		          "extraTileDesc" : "second layer with 3rd part tiles",
+		          "extraTilbloeDesc" : "second layer with 3rd part tiles",
 			  "extraTileUsage" :"L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg' ",
 			  
                           "pacmanTile" : "de-lac.OSMBright”,
@@ -67,13 +67,13 @@
 
 
 =====================================================================================
-============== BLOCKS =============================================================
+============== POLYGONS =============================================================
 
 
 {
-    “blocks”: [
+    “polygons”: [
         {
-            “block”: 
+            “polygon”: 
            {
                 "name": " ",
                 "coordinates": 
@@ -84,7 +84,7 @@
             }
         },
         {
-            “block”: 
+            “polygon”: 
             {
                 "name": " ",
                 "coordinates":
@@ -101,9 +101,9 @@
     ================= Example:
 
 {
-    “blocks”: [
+    “polygons”: [
         {
-            “block”: {
+            “polygon”: {
                 "name": "Embarcadero 1",
                 "coordinates": [
                     {
@@ -118,7 +118,7 @@
             }
         },
         {
-            “block”: {
+            “polygon”: {
                 "name": "Picasso 1",
                 "coordinates": [
                     {
