@@ -8,18 +8,24 @@
  			{
 			  "MBtile" : "null",
 			  "MBtileDesc" : "base map tile, like ’examples.map-i86nkdio’ ",
+			  
                           "extraTile" : "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg",
 		          "extraTileDesc" : "second layer with 3rd part tiles",
 			  "extraTileUsage" :"L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg' ",
+			  
                           "pacmanTile" : "de-lac.OSMBright”,
                           "pacmanTileDesc" : "third layer with pacman paths",	
-                          "pacmanTileUsage" : "L.mapbox.tileLayer('de-lac.OSMBright').addTo(map) ",			 
+                          "pacmanTileUsage" : "L.mapbox.tileLayer('de-lac.OSMBright').addTo(map) ",
+                          
                           "proximity" : "15",
  			  "proximityDesc" : "min distance required for a vertex from the user position, to become visited",
+ 			  
 			  "positionTimeInterval" : "1000",
                           "positionTimeIntervalDesc" : "each how many milliseconds the current position is updated",
+                          
 			  "segmentDistance" : "20",
                           "segmentDistance Desc" : "after which distance pacman should start walking",
+                          
 			  "pointDistance" : "5",
                           "pointDistanceDesc" : "min distance between two sequential points in a pacman segment"
                         },
