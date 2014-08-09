@@ -95,8 +95,6 @@ server.post({
     return next();
   }
 
-
-
   var now = new Date().getTime();
 
   // uuid v4 generation
