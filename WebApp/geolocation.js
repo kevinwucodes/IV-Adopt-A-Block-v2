@@ -44,46 +44,7 @@ function handle_gps(pos)
  lat = pos.coords.latitude;
  lng = pos.coords.longitude;
  currentPoint = L.latLng([lat,lng]);
- for (j=0; j<blocks.length; j++)
-		    {   
-		     //db += JSON.stringify(blocks[j].toGeoJSON());
-		     var layer = leafletPip.pointInLayer(currentPoint, L.geoJson(blocks[j].toGeoJSON()), true);
-			 if (layer.length) 
-			   { 
-			     for (m=0; m<vertex[j].length; m++)
-			     	{
-				     	vertex_json_properties = vertex[j][m].toGeoJSON();
-				     	marker_latlng = currentPoint;
-				     	vertex_latlng = L.latLng(vertex_json_properties.features[0].geometry.coordinates[1],
-				     							 vertex_json_properties.features[0].geometry.coordinates[0]);
-				     	
-				     	var distance = (marker_latlng.distanceTo(vertex_latlng).toFixed(0));
-				     	if (distance < proximity)
-				     	 {
-				     	  vertex[j][m].setStyle( {fillColor: '#00FF00'} );
-				     	  vertex[j][m].setStyle( {color: '#00FF00'} );
-				     	  vertex[j].splice(m, 1); // splice modifies the array in place and 
-				     	                          // returns an array with removed elements
-				     	  if (vertex[j].length==0)
-				     	  	{
-					     	 blocks[j].setStyle( {fillColor: '#00FF00'} );
-					     	 blocks[j].setStyle( {color: '#00FF00'} );
-					     	 blocks[j].setStyle( {fillOpacity: 0.8} );					     	 
-					     	 completed_blocks.push(blocks[j]);
-				     	  	}
-				     	 }
-			     	}
-			     	
-			     addCoveredPath(currentPoint.lng, currentPoint.lat);
-	       
-	            lastPosition = currentPoint;
-			     	
-			     	
-			     	
-			   }
-			}			 
-			 
-			     
+ add_new_position(currentPoint);
 			 
 }	
 
