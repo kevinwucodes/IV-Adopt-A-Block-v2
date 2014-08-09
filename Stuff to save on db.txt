@@ -3,55 +3,55 @@
 
 {
  "mapboxProperties":
-   {
-    "variables" : 
+   		 {
+                  "variables" : 
  			{
 			  "MBtile" : "null",
 			  "MBtileDesc" : "base map tile, like ’examples.map-i86nkdio’ ",
-        "extraTile" : "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg",
-		    "extraTileDesc" : "second layer with 3rd part tiles",
+                          "extraTile" : "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg",
+		          "extraTileDesc" : "second layer with 3rd part tiles",
 			  "extraTileUsage" :"L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg' ",
-        "pacmanTile" : "de-lac.OSMBright”,
-        "pacmanTileDesc" : "third layer with pacman paths",	
-        "pacmanTileUsage" : "L.mapbox.tileLayer('de-lac.OSMBright').addTo(map) ",			 
-        "proximity" : "15",
+                          "pacmanTile" : "de-lac.OSMBright”,
+                          "pacmanTileDesc" : "third layer with pacman paths",	
+                          "pacmanTileUsage" : "L.mapbox.tileLayer('de-lac.OSMBright').addTo(map) ",			 
+                          "proximity" : "15",
  			  "proximityDesc" : "min distance required for a vertex from the user position, to become visited",
 			  "positionTimeInterval" : "1000",
-        "positionTimeIntervalDesc" : "each how many milliseconds the current position is updated",
+                          "positionTimeIntervalDesc" : "each how many milliseconds the current position is updated",
 			  "segmentDistance" : "20",
-        "segmentDistance Desc" : "after which distance pacman should start walking",
+                          "segmentDistance Desc" : "after which distance pacman should start walking",
 			  "pointDistance" : "5",
-        "pointDistanceDesc" : "min distance between two sequential points in a pacman segment"
-      },
-    "shapeAttributes":
-     {
-      "block":
+                          "pointDistanceDesc" : "min distance between two sequential points in a pacman segment"
+                        },
+                   "shapeAttributes":
+                       {
+                        "block":
 			  {
 			   "blockStrokeColor" : "rgb(45,114,176)",
-         "blockStrokeOpacity" : "1",
-         "blockStrokeWeight" : "7",
+                           "blockStrokeOpacity" : "1",
+                           "blockStrokeWeight" : "7",
 			   "blockFillColor" : "#0033FF",
-         "blockFillOpacity" : "0",
+          		   "blockFillOpacity" : "0",
 			   "coveredBlockStrokeColor" : "rgb(52,123,79)",
 			   "coveredBlockFillColor" : "rgb(72,173,110)"
 			  },
-      "vertex":
+                        "vertex":
 			  {
 			   "vertexStrokeColor" : "#FF9900",
-         "vertexStrokeOpacity" : "0.8",
-         "vertexStrokeWeight" : "4",
+                           "vertexStrokeOpacity" : "0.8",
+                           "vertexStrokeWeight" : "4",
 			   "vertexFillColor" : "#FF9900",
-         "vertexFillOpacity" : "0.8",
+          		   "vertexFillOpacity" : "0.8",
 			   "vertexRadius" : "4"
 			  },
-      "pacmanPath":
+                        "pacmanPath":
 			   {
 			    "pacmanPathColor" : "#a79c9c",
 			    "pacmanPathOpacity" : "1",
 			    "pacmanPathWeight" : "18"
 			   }
-	   }
-	}                 
+		       }
+		 }                 
 }
 
 
@@ -65,40 +65,39 @@
 
 
 {
-    "blocks": 
-     [
+    “blocks”: [
         {
-          "block": 
+            “block”: 
            {
-            "name": " ",
-            "coordinates": 
-	            [
-               { "lat": " " ,  "lng": " " },
-               { "lat": " " ,  "lng": " " }
-              ]
+                "name": " ",
+                "coordinates": 
+	        [
+                    { "lat": " " ,  "lng": " " },
+                    { "lat": " " ,  "lng": " " }
+                ]
             }
         },
         {
-         "block": 
-           {
-             "name": " ",
-             "coordinates":
-	            [
-               { "lat": " " ,  "lng": " " },
-               { "lat": " " ,  "lng": " " }
-              ]                
-           }
+            “block”: 
+            {
+                "name": " ",
+                "coordinates":
+	        [
+                    { "lat": " " ,  "lng": " " },
+                    { "lat": " " ,  "lng": " " }
+                ]                
+            }
         }
-     ]
+    ]
 }
 
 
     ================= Example:
 
 {
-    "blocks": [
+    “blocks”: [
         {
-            "block": {
+            “block”: {
                 "name": "Embarcadero 1",
                 "coordinates": [
                     {
@@ -106,14 +105,14 @@
                         "lng": "-119.85544323921204"
                     },
                     {
-                        "lat": "34.41723461642956",
-                        "lng": "-119.85528767108917"
+                        "lat": "34.41669472297695",
+                        "lng": "-119.85545396804808"
                     }
                 ]
             }
         },
         {
-            "block": {
+            “block”: {
                 "name": "Picasso 1",
                 "coordinates": [
                     {
@@ -121,8 +120,8 @@
                         "lng": "-119.8554003238678"
                     },
                     {
-                        "lat": "34.41516353078204",
-                        "lng": "-119.85476732254027"
+                        "lat": "34.41504846896437",
+                        "lng": "-119.8554003238678"
                     }
                 ]
             }
