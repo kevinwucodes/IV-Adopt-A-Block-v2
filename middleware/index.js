@@ -46,6 +46,82 @@ var server = restify.createServer(
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
 
+// checks
+var check = {
+
+  // do we have a proper name?
+  name: function(req, res, next) {
+    // do we have a firstname?
+    if (req.body.firstname === undefined || req.body.firstname.length === 0) {
+      res.send(500, {
+        status: "error",
+        message: "firstname cannot be blank"
+      });
+      return next();
+    }
+
+    // do we have a lastname?
+    if (req.body.lastname === undefined || req.body.lastname.length === 0) {
+      res.send(500, {
+        status: "error",
+        message: "lastname cannot be blank"
+      });
+      return next();
+    }
+  },
+
+  // do we have a tripCategory?
+  tripCategory: function(req, res, next) {
+    if (req.body.tripCategory === undefined || req.body.tripCategory.length === 0) {
+      res.send(500, {
+        status: "error",
+        message: "tripCategory cannot be blank"
+      });
+      return next();
+    }
+  },
+
+  // do we have a tripID?
+  tripID: function(req, res, next) {
+    if (req.body.tripID === undefined || req.body.tripID.length !== 36) {
+      res.send(500, {
+        status: "error",
+        message: "tripID cannot be blank and must be in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      });
+      return next();
+    }
+  },
+
+  // do we have the proper point schema?
+  pointSchema: function(req, res, next) {
+    // do we have a lat?  if not, we need to get out of here
+    if (req.body.point.lat === undefined || req.body.point.lat.length === 0) {
+      res.send(500, {
+        status: "error",
+        message: "lat cannot be blank"
+      });
+      return next();
+    }
+
+    // do we have a long?  if not, we need to get out of here
+    if (req.body.point.long === undefined || req.body.point.long.length === 0) {
+      res.send(500, {
+        status: "error",
+        message: "long cannot be blank"
+      });
+      return next();
+    }
+
+    // do we have a epoch?  if not, we need to get out of here
+    if (req.body.point.epoch === undefined || req.body.point.epoch <= 1000000000000) {
+      res.send(500, {
+        status: "error",
+        message: "epoch cannot be blank and must be in milliseconds"
+      });
+      return next();
+    }
+  }
+}; // check
 
 /////////////////////////////
 
@@ -68,32 +144,8 @@ server.post({
   }
   */
 
-  // do we have a firstname?  if not, we need to get out of here
-  if (req.body.firstname === undefined || req.body.firstname.length === 0) {
-    res.send(500, {
-      status: "error",
-      message: "firstname cannot be blank"
-    });
-    return next();
-  }
-
-  // do we have a lastname?  if not, we need to get out of here
-  if (req.body.lastname === undefined || req.body.lastname.length === 0) {
-    res.send(500, {
-      status: "error",
-      message: "lastname cannot be blank"
-    });
-    return next();
-  }
-
-  // do we have a tripCategory?  if not, we need to get out of here
-  if (req.body.tripCategory === undefined || req.body.tripCategory.length === 0) {
-    res.send(500, {
-      status: "error",
-      message: "tripCategory cannot be blank"
-    });
-    return next();
-  }
+  check.name(req, res, next);
+  check.tripCategory(req, res, next);
 
   var now = new Date().getTime();
 
@@ -187,41 +239,8 @@ server.post({
   }
   */
 
-  // do we have a tripID?  if not, we need to get out of here
-  if (req.body.tripID === undefined || req.body.tripID.length !== 36) {
-    res.send(500, {
-      status: "error",
-      message: "tripID cannot be blank and must be in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    });
-    return next();
-  }
-
-  // do we have a lat?  if not, we need to get out of here
-  if (req.body.point.lat === undefined || req.body.point.lat.length === 0) {
-    res.send(500, {
-      status: "error",
-      message: "lat cannot be blank"
-    });
-    return next();
-  }
-
-  // do we have a long?  if not, we need to get out of here
-  if (req.body.point.long === undefined || req.body.point.long.length === 0) {
-    res.send(500, {
-      status: "error",
-      message: "long cannot be blank"
-    });
-    return next();
-  }
-
-  // do we have a epoch?  if not, we need to get out of here
-  if (req.body.point.epoch === undefined || req.body.point.epoch <= 1000000000000) {
-    res.send(500, {
-      status: "error",
-      message: "epoch cannot be blank and must be in milliseconds"
-    });
-    return next();
-  }
+  check.tripID(req, res, next);
+  check.pointSchema(req, res, next);
 
   var now = new Date().getTime();
 
@@ -281,15 +300,18 @@ server.post({
 });
 
 
+
+
+
 //
 // GET requests
 //
 
 
 server.get('/', function(req, res, next) {
-//   db.collection('users').find(function(err, docs) {
-//     console.log(docs);
-//   });
+  //   db.collection('users').find(function(err, docs) {
+  //     console.log(docs);
+  //   });
   //   q
   res.send(200, "get");
   return next();
