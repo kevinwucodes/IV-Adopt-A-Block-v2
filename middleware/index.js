@@ -6,6 +6,14 @@ var NODEPORT = process.env.NITROUS_PORT || process.env.JITSU_PORT || process.env
 var SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 var SSL_KEY_PATH = process.env.SSL_KEY_PATH;
 
+// mediafire config (unless someone else can find a better storage file service and API)
+var MEDIAFIRE_EMAIL = process.env.MEDIAFIRE_EMAIL;
+var MEDIAFIRE_PASSWORD = process.env.MEDIAFIRE_PASSWORD;
+var MEDIAFIRE_APPLICATIONID = process.env.MEDIAFIRE_APPLICATIONID;
+var MEDIAFIRE_APIKEY = process.env.MEDIAFIRE_APIKEY;
+
+// end config
+//////////////////////////////
 
 // includes
 var restify = require('restify');
@@ -13,8 +21,14 @@ var fs = require('fs');
 var mongojs = require('mongojs');
 var uuid = require('node-uuid');
 var _ = require('underscore');
+var crypto = require('crypto');
+var sha1 = crypto.createHash('sha1');
 
-// collections config
+// mediafire requires a sha1 of your email + password + application_id + API Key
+var MEDIAFIRE_SIGNATURE = MEDIAFIRE_EMAIL + MEDIAFIRE_PASSWORD + MEDIAFIRE_APPLICATIONID + MEDIAFIRE_APIKEY;
+var MEDIAFIRE_SIGNATURE_SHA = sha1.update(MEDIAFIRE_SIGNATURE).digest('hex');
+
+// mongo collections config
 var db = mongojs(MONGO_URI);
 
 // restify, setting up with SSL certs
