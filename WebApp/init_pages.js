@@ -1,10 +1,38 @@
-// actually I stay always in the SAME PAGE
+/**
+
+even if I stay always in the SAME page, I can logically consider it as 3 different pages:
+
+
+===== PAGE MAP (or real-time)
+just show the map and the blocks. I will see volunteers here
+
+
+===== PAGE EDITOR
+I load the maptile of pacman, so I can draw polygons (blocks)
+around the streets, fitting pacman paths
+
+
+===== PAGE START  (or pacman)
+I start the timer relevating my GPS position. If it's inside a block,
+I put pacman. I can simulate my GPS position also manually drawing markers on the map.
+Again, only positions inside blocks are considered.
+
+
+*/
+
+
+
+
+
+
 
 function init_page_editor()
 {	
+   console.log("init_pages.js#init_page_editor().");
   try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
  try {map.removeControl(drawControl);} //remove the old drawControl with markers
  catch(control_not_present){/*ignore*/}
+ clearInterval(timer);
    
  // add the Leaf tool to draw shapes on the map
  var options = 
@@ -55,10 +83,12 @@ function init_page_editor()
 
 function init_page_realTime()
 {
+    console.log("init_pages.js#init_page_realTime().");
  try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
  try {map.removeControl(drawControl);} //remove every draw control present
  catch(control_not_present){/*ignore*/}
  $( "#left-panel" ).panel( "close" ); 
+  clearInterval(timer);
 }
 
 
@@ -69,6 +99,7 @@ function init_page_realTime()
 
 function init_page_PacMan()
 {
+ console.log("init_pages.js#init_page_PacMan().");
  map.setZoom('18');
  pacman_layer.addTo(map);	
  $( "#left-panel" ).panel( "close" );
@@ -80,7 +111,7 @@ function init_page_PacMan()
  
  /* TODO probably there is a way to disable polygons without creating a new drawControl*/
  
- /*TESTING ONLY*/
+ /* ==========TESTING ONLY ==========*/
  // add a control to add just markers, to simulate volunteer walks
  var options = 
   {
@@ -93,7 +124,10 @@ function init_page_PacMan()
         rectangle : false,
         marker: true      }  
   };
-
  drawControl = new L.Control.Draw(options);
- map.addControl(drawControl);}  
+ map.addControl(drawControl); 
+  /* =========================*/
+  
+ timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // start tracking my position
+ }  
 
