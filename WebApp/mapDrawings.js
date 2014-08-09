@@ -1,4 +1,61 @@
 /**
+ ======  ARE ALL THE GPS POINTS CONSIDERED?  ====================================
+
+well... for the vertexes and blocks coverage yes.
+For pacman movements no. 
+
+The behaviour below is implemented in #addCoveredPath().
+
+Pacman movements are asynch. It walks for segments, it doesn't consider ALL the relevated points.
+A segmen is long #SEGMENT_DISTANCE. Only when I've reached that distance,
+pacman starts walking upon that segment.
+To smooth the zig-zag movements, a segment is not made by all the relevated points.
+I consider just points far #POINT_DISTANCE among eachother.
+
+Example: 
+global var SEGMENT_DISTANCE=20;
+global var POINT_DISTANCE=5;
+relevated points:   0 2 3 4 6 7 8 9 11 14 15 18 20 22 23 
+
+global var covered_points =  0 6 11 18 22.  Once reached 22, pacman starts walking upone segment[0]
+
+when the first and last point added to #covered_points are far more than SEGMENT_DISTANCE,
+I clone it in #segment_to_cover so I don't have concurrent problems.
+    - #covered_points is cleared and can accept others GPS positions;
+    - #segment_to_cover is passed to pacman, that will dequeue all its positions
+
+In this way I can keep pushing elements even if pacman is reading the old positions.
+
+
+
+======= I WANT TO USE ANOTHER GUY INSTEAD OF PACMAN ==============================
+If we want to use another buddy instead of pacman, implement another "pacman-like" file,
+be careful at the CSS and sprites positioning. Then
+
+   -) replace #addSegmentToBeCoveredByPacman(segment_to_cover) inside the function #addCoveredPath(), 
+passing the array of points to follow #segment_to_cover.
+
+  -)  replace #createPacman(current_point) inside the function #addCoveredPath().
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
 * reads blocks, draws them on the map as polygons, and adds them at blocks[] array.
 * for each vertex of the polygons, a circle it's created
 */
@@ -24,11 +81,8 @@ for (p=0; p<polygons_json.polygons.length; p++)
     
     // if (polygons_json.polygons[p].polygon.pacman.length > 0)
 	//    {  addPacManLine(polygons_json.polygons[currentBlockIndex].polygon.pacman);	 }
-		  
-       
-
-    timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL);
   }
+
   
 
 }
@@ -131,71 +185,33 @@ function addBlock(latlng_coordinates, name)
 }
 
 
-/**
-* adds a dotted line pacman-style the follows coordinates specified within the polygon
-* [TODO], it's still a draft
-*/
-function addPacManLine(pacman)
+
+
+
+function addCoveredPath(current_point)
 {
- var pacman_points=[];
-	         for (pp=0; pp < pacman.length; pp++)
-		         {  pacman_points.push([pacman[pp].lng, pacman[pp].lat]); }
-		     var pacman_json  = 
-				 	    	{
-							      type: 'Feature',
-							      geometry: 
-							         {
-							          type: 'LineString',
-							          coordinates: pacman_points
-							         },
-							      properties: 
-							         {
-								       color: '#FFCC00',
-								       weight: 8,
-								       opacity: 1,
-								       clickable: false,
-								       dashArray: [1, 30] 
-							         }
-							  };
-			 pacman_line = L.geoJson(pacman_json, {style: function(feature) { return feature.properties; }});
-			 pacman_lines.push(pacman_line);
-			 drawnPath.addLayer(pacman_line);
+  if(!lastPosition) 
+  	{//it's the first position, create pacman and the line
+  	 covered_points.push(current_point);
+  	 createPacman(current_point);
+  	}
+  else
+  {	 
+    if(covered_points.length==0 ||  // i am starting a new segment
+       covered_points[covered_points.length-1].distanceTo(current_point).toFixed(0) > POINT_DISTANCE ||
+       covered_points[0].distanceTo(current_point).toFixed(0) > SEGMENT_DISTANCE 
+      )
+        {covered_points.push(current_point);}
+     
+	if(covered_points[0].distanceTo(current_point).toFixed(0) > SEGMENT_DISTANCE)
+	    { //start animating pacman and the line
+	     var segment_to_cover=(covered_points.splice(0)); //copy the array
+	     covered_point=[]; //clear it to get future points
+	     addSegmentToBeCoveredByPacman(segment_to_cover);
+		}
+   }
 }
 
-
-
-
-/**
-* draws a line between the current user's GPS position and the last one
-*/
-function addCoveredPath(current_lng, current_lat)
-{
- movePacMan(L.latLng(current_lat,current_lng));
- if(!lastPosition) {return;} //it's the first position
- var line_json  = 
-			 	    	{
-						      type: 'Feature',
-						      geometry: 
-						         {
-						          type: 'LineString',
-						          coordinates: [
-						                         [lastPosition.lng, lastPosition.lat],
-						                         [current_lng, current_lat]
-						                       ]
-						         },
-						      properties: 
-						         {
-							       color: USER_PATH_COLOR,
-							       weight: USER_PATH_WEIGHT,
-							       opacity: USER_PATH_OPACITY,
-							       clickable: false,
-							       smoothFactor:20
-						         }
-						  };
-  var line = L.geoJson(line_json, {style: function(feature) { return feature.properties; }});	
-  drawnPath.addLayer(line);
-  drawnPath.bringToBack();
-}
 
 
 //alert( JSON.stringify((poly.geometry.coordinates)));
