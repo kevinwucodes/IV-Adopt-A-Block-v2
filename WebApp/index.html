@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>IV a-a-b Admin Page</title>
+<title>IV a-a-b Volunteer Page</title>
 <!-- iPhone, iOS 7, retina -->
  	<link href="http://www.ivparks.org/images/logo_home.png" sizes="120x120" rel="apple-touch-icon">
 	<meta name="apple-mobile-web-app-capable" content="yes" />  
@@ -33,11 +33,11 @@
 <link rel="stylesheet" href="./pacman.css" />
 <!-- my js functions -->
 <script src="./global.js"></script>
-<script src="./blocks.js"></script>
+<script src="./mapDrawings.js"></script>
 <script src="./geolocation.js"></script>
 <script src="./objectToJson.js"></script>
 <script src="./db_handler.js"></script>
-<script src="./init_pages.js"></script>
+<script src="./init_client_page.js"></script>
 
 <style>
   body { margin:0; padding:0; }
@@ -55,28 +55,22 @@
 
 <!-- header -->
   <div data-role="header" data-position="fixed" data-fullscreen="false"> 
-       <h1 id="sitename">IV A-a-B</h1>
-	   <a href="#left-panel" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all 
-	                                ui-btn-icon-right ui-icon-bullets">menu</a>
+       <h1 id="sitename">IV a-a-b Volunteer Page</h1>
   </div><!-- /header -->
 
+
 <!-- ## PAGE1 ## -->
-<div data-role="page" data-title="real-time" id="real-time" data-url="real-time" style="backgrond-color:grey;">
-	<!-- popup -->
-	<div data-role="popup" id="popupAddress" data-theme="a" class="ui-corner-all" 
+<div data-role="page" class="ui-body" data-title="real-time" id="real-time" data-url="real-time" style="backgrond-color:grey;">   
+
+<!-- PHOTO POPUP -->
+	<div data-role="popup" id="popupPhoto" data-theme="a" class="ui-corner-all" 
 	     style="width:300px; padding:10px;" >
-      <form>
-        <div style="padding:10px 20px;">
-            <h3>address</h3>
-            <input type="text" id="address"  value=""  data-theme="a" style="width:80%;">
-            <button type="submit"  class="ui-btn ui-corner-all ui-shadow ui-btn-b 
-                                         ui-btn-icon-left ui-icon-check"
-                                  onclick="">Ok
-	        </button>
-        </div>
-      </form>
-   </div><!-- /popup -->
-   
+        <div id="show-picture" class="photos"> </div>
+   </div>
+
+
+
+
    <!-- map -->
    <div class="ui-content" role="main">
        <div id='map'></div>
@@ -86,42 +80,46 @@
 
 
 
+<div data-role="footer" data-position="fixed">
+		<div data-role="navbar">
+            <ul>
+                <li>
+                   <a href="#" data-icon="navigation" 
+                      onclick=" timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // start tracking my position"
+                      >start</a>
+                </li>
+                <li>
+                  <a href="#" data-icon="camera" 
+                      onclick="$('#take-picture').click();">camera</a>
+                </li>
+                <li>
+                     <a  href="#" data-icon="check" data-transition="slide" 
+                        class="ui-btn">stop</a>
+                </li>
+            </ul>
+        </div><!-- /navbar -->
+	</div><!-- /footer -->
+	
+	
+	
+	!-- hidden div with the real input button for the camera -->
+	<div style="visibility:hidden;">
+           <input id="take-picture" type="file" accept="image/*" capture="camera" />
+    </div>
 
 
 
-<!-- LEFT PANEL -->
-<div data-role="panel" id="left-panel" data-position="left" data-theme="a" 
-     data-display="push"
-     style="box-shadow: 3px 4px 5px #555555; z-index:2000;">
-     <div>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;" onclick="init_page_realTime();">MAP</button>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;"onclick="init_page_editor();">EDITOR</button>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" id="pacmanPage" style="margin-top:30%;"onclick="init_page_PacMan();">START</button>              
-     </div>
-</div>
 
 <script>	 
-        initialize_map();
-	    //Because external toolbars are not within the page they will not auto initalize. 
-	    // You must call the toolbar plugin yourself and stylyze it
-	   $( "[data-role='header'], [data-role='footer']" ).toolbar(); 
-	   $( "[data-role='header']" ).toolbar({ theme: "a" });
-	   // same thing for the external left panel (menu)	            
-       $("#left-panel").panel();
-         // open it also with a swipe to right
-	    $("#left-panel").panel().enhanceWithin();
-	    	    
-	   $( document ).on( "swiperight", "body", function( e ) 
-	         	{ $( "#left-panel" ).panel( "open" );}
-	         	           );	 
-	    
-       //$( '#real-time' ).on( "pagebeforeshow", function() {initialize_map();});	  
+
+     //$( '#real-time' ).on( "pagebeforeshow", function() {initialize_map();});	  
        $( '#real-time' ).on( "pageshow", function() 
          {
-           //force the graphical map regresh. with Jquery it's needed       	           
-           map.invalidateSize(); 
-           $('.ui-panel-wrapper')[0].height();
-         });	        	           
+	      $( "[data-role='header'], [data-role='footer']" ).toolbar({ theme: "a" });         
+           initialize_map();   
+           init_page_PacMan(); 
+         });	 
+               	           
  </script>
 
 </body>
