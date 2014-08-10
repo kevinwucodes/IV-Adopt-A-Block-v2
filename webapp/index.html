@@ -43,7 +43,7 @@
   body { margin:0; padding:0; }
   html, body, {height: 100%;}
   #map { position:absolute; left:0px; top:0px; bottom:0; width: 100%; height:100%;}
-  #real-time { width: 100%; height: 100%;padding: 0px; margin-top: 44px; margin-bottom: 44px;}
+  #main-page { width: 100%; height: 100%;padding: 0px; margin-top: 44px; margin-bottom: 44px;}
 </style>
 </head>
 
@@ -55,12 +55,12 @@
 
 <!-- header -->
   <div data-role="header" data-position="fixed" data-fullscreen="false"> 
-       <h1 id="sitename">IV a-a-b Volunteer Page</h1>
+       <h1 id="sitename">IV AaB Volunteer Page</h1>
   </div><!-- /header -->
 
 
 <!-- ## PAGE1 ## -->
-<div data-role="page" class="ui-body" data-title="real-time" id="real-time" data-url="real-time" style="backgrond-color:grey;">   
+<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="main-page"  style="backgrond-color:grey;">   
 
 <!-- PHOTO POPUP -->
 	<div data-role="popup" id="popupPhoto" data-theme="a" class="ui-corner-all" 
@@ -112,8 +112,8 @@
 
 <script>	 
 
-     //$( '#real-time' ).on( "pagebeforeshow", function() {initialize_map();});	  
-       $( '#real-time' ).on( "pageshow", function() 
+     //$( '#main-page' ).on( "pagebeforeshow", function() {initialize_map();});	  
+       $( '#main-page' ).on( "pageshow", function() 
          {
 	      $( "[data-role='header'], [data-role='footer']" ).toolbar({ theme: "a" });         
            initialize_map();   
