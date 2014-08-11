@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C0E951C9-656A-4130-BE5D-E04D04532C14</string>
+	<key>IDESourceControlProjectName</key>
+	<string>IslaVistaAdoptABlock</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>DCEACA0A36DE211089AFCD2AA72A292ACF118584</key>
+		<string>https://github.com/mrdirtbag/adopt-a-block.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ios/IslaVistaAdoptABlock.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>DCEACA0A36DE211089AFCD2AA72A292ACF118584</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/mrdirtbag/adopt-a-block.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>DCEACA0A36DE211089AFCD2AA72A292ACF118584</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DCEACA0A36DE211089AFCD2AA72A292ACF118584</string>
+			<key>IDESourceControlWCCName</key>
+			<string>adopt-a-block</string>
+		</dict>
+	</array>
+</dict>
+</plist>
