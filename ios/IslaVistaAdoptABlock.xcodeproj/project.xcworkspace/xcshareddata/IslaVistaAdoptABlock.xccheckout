@@ -10,31 +10,31 @@
 	<string>IslaVistaAdoptABlock</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>DCEACA0A36DE211089AFCD2AA72A292ACF118584</key>
-		<string>https://github.com/mrdirtbag/adopt-a-block.git</string>
+		<key>79DC0E9F1C114E2034E95EFAC76B6A7E5B68B2E8</key>
+		<string>https://github.com/ginxwar/IV-Adopt-A-Block-v2.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>ios/IslaVistaAdoptABlock.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>DCEACA0A36DE211089AFCD2AA72A292ACF118584</key>
+		<key>79DC0E9F1C114E2034E95EFAC76B6A7E5B68B2E8</key>
 		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/mrdirtbag/adopt-a-block.git</string>
+	<string>https://github.com/ginxwar/IV-Adopt-A-Block-v2.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>DCEACA0A36DE211089AFCD2AA72A292ACF118584</string>
+	<string>79DC0E9F1C114E2034E95EFAC76B6A7E5B68B2E8</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>DCEACA0A36DE211089AFCD2AA72A292ACF118584</string>
+			<string>79DC0E9F1C114E2034E95EFAC76B6A7E5B68B2E8</string>
 			<key>IDESourceControlWCCName</key>
-			<string>adopt-a-block</string>
+			<string>IV-Adopt-A-Block-v2</string>
 		</dict>
 	</array>
 </dict>
