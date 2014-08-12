@@ -15,8 +15,8 @@
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script> 
 <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
-<link rel="stylesheet" href="./theme.css" />
-<link rel="stylesheet" href="./jquery.mobile.icons.min.css"/>
+<link rel="stylesheet" href="../webapp/theme.css" />
+<link rel="stylesheet" href="../webapp/jquery.mobile.icons.min.css"/>
 
 
 <!-- tool do draw polygons-->
@@ -28,16 +28,13 @@
 <!-- is a point in a shape -->
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-pip/v0.0.2/leaflet-pip.js'></script>
 
-<!-- pacman -->
-<script src="./pacman.js"></script>
-<link rel="stylesheet" href="./pacman.css" />
+
 <!-- my js functions -->
-<script src="./global.js"></script>
-<script src="./blocks.js"></script>
-<script src="./geolocation.js"></script>
-<script src="./objectToJson.js"></script>
-<script src="./db_handler.js"></script>
-<script src="./init_pages.js"></script>
+<script src="../webapp/global.js"></script>
+<script src="../webapp/mapDrawings.js"></script>
+<script src="../webapp/objectToJson.js"></script>
+<script src="../webapp/db_handler.js"></script>
+<script src="./init_admin_pages.js"></script>
 
 <style>
   body { margin:0; padding:0; }
@@ -55,7 +52,7 @@
 
 <!-- header -->
   <div data-role="header" data-position="fixed" data-fullscreen="false"> 
-       <h1 id="sitename">IV A-a-B</h1>
+       <h1 id="sitename">IV A-a-B Admin page</h1>
 	   <a href="#left-panel" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all 
 	                                ui-btn-icon-right ui-icon-bullets">menu</a>
   </div><!-- /header -->
@@ -94,17 +91,15 @@
      data-display="push"
      style="box-shadow: 3px 4px 5px #555555; z-index:2000;">
      <div>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;" onclick="init_page_realTime();">REAL TIME</button>
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;" onclick="init_page_realTime();">MAP</button>
        <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;"onclick="init_page_editor();">EDITOR</button>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;"onclick="init_page_PacMan();">PAC MAN</button>              
      </div>
 </div>
 
 <script>	 
-        initialize_map();
 	    //Because external toolbars are not within the page they will not auto initalize. 
 	    // You must call the toolbar plugin yourself and stylyze it
-	   $( "[data-role='header'], [data-role='footer']" ).toolbar(); 
+	   $( "[data-role='header']" ).toolbar(); 
 	   $( "[data-role='header']" ).toolbar({ theme: "a" });
 	   // same thing for the external left panel (menu)	            
        $("#left-panel").panel();
@@ -121,7 +116,9 @@
            //force the graphical map regresh. with Jquery it's needed       	           
            map.invalidateSize(); 
            $('.ui-panel-wrapper')[0].height();
-         });	        	           
+         });	 
+            initialize_map();
+            init_page_realTime();       	           
  </script>
 
 </body>

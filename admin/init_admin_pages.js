@@ -1,8 +1,30 @@
-// actually I stay always in the SAME PAGE
+/**
+
+even if I stay always in the SAME page, I can logically consider it as 3 different pages:
+
+
+===== PAGE MAP (or real-time)
+just show the map and the blocks. I will see volunteers here
+
+
+===== PAGE EDITOR
+I load the maptile of pacman, so I can draw polygons (blocks)
+around the streets, fitting pacman paths
+
+
+
+*/
+
+
+
+
+
+
 
 function init_page_editor()
 {	
-  try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
+ console.log("init_admin_pages.js#init_page_editor().");
+ try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
  try {map.removeControl(drawControl);} //remove the old drawControl with markers
  catch(control_not_present){/*ignore*/}
    
@@ -55,6 +77,7 @@ function init_page_editor()
 
 function init_page_realTime()
 {
+    console.log("init_admin_pages.js#init_page_realTime().");
  try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
  try {map.removeControl(drawControl);} //remove every draw control present
  catch(control_not_present){/*ignore*/}
@@ -63,37 +86,4 @@ function init_page_realTime()
 
 
 
-
-
-
-
-function init_page_PacMan()
-{
- map.setZoom('18');
- pacman_layer.addTo(map);	
- $( "#left-panel" ).panel( "close" );
- map.setView(map.getCenter(), 18); // fix the zoom at 18! so, with a big PacMan 
-     							   //and a thick line,  it's easyer cover all the points
-
- try {map.removeControl(drawControl);} //remove the old drawControl with polygons
- catch(control_not_present){/*ignore*/} 
- 
- /* TODO probably there is a way to disable polygons without creating a new drawControl*/
- 
- /*TESTING ONLY*/
- // add a control to add just markers, to simulate volunteer walks
- var options = 
-  {
-    position: 'topright',
-    draw: 
-      { // https://github.com/Leaflet/Leaflet.draw/blob/master/README.md
-        polyline: false,
-        polygon:  false,
-        circle: false,
-        rectangle : false,
-        marker: true      }  
-  };
-
- drawControl = new L.Control.Draw(options);
- map.addControl(drawControl);}  
 
