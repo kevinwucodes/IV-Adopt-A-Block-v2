@@ -46,83 +46,6 @@ var server = restify.createServer(
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
 
-// checks
-var check = {
-
-  // do we have a proper name?
-  name: function(req, res, next) {
-    // do we have a firstname?
-    if (req.body.firstname === undefined || req.body.firstname.length === 0) {
-      res.send(500, {
-        status: "error",
-        message: "firstname cannot be blank"
-      });
-      return next();
-    }
-
-    // do we have a lastname?
-    if (req.body.lastname === undefined || req.body.lastname.length === 0) {
-      res.send(500, {
-        status: "error",
-        message: "lastname cannot be blank"
-      });
-      return next();
-    }
-  },
-
-  // do we have a tripCategory?
-  tripCategory: function(req, res, next) {
-    if (req.body.tripCategory === undefined || req.body.tripCategory.length === 0) {
-      res.send(500, {
-        status: "error",
-        message: "tripCategory cannot be blank"
-      });
-      return next();
-    }
-  },
-
-  // do we have a tripID?
-  tripID: function(req, res, next) {
-    if (req.body.tripID === undefined || req.body.tripID.length !== 36) {
-      res.send(500, {
-        status: "error",
-        message: "tripID cannot be blank and must be in the format of xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-      });
-      return next();
-    }
-  },
-
-  // do we have the proper point schema?
-  pointSchema: function(req, res, next) {
-    // do we have a lat?  if not, we need to get out of here
-    if (req.body.point.lat === undefined || req.body.point.lat.length === 0) {
-      res.send(500, {
-        status: "error",
-        message: "lat cannot be blank"
-      });
-      return next();
-    }
-
-    // do we have a long?  if not, we need to get out of here
-    if (req.body.point.long === undefined || req.body.point.long.length === 0) {
-      res.send(500, {
-        status: "error",
-        message: "long cannot be blank"
-      });
-      return next();
-    }
-
-    // do we have a epoch?  if not, we need to get out of here
-    if (req.body.point.epoch === undefined || req.body.point.epoch <= 1000000000000) {
-      res.send(500, {
-        status: "error",
-        message: "epoch cannot be blank and must be in milliseconds"
-      });
-      return next();
-    }
-  }
-}; // check
-
 /////////////////////////////
 
 //
@@ -144,8 +67,15 @@ server.post({
   }
   */
 
-  check.name(req, res, next);
-  check.tripCategory(req, res, next);
+  // checking require inputs
+  if (req.body.firstname === undefined || req.body.firstname.length === 0 ||
+    req.body.lastname === undefined || req.body.lastname.length === 0 ||
+    req.body.tripCategory === undefined || req.body.tripCategory.length === 0) {
+    var err = new Error();
+    err.status = 403;
+    err.message = "required values missing";
+    return next(err);
+  }
 
   var now = new Date().getTime();
 
@@ -239,8 +169,16 @@ server.post({
   }
   */
 
-  check.tripID(req, res, next);
-  check.pointSchema(req, res, next);
+  // checking require inputs
+  if (req.body.tripID === undefined || req.body.tripID.length !== 36 ||
+    req.body.point.lat === undefined || req.body.point.lat.length === 0 ||
+    req.body.point.long === undefined || req.body.point.long.length === 0 ||
+    req.body.point.epoch === undefined || req.body.point.epoch <= 1000000000000) {
+    var err = new Error();
+    err.status = 403;
+    err.message = "required values missing";
+    return next(err);
+  }
 
   var now = new Date().getTime();
 
@@ -300,7 +238,90 @@ server.post({
 });
 
 
+// completed route
+server.post({
+  path: '/users/completed',
+  version: '1.0.0'
+}, function(req, res, next) {
 
+  /*
+  expecting:
+  {
+    tripID: "a23e5bed-658c-4d0d-8622-8ea8a6e9c8ae",
+    comments: "I had a great time picking up trash",
+    buckets: 0.75,
+    blocks: 1.5
+  }
+  */
+
+  // checking require inputs
+  if (req.body.tripID === undefined || req.body.tripID.length !== 36 ||
+    isNaN(req.body.buckets) ||
+    isNaN(req.body.blocks)) {
+    var err = new Error();
+    err.status = 403;
+    err.message = "required values missing";
+    return next(err);
+  }
+
+  var now = new Date().getTime();
+
+  var payload = {
+    tripID: req.body.tripID,
+    comments: req.body.comments,
+    buckets: req.body.buckets,
+    blocks: req.body.blocks,
+    completed: now
+  }
+
+  // TODO: need to check to see if final submission has already occurred.  If so, then we need to throw an error
+
+  db.collection('users').findAndModify({
+    query: {
+      "trips.tripID": payload.tripID
+      // $and: [ { "trips.tripID": payload.tripID }, { "trips.$.completed": { $exists: false } } ]
+    },
+
+    update: {
+      // finalizing trip route by adding buckets, blocks, and a completed value
+      $set: {
+        "trips.$.buckets": payload.buckets,
+        "trips.$.blocks": payload.blocks,
+        "trips.$.completed": payload.completed
+      }
+    },
+
+
+  }, function(err, doc, lastErrorObject) {
+
+    if (err) {
+      return next(err);
+    }
+
+    // can we find the tripID at all?
+    if (lastErrorObject.n === 0) {
+      // no, lets tell the user that we couldn't find anything to update/insert
+      res.send(500, {
+        status: "error",
+        message: "there was no such tripID"
+      });
+      return next();
+    }
+
+    // did mongo report back a single updated document?
+    if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
+      res.send(201, {
+        status: "success",
+        message: "completed trip for tripID " + payload.tripID
+      });
+      return next();
+    }
+
+
+  });
+
+  return next();
+});
 
 
 //
@@ -316,6 +337,9 @@ server.get('/', function(req, res, next) {
   res.send(200, "get");
   return next();
 });
+
+
+
 
 
 //
