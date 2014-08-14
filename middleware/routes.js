@@ -148,8 +148,17 @@ module.exports.usersWaypoints = function(req, res, next) {
   }
 
   db.collection('users').findAndModify({
+
+    // we want to ensure that we search on a tripID that hasn't been completed
     query: {
-      "trips.tripID": payload.tripID
+      "trips": {
+        $elemMatch: {
+          "tripID": payload.tripID,
+          "completed": {
+            $exists: false
+          }
+        }
+      }
     },
 
     update: {
@@ -160,7 +169,7 @@ module.exports.usersWaypoints = function(req, res, next) {
     },
 
     fields: {
-      trips: 1
+      "trips.$": 1
     }
   }, function(err, doc, lastErrorObject) {
 
@@ -212,14 +221,22 @@ module.exports.usersResumed = function(req, res, next) {
   var now = new Date().getTime();
 
   var payload = {
-    tripID: req.body.tripID,    
+    tripID: req.body.tripID,
     resumed: now
   }
 
 
   db.collection('users').findAndModify({
+    // we want to ensure that we search on a tripID that hasn't been completed
     query: {
-      "trips.tripID": payload.tripID
+      "trips": {
+        $elemMatch: {
+          "tripID": payload.tripID,
+          "completed": {
+            $exists: false
+          }
+        }
+      }
     },
 
     update: {
@@ -230,7 +247,7 @@ module.exports.usersResumed = function(req, res, next) {
     },
 
     fields: {
-      trips: 1
+      "trips.$": 1
     }
   }, function(err, doc, lastErrorObject) {
 
@@ -282,14 +299,22 @@ module.exports.usersPaused = function(req, res, next) {
   var now = new Date().getTime();
 
   var payload = {
-    tripID: req.body.tripID,    
+    tripID: req.body.tripID,
     paused: now
   }
 
 
   db.collection('users').findAndModify({
+    // we want to ensure that we search on a tripID that hasn't been completed
     query: {
-      "trips.tripID": payload.tripID
+      "trips": {
+        $elemMatch: {
+          "tripID": payload.tripID,
+          "completed": {
+            $exists: false
+          }
+        }
+      }
     },
 
     update: {
@@ -300,7 +325,7 @@ module.exports.usersPaused = function(req, res, next) {
     },
 
     fields: {
-      trips: 1
+      "trips.$": 1
     }
   }, function(err, doc, lastErrorObject) {
 
@@ -364,12 +389,17 @@ module.exports.usersCompleted = function(req, res, next) {
     completed: now
   }
 
-  // TODO: need to check to see if final submission has already occurred.  If so, then we need to throw an error
-
   db.collection('users').findAndModify({
+    // we want to ensure that we search on a tripID that hasn't been completed
     query: {
-      "trips.tripID": payload.tripID
-      // $and: [ { "trips.tripID": payload.tripID }, { "trips.$.completed": { $exists: false } } ]
+      "trips": {
+        $elemMatch: {
+          "tripID": payload.tripID,
+          "completed": {
+            $exists: false
+          }
+        }
+      }
     },
 
     update: {
@@ -381,7 +411,9 @@ module.exports.usersCompleted = function(req, res, next) {
       }
     },
 
-
+    fields: {
+      "trips.$": 1
+    }
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
