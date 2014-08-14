@@ -1,1 +1,43 @@
 This is the REST layer for IV Adopt-a-Block
+
+
+POST /users
+```
+{
+  "firstname":"michael",
+  "lastname":"jordan",
+  "tripCategory":"staff"
+}
+```
+POST /users/waypoints
+```
+{
+  "tripID": "",
+  "point": {
+    "lat": 34.409094,
+    "long": -119.854158,
+    "epoch": 1405659960723
+  }
+}
+```
+POST /users/paused
+```
+{
+  "tripID": ""
+}
+```
+POST /users/resumed
+```
+{
+  "tripID": ""
+}
+```
+POST /users/completed
+```
+{
+  "tripID": "",
+  "buckets": 0.75,
+  "blocks": 1.5,
+  "comments": "I love picking up trash"
+}
+```
