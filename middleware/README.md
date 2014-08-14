@@ -1,5 +1,10 @@
 This is the REST layer for IV Adopt-a-Block
 
+All POST Headers should be:
+```
+Content-Type: application/json
+Accept-Version: ~1
+```
 
 POST /users
 ```
