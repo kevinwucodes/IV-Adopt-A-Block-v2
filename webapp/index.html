@@ -61,18 +61,42 @@
 
 <!-- ## PAGE1 ## -->
 <div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="main-page"  style="backgrond-color:grey;">   
+ <div class="ui-content" role="main">
 
 <!-- PHOTO POPUP -->
 	<div data-role="popup" id="popupPhoto" data-theme="a" class="ui-corner-all" 
 	     style="width:300px; padding:10px;" >
         <div id="show-picture" class="photos"> </div>
    </div>
+   
+   
+<!-- SIGN IN -->
+	<div data-role="popup" id="popupSignin" data-theme="a" class="ui-corner-all" 
+	     style="width:100%; height:100%;" >
+	     <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left" onclick="$('#popupSignin').popup('close');">Close</a>
+        <div style="padding:20px;"> 
+            <label for="text-basic">Name:</label>
+            <input type="text" name="text-basic" id="volname" value="">
+
+            <label for="text-basic">Surname:</label>
+            <input type="text" name="text-basic" id="volsurname" value="">
+
+			<label for="select-choice-1" class="select">type of volunteer:</label>
+			<select name="select-choice-1" id="voltype">
+			    <option value="type1">type1</option>
+			    <option value="type2">type2</option>
+			    <option value="type3">type3</option>
+			    <option value="type4">type4</option>
+			</select>
+		    
+		    <input type="button" data-icon="check" value="START" onclick="startTracking();">
+        </div>
+   </div>   
 
 
 
 
    <!-- map -->
-   <div class="ui-content" role="main">
        <div id='map'></div>
    </div>
 
@@ -84,13 +108,15 @@
 		<div data-role="navbar">
             <ul>
                 <li>
-                   <a href="#" data-icon="navigation" 
-                      onclick=" timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // start tracking my position"
-                      >start</a>
+                   <a href="#popupSignin" data-icon="navigation" 
+                      data-rel="popup" data-position-to="window" 
+                      data-transition="pop">start</a>
                 </li>
                 <li>
-                  <a href="#" data-icon="camera" 
-                      onclick="$('#take-picture').click();">camera</a>
+                  <a href="#popupPhoto" data-icon="camera" 
+                     data-rel="popup" data-position-to="window" 
+                     data-transition="pop"
+                     onclick="$('#take-picture').click();">camera</a>
                 </li>
                 <li>
                      <a  href="#" data-icon="check" data-transition="slide" 

@@ -37,6 +37,57 @@ function init_page_PacMan()
 
 
 
+
+function startTracking ()
+{
+ name = $('#volname').val();
+ surname = $('#volsurname').val();
+ type = $('#voltype').val();
+ if (!name || !surname)
+   {return;}
+ alert('start tracking..but still not saving');
+ timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // start tracking my position
+  $('#popupSignin').popup('close');
+  $('#popupSignin').popup('close'); // bug... 2 times are required  
+  
+  
+  $.ajax(
+  {
+	  type: "POST",
+	  url: "https://iv-adopt-a-block-v2.jit.su/users",
+	  data: '{ "firstname":"'+name+'","lastname":"'+surname+'","tripCategory":"'+type+'"}',
+	  headers: {
+	           "Content-Type": "application/json",
+	           "Accept-Version": "~1"
+	          },		
+	  dataType: 'json',          	
+	  success: function(response)
+	                 {
+	                  tripId = response.UUID;
+	                  alert("tripId: "+tripId);
+	                  },
+	  error: function(response)
+	                 {alert(JSON.stringify(response)); }
+  });
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var photo_lat;
 var photo_lng;
 var uploading = false;
