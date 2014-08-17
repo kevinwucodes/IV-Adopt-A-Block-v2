@@ -3,10 +3,12 @@
 // includes
 var restify = require('restify');
 var fs = require('fs');
+var request = require('superagent');
 
 // include local
 var config = require('./config');
 var r = require('./routes');
+var mediafire = require('./mediafire');
 
 // restify, setting up with SSL certs
 var server = restify.createServer(
@@ -69,6 +71,83 @@ server.get('/', function(req, res, next) {
   res.send(200, "get");
   return next();
 });
+
+
+//
+// GET static requests
+//
+
+console.log(__dirname);
+
+server.get('/static/properties/v1/mapboxProperties.json', function(req, res, next) {
+  var file = "".concat(__dirname, '/static/properties/v1/mapboxProperties.json');
+
+  // console.log(file);
+
+  fs.createReadStream(file).pipe(res);
+});
+
+
+//
+// UPLOAD testing
+//
+
+var respond = function(req, res, next) {
+  res.send('hello ' + req.params.name);
+}
+
+var echo_upload_file = function(req, res, next) {
+  console.log('XXXX: BODY', req.body)
+  console.log('XXXX params', req.params)
+  console.log('XXXX UPLOADED FILES', req.files)
+  res.send('done');
+  next();
+}
+
+
+server.post('/upload', echo_upload_file);
+
+//
+// mediafire testing
+//
+
+// console.log(mediafire.url.getSession);
+
+
+// example
+// request
+//    .post('/api/pet')
+//    .send({ name: 'Manny', species: 'cat' })
+//    .set('X-API-Key', 'foobar')
+//    .set('Accept', 'application/json')
+//    .end(function(res){
+//      if (res.ok) {
+//        alert('yay got ' + JSON.stringify(res.body));
+//      } else {
+//        alert('Oh no! error ' + res.text);
+//      }
+//    });
+
+
+// // good
+// request
+//   .post(mediafire.url.getSession)
+//   .query({ email: config.mediafire.email })
+//   .query({ password: config.mediafire.password })
+//   .query({ application_id: config.mediafire.application_id })
+//   .query({ signature: config.mediafire.signature_sha })
+//   .query({ response_format: 'json' })
+//   .send()
+//   .end(function(a,b,c,d) {
+//     console.log("a ", a);
+//     console.log("b ", b);
+//     console.log("c ", c);
+//     console.log("d ", d);
+
+// });
+
+
+
 
 /////////////////////////////
 // end requests
