@@ -82,8 +82,7 @@ console.log(__dirname);
 server.get('/static/properties/v1/mapboxProperties.json', function(req, res, next) {
   var file = "".concat(__dirname, '/static/properties/v1/mapboxProperties.json');
 
-  // console.log(file);
-
+  res.setHeader("content-type", "application/json");
   fs.createReadStream(file).pipe(res);
 });
 
