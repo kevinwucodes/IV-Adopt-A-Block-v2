@@ -1,5 +1,7 @@
 This is the REST layer for IV Adopt-a-Block
 
+#### Post Routes
+
 All POST Headers should be:
 ```
 Content-Type: application/json
@@ -46,3 +48,15 @@ POST /users/completed
   "comments": "I love picking up trash"
 }
 ```
+
+#### GET Static Routes
+
+
+```
+GET /static/properties/v1/mapboxProperties.json
+```
+This file is necessary for de-lac.  (de-lac, could you provide a description for this for documentation purposes?)
+
+#### Get Routes
+
+(work in progress)
