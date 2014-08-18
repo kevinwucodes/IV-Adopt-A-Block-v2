@@ -89,7 +89,8 @@
 			    <option value="type4">type4</option>
 			</select>
 		    
-		    <input type="button" data-icon="check" value="START" onclick="startTracking();">
+		    <input type="button" data-icon="check" value="START" 
+		           onclick="startTracking($('#volname').val(), $('#volsurname').val(), $('#voltype').val());">
         </div>
    </div>   
 
@@ -108,19 +109,23 @@
 		<div data-role="navbar">
             <ul>
                 <li>
-                   <a href="#popupSignin" data-icon="navigation" 
+                   <a id="menu_start"
+                      href="#popupSignin" data-icon="navigation" 
                       data-rel="popup" data-position-to="window" 
                       data-transition="pop">start</a>
                 </li>
                 <li>
-                  <a href="#popupPhoto" data-icon="camera" 
+                  <a id="menu_camera"
+                     href="#popupPhoto" data-icon="camera" 
                      data-rel="popup" data-position-to="window" 
                      data-transition="pop"
                      onclick="$('#take-picture').click();">camera</a>
                 </li>
                 <li>
-                     <a  href="#" data-icon="check" data-transition="slide" 
-                        class="ui-btn">stop</a>
+                     <a id="menu_stop" 
+                        href="#" data-icon="check" disabled="" data-transition="slide" 
+                        class="ui-btn"
+                        onclick="stopTracking();">stop</a>
                 </li>
             </ul>
         </div><!-- /navbar -->
@@ -137,11 +142,9 @@
 
 
 <script>	 
-
-     //$( '#main-page' ).on( "pagebeforeshow", function() {initialize_map();});	  
        $( '#main-page' ).on( "pageshow", function() 
          {
-	      $( "[data-role='header'], [data-role='footer']" ).toolbar({ theme: "a" });         
+	      $( "[data-role='header'], [data-role='footer']" ).toolbar({ theme: "a" });   
            initialize_map();   
            init_page_PacMan(); 
          });	 

@@ -4,6 +4,92 @@ put on GitHub the JSON syntax stuff to save on the db
 */
 
 
+function db_start_trip(name, surname, type)
+{
+ alert('{ "firstname":"'+name+'","lastname":"'+surname+'","tripCategory":"'+type+'"}');
+   $.ajax(
+  {
+	  type: "POST",
+	  url: "https://iv-adopt-a-block-v2.jit.su/users",
+	  data: '{ "firstname":"'+name+'", "lastname":"'+surname+'", "tripCategory":"'+type+'"}',
+	  headers: {
+	           "Content-Type": "application/json",
+	           "Accept-Version": "~1"
+	          },		
+	  dataType: 'json',          	
+	  success: function(response)
+	                 {
+	                  TRIP_ID = response.UUID;
+	                  alert("tripId: "+TRIP_ID);
+	                  },
+	  error: function(response)
+	                 {alert(JSON.stringify(response));}
+  });
+}
+
+
+function db_resume_trip(TRIP_ID)
+{
+ $.ajax(
+  {
+	  type: "POST",
+	  url: "https://iv-adopt-a-block-v2.jit.su/users/resumed",
+	  data: '{ "tripID": "'+TRIP_ID+'" }',
+	  headers: {
+	           "Content-Type": "application/json",
+	           "Accept-Version": "~1"
+	          },		
+	  dataType: 'json',          	
+	  success: function(response)
+	                 {alert(JSON.stringify(response)); },
+	  error: function(response)
+	                 {alert(JSON.stringify(response)); }
+  });
+}
+
+
+function db_complete_trip(TRIP_ID)
+{
+  $.ajax(
+  {
+	  type: "POST",
+	  url: "https://iv-adopt-a-block-v2.jit.su/users/completed",
+	  data: '{ "tripID": "'+TRIP_ID+'", "buckets": 0.75,  "blocks": 1.5, "comments": "I love picking up trash" }',
+	  headers: {
+	           "Content-Type": "application/json",
+	           "Accept-Version": "~1"
+	          },		
+	  dataType: 'json',          	
+	  success: function(response)
+	                 {alert(JSON.stringify(response)); },
+	  error: function(response)
+	                 {alert(JSON.stringify(response)); }
+  });
+}
+
+
+function db_pause_trip(TRIP_ID)
+{
+  $.ajax(
+  {
+	  type: "POST",
+	  url: "https://iv-adopt-a-block-v2.jit.su/users/paused",
+	  data: '{ "tripID": "'+TRIP_ID+'" }',
+	  headers: {
+	           "Content-Type": "application/json",
+	           "Accept-Version": "~1"
+	          },		
+	  dataType: 'json',          	
+	  success: function(response)
+	                 {alert(JSON.stringify(response)); },
+	  error: function(response)
+	                 {alert(JSON.stringify(response)); }
+  });
+}
+
+
+
+
 function db_read_blocks()
 {
  console.log("db_handler.js#db_read_blocks(). data still read by programatically, not from db");

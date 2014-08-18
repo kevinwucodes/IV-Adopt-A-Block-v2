@@ -5,6 +5,7 @@ var lastPosition = false;
 var POSITION_TIME_INTERVAL = 1000; // each how many milliseconds the current position is updated
 var SEGMENT_DISTANCE=20;
 var POINT_DISTANCE=5; // distance between 2 points of the same segment
+var TRIP_ID; // got by db when a user sign in
 
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks

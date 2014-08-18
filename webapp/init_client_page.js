@@ -36,51 +36,78 @@ function init_page_PacMan()
 
 
 
+// ===========================================================================================
+// ==============  TRIP ==================================
+// ===========================================================================================
 
-
-function startTracking ()
+function startTracking (name, surname, type)
 {
- name = $('#volname').val();
- surname = $('#volsurname').val();
- type = $('#voltype').val();
- if (!name || !surname)
+  if (!name || !surname || !type)
    {return;}
- alert('start tracking..but still not saving');
- timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // start tracking my position
+  alert('start tracking..but still not saving');
+  timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // start tracking my position
   $('#popupSignin').popup('close');
-  $('#popupSignin').popup('close'); // bug... 2 times are required  
+  $('#popupSignin').popup('close'); // BUG... 2 times are required  i don't know why
   
+  db_start_trip(name, surname, type);
   
-  $.ajax(
-  {
-	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users",
-	  data: '{ "firstname":"'+name+'","lastname":"'+surname+'","tripCategory":"'+type+'"}',
-	  headers: {
-	           "Content-Type": "application/json",
-	           "Accept-Version": "~1"
-	          },		
-	  dataType: 'json',          	
-	  success: function(response)
-	                 {
-	                  tripId = response.UUID;
-	                  alert("tripId: "+tripId);
-	                  },
-	  error: function(response)
-	                 {alert(JSON.stringify(response)); }
-  });
+  $('#menu_start').attr("href", "#");  
+  $('#menu_start').attr("id", "menu_pause"); 
   
-  
+  $('#menu_pause').attr('data-rel', "");  
+  $('#menu_pause').html("pause"); 
+  $('#menu_pause').attr("onclick", "pauseTracking();");    
+  $('#menu_pause').attr('data-icon', "minus");
+  $('#menu_pause').addClass('ui-icon-minus')
+  $('#menu_pause').removeClass('ui-icon-navigation');  
+}
+
+
+
+function pauseTracking ()
+{
+ if (!TRIP_ID)
+   {return;}
+ clearInterval(timer); // pause tracking my position 
+ db_pause_trip(TRIP_ID);
+ 
+  $('#menu_pause').attr("id","menu_resume");
+  $('#menu_resume').attr("data-icon","recycle");
+  $('#menu_resume').addClass('ui-icon-recycle')
+  $('#menu_resume').removeClass('ui-icon-minus');  
+  $('#menu_resume').attr("onclick","resumeTracking();"); 
+  $('#menu_resume').html("resume");      
+}
+
+
+
+function resumeTracking ()
+{
+ if (!TRIP_ID)
+   {return;}
+ timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // resume tracking my position
+ db_resume_trip(TRIP_ID);
+ 
+  $('#menu_resume').attr("id","menu_pause");
+  $('#menu_pause').attr("data-icon","minus");
+  $('#menu_pause').addClass('ui-icon-minus')
+  $('#menu_pause').removeClass('ui-icon-recycle');   
+  $('#menu_pause').attr("onclick","pauseTracking();"); 
+  $('#menu_pause').html("pause");     
 }
 
 
 
 
 
-
-
-
-
+function stopTracking ()
+{
+ if (!TRIP_ID)
+   {return;}
+ clearInterval(timer); // stop tracking my position 
+ db_complete_trip(TRIP_ID);
+ TRIP_ID="";
+}
 
 
 
