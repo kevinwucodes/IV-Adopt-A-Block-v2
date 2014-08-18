@@ -49,9 +49,6 @@ POST /users/completed
 }
 ```
 
-#### GET Static Routes
-
-(work in progress)
 
 
 #### GET App Properties
@@ -66,6 +63,11 @@ Examples of properties are:
    - ...
   
    In this way, changing a property on the db will automatically affect all the app versions, without recompiling.
+
+
+#### GET Static Routes
+
+(work in progress)
 
 #### Get Routes
 
