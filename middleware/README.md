@@ -51,7 +51,10 @@ POST /users/completed
 
 #### GET Static Routes
 
+(work in progress)
 
+
+#### GET App Properties
 ```
 GET /static/properties/v1/mapboxProperties.json
 ```
