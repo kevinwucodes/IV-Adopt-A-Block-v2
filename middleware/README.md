@@ -55,7 +55,14 @@ POST /users/completed
 ```
 GET /static/properties/v1/mapboxProperties.json
 ```
-This file is necessary for de-lac.  (de-lac, could you provide a description for this for documentation purposes?)
+To keep the app's properties consistent among its different versions (IOS, webapp, Android), we stored them in the db.
+Examples of properties are:
+   - color, thickness, opacity of shapes on the map (blocks, pacman path, vertexes)
+   - frequency of position updating
+   - proximity required to cover a vertex
+   - ...
+  
+   In this way, changing a property on the db will automatically affect all the app versions, without recompiling.
 
 #### Get Routes
 
