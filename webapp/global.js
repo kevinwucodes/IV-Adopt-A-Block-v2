@@ -2,10 +2,13 @@
 var currentBlockIndex = -1; //blocks[] index of the block clicked
 var proximity = 15;  // min distance required for a vertex from the user position, to become visited
 var lastPosition = false;
-var POSITION_TIME_INTERVAL = 1000; // each how many milliseconds the current position is updated
+var POSITION_TIME_INTERVAL = 3000; // how often (in milliseconds) the current position is updated
 var SEGMENT_DISTANCE=20;
 var POINT_DISTANCE=5; // distance between 2 points of the same segment
 var TRIP_ID; // got by db when a user sign in
+var USERNAME;
+var USERSURNAME;
+var USERTYPE;
 
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks
@@ -55,12 +58,32 @@ var USER_PATH_WEIGHT = 19;
 
 
 
+function loading()
+{
+ $.mobile.loading( "show", {
+            text: "",
+            textVisible: false,
+            //theme : $.mobile.loader.prototype.options.theme,
+            textonly: false,
+            html: ""
+           });
+ black_panel_style = $("#blackPanel").attr("style");
+ black_panel_style = black_panel_style.replace("z-index:-1;", "z-index:2000;");
+ $("#blackPanel").attr("style",black_panel_style); 
+}
 
+function stopLoading()
+{
+ $.mobile.loading( "hide" ); 
+ black_panel_style = $("#blackPanel").attr("style");
+ black_panel_style = black_panel_style.replace("z-index:2000;", "z-index:-1;");
+ $("#blackPanel").attr("style",black_panel_style); 
+}
 
 
 
 function add_new_position(point)
-{
+{ 
  // is it inside any block?
 	 	  var isInside= false;
 	 	  for (j=0; j<blocks.length; j++)
@@ -72,11 +95,12 @@ function add_new_position(point)
 			    checkVertexesCovered( point, j);
 			   }
 			}
-			if (isInside)  // if it's false, it's the first relevation 
+			if (true || isInside) 
 			     {  
 			      addCoveredPath(point);
 			      lastPosition = point; 
-			      db_save_currentPosition(point);  // save it only if it's inside a block
+			      db_post_waypoint(TRIP_ID, point);  // save it only if it's inside a block
+			      console.log("add_new_position "+point.lat+" "+point.lng);
 			     }
 }
 
@@ -85,6 +109,7 @@ function add_new_position(point)
 
 function initialize_map()
 {
+ 
  map = L.mapbox.map('map', null,{minZoom: 15,maxZoom: 19}).setView([34.4141859, -119.859201], 18);
  mapTile = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
   attribution: 'Map tiles by <a href="http://stamen.com">Stamen</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>'

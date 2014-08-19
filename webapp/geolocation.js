@@ -31,6 +31,7 @@ function handleError(error)
 			console.log("geolocalization timeout");
 			break;
 		case error.UNKNOWN_ERROR:
+		    console.log("geolocalization UNKNOWN_ERROR");
 			alert("geolocalization UNKNOWN_ERROR");
 			break;
 		default:

@@ -1,18 +1,19 @@
-/**
-*
-put on GitHub the JSON syntax stuff to save on the db
-*/
 
 
 function db_start_trip(name, surname, type)
 {
- alert('{ "firstname":"'+name+'","lastname":"'+surname+'","tripCategory":"'+type+'"}');
-   $.ajax(
+ if (!name || !surname || !type)
+   {return;}
+ loading();
+ USERNAME = name;
+ USERSURNAME = surname;
+ USERTYPE = type;
+ $.ajax(
   {
 	  type: "POST",
 	  url: "https://iv-adopt-a-block-v2.jit.su/users",
 	  data: '{ "firstname":"'+name+'", "lastname":"'+surname+'", "tripCategory":"'+type+'"}',
-	  headers: {
+	  headers:{
 	           "Content-Type": "application/json",
 	           "Accept-Version": "~1"
 	          },		
@@ -21,67 +22,113 @@ function db_start_trip(name, surname, type)
 	                 {
 	                  TRIP_ID = response.UUID;
 	                  alert("tripId: "+TRIP_ID);
-	                  },
+	                  db_start_trip_callback (USERNAME, USERSURNAME, USERTYPE);
+	                  stopLoading();
+	                 },
 	  error: function(response)
-	                 {alert(JSON.stringify(response));}
+	                 {
+	                  alert('db_start_trip: '+JSON.stringify(response));
+	                  stopLoading();
+	                 }
   });
 }
 
 
-function db_resume_trip(TRIP_ID)
+function db_resume_trip(tripId)
 {
+ if (!tripId)
+   {return;}
  $.ajax(
   {
 	  type: "POST",
 	  url: "https://iv-adopt-a-block-v2.jit.su/users/resumed",
-	  data: '{ "tripID": "'+TRIP_ID+'" }',
+	  data: '{ "tripID": "'+tripId+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
 	           "Accept-Version": "~1"
 	          },		
 	  dataType: 'json',          	
 	  success: function(response)
-	                 {alert(JSON.stringify(response)); },
+	                 {alert(JSON.stringify(response));
+	                  db_resume_trip_callback(); 
+	                 },
 	  error: function(response)
-	                 {alert(JSON.stringify(response)); }
+	                 {alert('db_resume_trip :'+JSON.stringify(response)); }
   });
 }
 
 
-function db_complete_trip(TRIP_ID)
+function db_complete_trip(tripId, bucket, comment)
 {
-  $.ajax(
+ if (!tripId || !bucket)
+   {return;}
+ loading();
+ $.ajax(
   {
 	  type: "POST",
 	  url: "https://iv-adopt-a-block-v2.jit.su/users/completed",
-	  data: '{ "tripID": "'+TRIP_ID+'", "buckets": 0.75,  "blocks": 1.5, "comments": "I love picking up trash" }',
+	  data: '{ "tripID": "'+tripId+'", "buckets": '+bucket+',  "blocks": '+completed_blocks.length+', "comments": "'+comment+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
 	           "Accept-Version": "~1"
 	          },		
 	  dataType: 'json',          	
 	  success: function(response)
-	                 {alert(JSON.stringify(response)); },
+	                 {alert(JSON.stringify(response));
+	                  db_complete_trip_callback();
+	                  stopLoading(); 
+	                 },
+	  error: function(response)
+	                 {
+	                  alert('db_complete_trip '+JSON.stringify(response)); 
+	                  stopLoading();
+	                 }
+  });
+}
+
+
+function db_pause_trip(tripId)
+{
+ if (!tripId)
+   {return;}
+ $.ajax(
+  {
+	  type: "POST",
+	  url: "https://iv-adopt-a-block-v2.jit.su/users/paused",
+	  data: '{ "tripID": "'+tripId+'" }',
+	  headers: {
+	           "Content-Type": "application/json",
+	           "Accept-Version": "~1"
+	          },		
+	  dataType: 'json',          	
+	  success: function(response)
+	                 {alert(JSON.stringify(response));
+	                  db_pause_trip_callback(); 
+	                 },
 	  error: function(response)
 	                 {alert(JSON.stringify(response)); }
   });
 }
 
 
-function db_pause_trip(TRIP_ID)
+
+function db_post_waypoint(tripId, point)
 {
-  $.ajax(
+ if (!tripId || !point)
+   {return;}
+ $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/paused",
-	  data: '{ "tripID": "'+TRIP_ID+'" }',
+	  url: "https://iv-adopt-a-block-v2.jit.su/users/waypoints",
+	  data: '{"tripID": "'+tripId+'","point": {"lat": '+point.lat+',"long": '+point.lng+',"epoch": '+(new Date).getTime()+' } }',
 	  headers: {
 	           "Content-Type": "application/json",
 	           "Accept-Version": "~1"
 	          },		
 	  dataType: 'json',          	
 	  success: function(response)
-	                 {alert(JSON.stringify(response)); },
+	                 {alert(JSON.stringify(response));
+	                 },
 	  error: function(response)
 	                 {alert(JSON.stringify(response)); }
   });
@@ -234,10 +281,6 @@ function db_save_blocks(blocks)
 
 }
 
-function db_save_currentPosition(point)
-{
-  console.log("db_handler.js#db_save_currentPosition(). function not yet implemented");
-}
 
 
 

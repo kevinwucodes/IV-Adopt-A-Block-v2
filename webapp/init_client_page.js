@@ -1,7 +1,7 @@
 
 function init_page_PacMan()
 {
- console.log("init_client_page.js#init_page_PacMan().");
+ console.log("init_client_page.js#init_page_PacMan()");
  map.setZoom('18');
  pacman_layer.addTo(map);	
  map.setView(map.getCenter(), 18); // fix the zoom at 18! so, with a big PacMan 
@@ -28,7 +28,7 @@ function init_page_PacMan()
                 ('change', function(event)
   					         {handle_photo(event);}
   				);
- }  
+}  
 
 
 
@@ -37,62 +37,55 @@ function init_page_PacMan()
 
 
 // ===========================================================================================
-// ==============  TRIP ==================================
+// ============== CALLBACK DB FUNCTIONS ==================================
 // ===========================================================================================
 
-function startTracking (name, surname, type)
+function db_start_trip_callback (name, surname, type)
 {
-  if (!name || !surname || !type)
-   {return;}
-  alert('start tracking..but still not saving');
-  timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // start tracking my position
+  // start tracking my position
+  timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); 
   $('#popupSignin').popup('close');
   $('#popupSignin').popup('close'); // BUG... 2 times are required  i don't know why
-  
-  db_start_trip(name, surname, type);
   
   $('#menu_start').attr("href", "#");  
   $('#menu_start').attr("id", "menu_pause"); 
   
   $('#menu_pause').attr('data-rel', "");  
   $('#menu_pause').html("pause"); 
-  $('#menu_pause').attr("onclick", "pauseTracking();");    
+  $('#menu_pause').attr("onclick", "db_pause_trip('"+TRIP_ID+"');");    
   $('#menu_pause').attr('data-icon', "minus");
   $('#menu_pause').addClass('ui-icon-minus')
-  $('#menu_pause').removeClass('ui-icon-navigation');  
+  $('#menu_pause').removeClass('ui-icon-navigation');
+    
+  $('#menu_stop').removeClass('ui-disabled');   // enable stop
 }
 
 
 
-function pauseTracking ()
+function db_pause_trip_callback ()
 {
- if (!TRIP_ID)
-   {return;}
  clearInterval(timer); // pause tracking my position 
- db_pause_trip(TRIP_ID);
  
   $('#menu_pause').attr("id","menu_resume");
   $('#menu_resume').attr("data-icon","recycle");
   $('#menu_resume').addClass('ui-icon-recycle')
   $('#menu_resume').removeClass('ui-icon-minus');  
-  $('#menu_resume').attr("onclick","resumeTracking();"); 
+  $('#menu_resume').attr("onclick","db_resume_trip('"+TRIP_ID+"');"); 
   $('#menu_resume').html("resume");      
 }
 
 
 
-function resumeTracking ()
+function db_resume_trip_callback ()
 {
- if (!TRIP_ID)
-   {return;}
- timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); // resume tracking my position
- db_resume_trip(TRIP_ID);
+ // resume tracking my position
+ timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); 
  
   $('#menu_resume').attr("id","menu_pause");
   $('#menu_pause').attr("data-icon","minus");
-  $('#menu_pause').addClass('ui-icon-minus')
+  $('#menu_pause').addClass('ui-icon-minus');
   $('#menu_pause').removeClass('ui-icon-recycle');   
-  $('#menu_pause').attr("onclick","pauseTracking();"); 
+  $('#menu_pause').attr("onclick","db_pause_trip('"+TRIP_ID+"');"); 
   $('#menu_pause').html("pause");     
 }
 
@@ -100,17 +93,39 @@ function resumeTracking ()
 
 
 
-function stopTracking ()
+function db_complete_trip_callback ()
 {
- if (!TRIP_ID)
-   {return;}
  clearInterval(timer); // stop tracking my position 
- db_complete_trip(TRIP_ID);
- TRIP_ID="";
+ $("body").pagecontainer("change", "#main-page", { transition:'pop' });
+ 
+ $('#menu_resume').attr("id","menu_start");
+ $('#menu_pause').attr("id","menu_start");
+
+ $('#menu_camera').removeClass('ui-disabled');
+ 
+ $('#menu_start').removeClass('ui-icon-recycle');  
+ $('#menu_start').removeClass('ui-icon-minus');  
+ $('#menu_start').removeClass('ui-disabled');   // enable stop 
+ $('#menu_start').addClass('ui-icon-navigation');
+ $('#menu_start').attr("href","#popupSignin");
+ $('#menu_start').attr("onclick"," "); 
+ $('#menu_start').attr('data-rel', "popup"); 
+ $('#menu_start').html("start");  
+ 
+ // reset variables
+  TRIP_ID="";
+  covered_points=[];
+  completed_blocks=[];
+  lastPosition = false;
+  timer=false;
+ 
 }
 
 
-
+function loadSummary(tripId, bucket, comment)
+{
+ $('#summary').html("TRIP: "+tripId+"<br>BUCKETS: "+bucket+"<br>COMMENT: "+comment);
+}
 
 
 
