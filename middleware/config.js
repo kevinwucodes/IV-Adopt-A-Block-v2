@@ -22,6 +22,9 @@ var mediafire = {
 
 // mediafire requires a sha1 of your email + password + application_id + API Key
 mediafire.signature = mediafire.email + mediafire.password + mediafire.application_id + mediafire.apikey;
-mediafire.signature_sha = sha1.update(mediafire.signature).digest('hex')
+mediafire.signature_sha = sha1.update(mediafire.signature).digest('hex');
 
-module.exports.MEDIAFIRE_SIGNATURE_SHA = mediafire.signature_sha;
+
+// module.exports.MEDIAFIRE_SIGNATURE_SHA = mediafire.signature_sha;
+
+module.exports.mediafire = mediafire;

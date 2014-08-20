@@ -1,6 +1,6 @@
 {
   "name": "iv-aab-middleware",
-  "version": "0.0.0",
+  "version": "0.0.0-6",
   "description": "REST layer for iv-aab",
   "main": "index.js",
   "scripts": {
@@ -17,10 +17,12 @@
     "url": "https://github.com/ginxwar/IV-Adopt-A-Block-v2/issues"
   },
   "dependencies": {
-    "restify": ">= 2.8.1",
+    "restify": ">= 2.8.2",
     "mongojs": ">= 0.13.1",
     "node-uuid": ">= 1.4.1",
-    "underscore": ">= 1.6.0"
+    "underscore": ">= 1.6.0",
+    "superagent": ">= 0.18.2",
+    "xml2js": ">= 0.4.4"
   },
   "homepage": "https://github.com/ginxwar/IV-Adopt-A-Block-v2",
   "subdomain": "iv-adopt-a-block-v2",

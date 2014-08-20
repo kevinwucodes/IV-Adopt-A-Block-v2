@@ -3,10 +3,15 @@
 // includes
 var mongojs = require('mongojs');
 var uuid = require('node-uuid');
+var fs = require('fs');
+var path = require('path');
 var _ = require('underscore');
+
 
 // include local
 var config = require('./config');
+var mediafire = require('./mediafire');
+
 // var dbCalls = require('./db');
 
 // mongo collections config
@@ -444,3 +449,47 @@ module.exports.usersCompleted = function(req, res, next) {
 
   return next();
 }
+
+//
+// image routing
+//
+
+module.exports.usersImages = function(req, res, next) {
+  
+  console.log("****** userImages route ******");
+
+  // current full path of the image, including basename
+  var currentPath = path.dirname(req.files.filedata.path);
+
+  // generate a UUID for this image
+  var uniqueid = uuid.v4();
+
+  // new full path of the image, using the UUID as name
+  var newBaseName = currentPath + "/" + uniqueid; 
+
+  // renaming the file from current to new full path name
+  fs.rename(req.files.filedata.path, newBaseName, function(err) {
+    if (err) throw err;
+
+    // TODO: upload to mediafire
+    // TODO: send mail to adam
+
+    // upload to mediafire
+    mediafire.upload(newBaseName, function(err, details) {
+      if (err) throw err;
+
+      console.log("a ", err);
+      console.log("b ", details);
+
+      // now save the details (filekey) to the db)
+    
+    });
+
+    
+
+  });
+
+  res.send('done');
+  next();
+
+};

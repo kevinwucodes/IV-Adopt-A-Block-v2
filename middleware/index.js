@@ -2,13 +2,10 @@
 
 // includes
 var restify = require('restify');
-var fs = require('fs');
-var request = require('superagent');
 
 // include local
 var config = require('./config');
 var r = require('./routes');
-var mediafire = require('./mediafire');
 
 // restify, setting up with SSL certs
 var server = restify.createServer(
@@ -77,8 +74,6 @@ server.get('/', function(req, res, next) {
 // GET static requests
 //
 
-console.log(__dirname);
-
 server.get('/static/properties/v1/mapboxProperties.json', function(req, res, next) {
   var file = "".concat(__dirname, '/static/properties/v1/mapboxProperties.json');
 
@@ -91,20 +86,10 @@ server.get('/static/properties/v1/mapboxProperties.json', function(req, res, nex
 // UPLOAD testing
 //
 
-var respond = function(req, res, next) {
-  res.send('hello ' + req.params.name);
-}
-
-var echo_upload_file = function(req, res, next) {
-  console.log('XXXX: BODY', req.body)
-  console.log('XXXX params', req.params)
-  console.log('XXXX UPLOADED FILES', req.files)
-  res.send('done');
-  next();
-}
-
-
-server.post('/upload', echo_upload_file);
+server.post({
+  path: '/users/images',
+  version: '1.0.0'
+}, r.usersImages);
 
 //
 // mediafire testing
@@ -128,22 +113,20 @@ server.post('/upload', echo_upload_file);
 //    });
 
 
-// // good
+
+
+// var temp_session_token = "afea4efb9dfb57da043646bcce480f78fb66f266ffadf3b2d764cce30e63c4c1a2335705104c966e601f67dbdc5e9c4d227509bbdea6a0bd2bd09c20e6e89cbc113e7cba70e20701";
+
 // request
-//   .post(mediafire.url.getSession)
-//   .query({ email: config.mediafire.email })
-//   .query({ password: config.mediafire.password })
-//   .query({ application_id: config.mediafire.application_id })
-//   .query({ signature: config.mediafire.signature_sha })
-//   .query({ response_format: 'json' })
-//   .send()
+//   .post(mediafire.url.postSimpleImage)
+//   .query({ session_token: temp_session_token})
+//   .attach('image', '/tmp/73fbd3c13c249bb9d002494abc364c8d')
 //   .end(function(a,b,c,d) {
 //     console.log("a ", a);
 //     console.log("b ", b);
 //     console.log("c ", c);
 //     console.log("d ", d);
-
-// });
+//   });
 
 
 
