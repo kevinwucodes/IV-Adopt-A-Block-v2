@@ -39,6 +39,15 @@ POST /users/resumed
   "tripID": ""
 }
 ```
+POST /users/images
+```
+HEADERS
+Content-Type: multipart/form-data
+Accept-Version: ~1
+
+PAYLOAD
+(wip)
+```
 POST /users/completed
 ```
 {
