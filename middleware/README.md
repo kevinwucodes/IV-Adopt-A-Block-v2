@@ -46,7 +46,19 @@ Content-Type: multipart/form-data
 Accept-Version: ~1
 
 PAYLOAD
-(wip)
+
+{
+    tripID: "",
+    imageType: "JPG",
+    blob: <multipart representation>, // this no longer require base64 encoding due to multipart/form-data content type
+    type: "hazard",
+    comment: "bring something to clean up glass please",
+    point: {
+      "lat": 34.409094,
+      "long": -119.854158,
+      "epoch": 1405659960723
+    }
+}
 ```
 POST /users/completed
 ```
