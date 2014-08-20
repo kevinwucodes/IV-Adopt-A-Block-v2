@@ -32,11 +32,11 @@ var getUploadedFileDetails = function(response, callback) {
         responseResult: responseResult
       }
 
+      // return good callback
       callback(null, uploadFileResult);
-    }
-    else {
-    	// return the error
-    	callback("error", null);
+    } else {
+      // return the error callback
+      callback("error", null);
     }
   });
 }
@@ -80,10 +80,10 @@ var getSession = function(callback) {
 
 
 var upload = function(filepath, callback) {
-	// get a mediafire session
-  getSession(function(err, res) {  	
+  // get a mediafire session
+  getSession(function(err, res) {
     if (err) throw err;
-    
+
     var sessionToken = res.body.response.session_token;
 
     // then upload
@@ -92,7 +92,7 @@ var upload = function(filepath, callback) {
 
       // then get the uploaded result detail
       getUploadedFileDetails(res.text, function(err, details) {
-      	// return back to caller      	
+        // return back to caller
         callback(err, details);
       });
     });
