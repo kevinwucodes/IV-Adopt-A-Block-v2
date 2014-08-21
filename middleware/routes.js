@@ -537,7 +537,6 @@ module.exports.usersImages = function(req, res, next) {
     mediafire.upload(newBaseName, function(err, details) {
       if (err) throw err;
 
-      // console.log("a ", err);
       console.log("mediafire upload details: ", details);
 
       var fileKey = details.fileKey;
