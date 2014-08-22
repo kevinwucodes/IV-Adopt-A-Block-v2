@@ -1,3 +1,5 @@
+"use strict";
+
 var request = require('superagent');
 var parseXml = require('xml2js').parseString;
 

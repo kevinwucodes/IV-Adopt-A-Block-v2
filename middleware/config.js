@@ -9,6 +9,12 @@ module.exports.NODEPORT = process.env.NITROUS_PORT || process.env.JITSU_PORT || 
 module.exports.SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 module.exports.SSL_KEY_PATH = process.env.SSL_KEY_PATH;
 
+// config emailer
+module.exports.GMAIL_USERNAME = process.env.GMAIL_USERNAME;
+module.exports.GMAIL_PASSWORD = process.env.GMAIL_PASSWORD;
+// the email_administrator is the person receiving the hazard image emails
+module.exports.EMAIL_ADMINISTRATOR = process.env.EMAIL_ADMINISTRATOR;
+
 // config: mongo
 module.exports.MONGO_URI = process.env.MONGO_URI;
 

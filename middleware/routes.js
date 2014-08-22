@@ -11,6 +11,7 @@ var _ = require('underscore');
 // include local
 var config = require('./config');
 var mediafire = require('./mediafire');
+var mailer = require('./mailer');
 
 // var dbCalls = require('./db');
 
@@ -533,7 +534,32 @@ module.exports.usersImages = function(req, res, next) {
     // TODO: send mail to adam
     // TODO: delete the /tmp/ file
 
+
+    /////
+    // BEGIN EMAIL PROCESS
+    /////
+
+    var emailText = "comment: " + payload.comment + "\n";
+    emailText += "Link to location: \n\n";
+    emailText += "http://maps.google.com/maps?&z=10&q=" + point.lat + "+" + point.long + "&ll=" + point.lat + "+" + point.long;
+
+    // send email to administrator
+    mailer.sendmail({
+      subject: "IV AAB system-mailer: hazard image",
+      text: emailText,
+      attachment: newBaseName
+    }, function(err, result) {
+      if (err) throw err;
+      console.log("sendmail err ", err);
+      console.log("sendmail result ", result);
+
+    });
+
+
+    /////
     // upload to mediafire
+    ///// 
+
     mediafire.upload(newBaseName, function(err, details) {
       if (err) throw err;
 
