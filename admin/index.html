@@ -17,6 +17,10 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
 <link rel="stylesheet" href="../webapp/theme.css" />
 <link rel="stylesheet" href="../webapp/jquery.mobile.icons.min.css"/>
+<!-- DataTables -->
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.2/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+
 
 
 <!-- tool do draw polygons-->
@@ -35,6 +39,7 @@
 <script src="../webapp/objectToJson.js"></script>
 <script src="../webapp/db_handler.js"></script>
 <script src="./init_admin_pages.js"></script>
+<script src="./db_handler.js"></script>
 
 <style>
   body { margin:0; padding:0; }
@@ -57,22 +62,8 @@
 	                                ui-btn-icon-right ui-icon-bullets">menu</a>
   </div><!-- /header -->
 
-<!-- ## PAGE1 ## -->
-<div data-role="page" data-title="real-time" id="real-time" data-url="real-time" style="backgrond-color:grey;">
-	<!-- popup -->
-	<div data-role="popup" id="popupAddress" data-theme="a" class="ui-corner-all" 
-	     style="width:300px; padding:10px;" >
-      <form>
-        <div style="padding:10px 20px;">
-            <h3>address</h3>
-            <input type="text" id="address"  value=""  data-theme="a" style="width:80%;">
-            <button type="submit"  class="ui-btn ui-corner-all ui-shadow ui-btn-b 
-                                         ui-btn-icon-left ui-icon-check"
-                                  onclick="">Ok
-	        </button>
-        </div>
-      </form>
-   </div><!-- /popup -->
+<!-- ## PAGE 1 ## -->
+<div data-role="page" data-title="real-time" id="real-time-page" data-url="real-time" style="backgrond-color:grey;">
    
    <!-- map -->
    <div class="ui-content" role="main">
@@ -80,6 +71,28 @@
    </div>
 
 </div><!-- /page1 -->
+
+
+
+<!-- ## PAGE 2 ## -->
+<div data-role="page" data-title="daily report" id="daily-report-page" 
+     data-url="dailyReport" style="backgrond-color:grey;">
+	<div class="ui-content" role="main">
+		<table id="table_daily" class="display">
+		    <thead>
+		        <tr>
+		            <th>volunteer:</th>
+		            <th>trip started on:</th>
+		            <th>endend on:</th>	
+		            <th>buckets:</th>
+		            <th>blocks:</th>		            			            	            
+		        </tr>
+		    </thead>
+		    <tbody id="table_daily_tbody"> </tbody>
+		</table>
+	</div>
+</div><!-- /page2 -->
+
 
 
 
@@ -91,8 +104,14 @@
      data-display="push"
      style="box-shadow: 3px 4px 5px #555555; z-index:2000;">
      <div>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;" onclick="init_page_realTime();">MAP</button>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;"onclick="init_page_editor();">EDITOR</button>
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;" 
+               onclick="init_page_realTime();">MAP</button>
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" 
+               style="margin-top:30%;"onclick="init_page_editor();">EDITOR</button>
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-top:30%;"
+               onclick="init_page_dailyReport();">DAILY REPORT</button>
+       
+       
      </div>
 </div>
 

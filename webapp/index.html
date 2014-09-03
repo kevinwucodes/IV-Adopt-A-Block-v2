@@ -18,7 +18,8 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
 <link rel="stylesheet" href="./theme.css" />
 <link rel="stylesheet" href="./jquery.mobile.icons.min.css"/>
-
+<!-- upload photo-->
+<link rel="stylesheet" href="./upload_photos.css"/>
 
 <!-- tool do draw polygons-->
 <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
@@ -59,14 +60,14 @@
        <h1 id="sitename">IV AaB Volunteer Page</h1>
   </div><!-- /header -->
 
-
+ 
 <!-- ## PAGE1 ## -->
 <div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="main-page"  style="backgrond-color:grey;">   
  <div class="ui-content" role="main">
 
 <!-- PHOTO POPUP -->
 	<div data-role="popup" id="popupPhoto" data-theme="a" class="ui-corner-all" 
-	     style="width:300px; padding:10px;" >
+	     style="width:250px; height:100%; padding:10px;" >
         <div id="show-picture" class="photos"> </div>
    </div>
    
@@ -116,7 +117,8 @@
 	 <input type="text" id="comment" name="text-basic" id="text-basic" value="">	 
 
 	 <a href="#summary-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a" data-transition="slide"
-	    onclick="loadSummary(TRIP_ID, $('#buckets').val(), $('#comment').val());">Ok</a>
+	    onclick=" clearInterval(timer); // stop tracking my position 
+	              loadSummary(TRIP_ID, $('#buckets').val(), $('#comment').val());">Ok</a>
  </div>
 </div>
 

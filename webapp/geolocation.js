@@ -45,6 +45,8 @@ function handle_gps(pos)
  lat = pos.coords.latitude;
  lng = pos.coords.longitude;
  currentPoint = L.latLng([lat,lng]);
+ // if you want to consider just GPS points into Isla Vista
+ // delete the 'true' into the IF of the function global.js#add_new_position()
  add_new_position(currentPoint);
 			 
 }	

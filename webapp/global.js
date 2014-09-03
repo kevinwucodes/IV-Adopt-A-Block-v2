@@ -1,7 +1,10 @@
 // ====== VARIABLES ======
+$.support.cors = true; // tell $.ajax to load cross-domain pages.  
+$.mobile.allowCrossDomainPages = true;
+
 var currentBlockIndex = -1; //blocks[] index of the block clicked
 var proximity = 15;  // min distance required for a vertex from the user position, to become visited
-var lastPosition = false;
+var LAST_POSITION = false;
 var POSITION_TIME_INTERVAL = 3000; // how often (in milliseconds) the current position is updated
 var SEGMENT_DISTANCE=20;
 var POINT_DISTANCE=5; // distance between 2 points of the same segment
@@ -32,6 +35,7 @@ var pacman_layer; //MapTie with yellow dotted streets
 var map; //MapBox map. to be initialized. drawnItems should be added to this map
 var timer;  // timer that checks current user position 
 var pacman;
+
  
  
 // ====== SHAPE ATTRIBUTES ======
@@ -98,7 +102,7 @@ function add_new_position(point)
 			if (true || isInside) 
 			     {  
 			      addCoveredPath(point);
-			      lastPosition = point; 
+			      LAST_POSITION = point; 
 			      db_post_waypoint(TRIP_ID, point);  // save it only if it's inside a block
 			      console.log("add_new_position "+point.lat+" "+point.lng);
 			     }
@@ -115,7 +119,7 @@ function initialize_map()
   attribution: 'Map tiles by <a href="http://stamen.com">Stamen</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>'
 }).addTo(map);
  mapTile.setZIndex(0);
- pacman_layer = L.mapbox.tileLayer('de-lac.OSMBright');  //I'll add it only in the right page
+ pacman_layer = L.mapbox.tileLayer('de-lac.OSMBright');  //I'll add it later only in the right page
  pacman_layer.setZIndex(1);
 
   drawnPath = new L.FeatureGroup(); // Initialise the FeatureGroup to store editable layers   
@@ -183,26 +187,26 @@ function initialize_map()
 
 function checkVertexesCovered(marker_latlng, blockIndex)
 {
- for (m=0; m<vertex[j].length; m++)
+ for (m=0; m<vertex[blockIndex].length; m++)
 	{
-	 vertex_json_properties = vertex[j][m].toGeoJSON();
+	 vertex_json_properties = vertex[blockIndex][m].toGeoJSON();
 	 vertex_latlng = L.latLng(vertex_json_properties.features[0].geometry.coordinates[1],			     							  vertex_json_properties.features[0].geometry.coordinates[0]
 	 						 );
 				     	
 	 var distance = (marker_latlng.distanceTo(vertex_latlng));
 	 if (distance < proximity)
 	   {
-		 vertex[j][m].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
-		 vertex[j][m].setStyle( {color: COVERED_BLOCK_FILL_COLOR} );
-		 vertex[j][m].setStyle( {fillOpacity: 0.8} );				     	  
-		 vertex[j].splice(m, 1); // remove the vertex covered
+		 vertex[blockIndex][m].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
+		 vertex[blockIndex][m].setStyle( {color: COVERED_BLOCK_FILL_COLOR} );
+		 vertex[blockIndex][m].setStyle( {fillOpacity: 0.8} );				     	  
+		 vertex[blockIndex].splice(m, 1); // remove the vertex covered
 		 m--;
-		 if (vertex[j].length==0)
+		 if (vertex[blockIndex].length==0)
 		   { // all the vertexwa have been covered
-			 blocks[j].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
-			 blocks[j].setStyle( {color: COVERED_BLOCK_STROKE_COLOR} );
-			 blocks[j].setStyle( {fillOpacity: 0.7} );					     	 
-			 completed_blocks.push(blocks[j]);
+			 blocks[blockIndex].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
+			 blocks[blockIndex].setStyle( {color: COVERED_BLOCK_STROKE_COLOR} );
+			 blocks[blockIndex].setStyle( {fillOpacity: 0.7} );					     	 
+			 completed_blocks.push(blocks[blockIndex]);
 			 alert('compliments, you have completed '+completed_blocks.length+' blocks');
 			}
 	   }

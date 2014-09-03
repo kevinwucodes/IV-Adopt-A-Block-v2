@@ -27,8 +27,23 @@ var trail;  //trail (polyline) left by pacman, that cover yellow dots
 var audio_chomp; //works on mobile only if it's added at the home screen as webapp
 
 
-/**
-*/
+
+
+
+
+function destroyPacman()
+{
+ try
+  {
+   map.removeLayer(pacman);
+   map.removeLayer(trail);
+  }
+ catch (e) {/*if not present, do nothing*/}
+ trail=false;
+ pacman=false;
+}
+
+
 function createPacman(point)
 {
     walking=false;

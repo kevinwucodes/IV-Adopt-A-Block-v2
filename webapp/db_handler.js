@@ -127,10 +127,51 @@ function db_post_waypoint(tripId, point)
 	          },		
 	  dataType: 'json',          	
 	  success: function(response)
+	                 {console.log(JSON.stringify(response)); },
+	  error: function(response)
+	                 {console.log(JSON.stringify(response)); }
+  });
+}
+
+ 
+
+function db_post_image(image, tripId, point, comment, type)
+{
+ if (!tripId || !point)
+   {return;}
+ $.ajax(
+  {
+	  type: "POST",
+	  url: "https://iv-adopt-a-block-v2.jit.su/users/images",
+	  data: '{"tripID": "'+tripId+'","point": {"lat": '+point.lat+',"long": '+point.lng+',"epoch": '+(new Date).getTime()+' }, "imageType": "JPG", "type": "'+type+'", "comment" : "'+comment+'", "blob" : '+image+'}',
+	  headers: {
+	           "Content-Type": "multipart/form-data",
+	           "Accept-Version": "~1"
+	          },		
+	  dataType: 'json',
+	  processData: false,       
+	  
+	  xhrFields: {
+		  	      onprogress: function (event) 
+		  	       {
+			  	    if (event.lengthComputable) 
+			  	    {
+			  	     var percent = parseInt(event.loaded / event.total * 100);
+					 progressElement.style.width = percent+'%'; //refer to handle_photo()
+				  	}
+				   }
+				 },
+	  
+	  
+	     	
+	  success: function(response)
 	                 {alert(JSON.stringify(response));
+	                  db_post_image_callback(); 
 	                 },
 	  error: function(response)
-	                 {alert(JSON.stringify(response)); }
+	                 {alert(JSON.stringify(response)); 
+		              db_post_image_fail_callback();
+	                 }
   });
 }
 
