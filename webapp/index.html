@@ -168,9 +168,11 @@
 	
 	
 	!-- hidden div with the real input button for the camera -->
-	<div style="visibility:hidden;">
+	<form enctype="multipart/form-data" id="form-take-picture" style="visibility:hidden;">    
+	  <div>
            <input id="take-picture" type="file" accept="image/*" capture="camera" />
-    </div>
+      </div>
+    </form>
     
     !-- black panel -->
     <div id ="blackPanel" style="position:fixed; left:0px; top:0px; width:100%; height:2000px; background-color:rgba(3, 3, 3, 0.7);  z-index:-1;">

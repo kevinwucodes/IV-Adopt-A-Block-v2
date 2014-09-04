@@ -135,7 +135,7 @@ function db_post_waypoint(tripId, point)
 
  
 
-function db_post_image(image, tripId, point, comment, type)
+function db_post_image(imageForm, tripId, point, comment, type)
 {
  if (!tripId || !point)
    {return;}
@@ -143,14 +143,24 @@ function db_post_image(image, tripId, point, comment, type)
   {
 	  type: "POST",
 	  url: "https://iv-adopt-a-block-v2.jit.su/users/images",
-	  data: '{"tripID": "'+tripId+'","point": {"lat": '+point.lat+',"long": '+point.lng+',"epoch": '+(new Date).getTime()+' }, "imageType": "JPG", "type": "'+type+'", "comment" : "'+comment+'", "blob" : '+image+'}',
-	  headers: {
+	  data: '{"tripID": "'+tripId+'","point": {"lat": '+point.lat+',"long": '+point.lng+',"epoch": '+(new Date).getTime()+' }, "imageType": "JPG", "type": "'+type+'", "comment" : "'+comment+'", "blob" : '+imageForm+'}',
+	 /* headers: {
 	           "Content-Type": "multipart/form-data",
 	           "Accept-Version": "~1"
-	          },		
+	          },*/	
 	  dataType: 'json',
-	  processData: false,       
-	  
+	 contentType: false,
+     cache: false,
+     processData: false,      
+	  /*
+	  xhr: function() {
+                    var myXhr = $.ajaxSettings.xhr();
+                    if(myXhr.upload){
+                        myXhr.upload.addEventListener('progress',progress, false);
+                    }
+                    return myXhr;
+                }
+	  */
 	  xhrFields: {
 		  	      onprogress: function (event) 
 		  	       {

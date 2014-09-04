@@ -21,8 +21,6 @@ function handleError(error)
 	 {
 		case error.PERMISSION_DENIED:
 			console.log("geolocalization not allowed");
-			//alert("geolocalization not allowed");
-			clearInterval(timer);
 			break;
 		case error.POSITION_UNAVAILABLE:
 			console.log('POSITION_UNAVAILABLE, I try again');

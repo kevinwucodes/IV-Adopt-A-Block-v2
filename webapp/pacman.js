@@ -39,8 +39,14 @@ function destroyPacman()
    map.removeLayer(trail);
   }
  catch (e) {/*if not present, do nothing*/}
+ try{ clearInterval(pacman_timer); } 
+ catch (e) {/*if not present, do nothing*/}
  trail=false;
  pacman=false;
+ walking=false;
+ currentSegment=false;
+ segments_to_walk = [];
+ movement_direction=[];
 }
 
 

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="citrix.sb.IV-AaB-Volunteer" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>IV-AaB-Volunteer</name>
+    <description>
+        Isla Vista Adopt a Block - Volunteer App
+    </description>
+    <author email="daniele.fani@unicam.it" href="http://danielefani.altervista.org">
+        Daniele Fani'
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+</widget>

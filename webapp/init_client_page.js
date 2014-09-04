@@ -3,7 +3,10 @@ function init_page_PacMan()
 {
  console.log("init_client_page.js#init_page_PacMan()");
  pacman_layer.addTo(map);	
- map.setView(map.getCenter(), 18);  
+ navigator.geolocation.getCurrentPosition(function (pos) {map.setView(L.latLng(pos.coords.latitude,pos.coords.longitude), 18);},
+ 										 function onerror(error) {console.log(error.message);}, 
+ 										 {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
+ 										);
  // fix the zoom at 18! so, with a big PacMan and a thick line,  it's easyer cover all the points
  map.touchZoom.disable();
  map.doubleClickZoom.disable();
@@ -31,9 +34,6 @@ function init_page_PacMan()
   					         {handle_photo(event);}
   				);
 }  
-
-
-
 
 
 
@@ -107,7 +107,7 @@ function db_complete_trip_callback ()
  
  $('#menu_start').removeClass('ui-icon-recycle');  
  $('#menu_start').removeClass('ui-icon-minus');  
- $('#menu_start').removeClass('ui-disabled');   // enable stop 
+ $('#menu_start').removeClass('ui-disabled');   // enable start 
  $('#menu_start').addClass('ui-icon-navigation');
  $('#menu_start').attr("href","#popupSignin");
  $('#menu_start').attr("onclick"," "); 
@@ -217,7 +217,8 @@ function handle_photo(event)
 			        canvas.height = tempH;
 			        var ctx = canvas.getContext("2d");
 			        ctx.drawImage(image, 0, 0, tempW, tempH);
-					db_post_image(image, TRIP_ID, LAST_POSITION, "this is a comment", "hazard");
+			        var imageform = new FormData($('#take-picture'));
+					db_post_image(imageform, TRIP_ID, LAST_POSITION, "this is a comment", "hazard");
 				}
 
 				image.src = readerEvent.target.result;
