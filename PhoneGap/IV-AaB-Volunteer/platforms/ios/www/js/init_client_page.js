@@ -3,36 +3,38 @@ function init_page_PacMan()
 {
  console.log("init_client_page.js#init_page_PacMan()");
  pacman_layer.addTo(map);
- navigator.geolocation.getCurrentPosition(function (pos)
-                                             {
-                                              map.setView(L.latLng(pos.coords.latitude,
-                                                                   pos.coords.longitude),
-                                                                   18
-                                                                  );
-                                              },
-                                           function onerror(error)
-                                              {
-                                               console.log(error.message);
-                                          alert(error.code+' '+error.PERMISSION_DENIED);
-                                               if (error.code == error.PERMISSION_DENIED)
-                                                {
-                                                 console.log("geolocalization not allowed");
-                                                 alert("turn on your GPS service!");
-                                                }
-                                               },
-                                           {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
-                                          );
- // fix the zoom at 18! so, with a big PacMan and a thick line,  it's easyer cover all the points
+ // I check gps position to center the map and show to the user the current the accuracy
+ // I will destroy this watch once I start a new trip (look at the SIGN IN popup)
+ watchGPS =  navigator.geolocation.watchPosition
+    (//onsuccess
+     function (pos)
+      {
+       set_gps_signal_icon(pos.coords.accuracy);
+       map.setView(L.latLng(pos.coords.latitude,pos.coords.longitude), 18);
+      },
+       //onerror
+     function (error)
+      {
+       console.log(error.message);
+       if (error.code == error.PERMISSION_DENIED)
+        {
+         console.log("geolocalization not allowed");
+         alert("turn on your GPS service!");
+        }
+      },
+     {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
+    );
+    // fix the zoom at 18! so, with a big PacMan and a thick line,  it's easyer cover all the points
  map.touchZoom.disable();
  map.doubleClickZoom.disable();
  map.scrollWheelZoom.disable();
   
  /* ==========TESTING ONLY ==========*/
  // add a control to add just markers, to simulate volunteer walks
- var options = 
+ var options =
   {
     position: 'topright',
-    draw: 
+    draw:
       { // https://github.com/Leaflet/Leaflet.draw/blob/master/README.md
         polyline: false,
         polygon:  false,
@@ -49,8 +51,6 @@ function init_page_PacMan()
   					         {handle_photo(event);}
   				); */
 }  
-
-
 
 
 

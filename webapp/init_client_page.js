@@ -3,10 +3,15 @@ function init_page_PacMan()
 {
  console.log("init_client_page.js#init_page_PacMan()");
  pacman_layer.addTo(map);	
- navigator.geolocation.getCurrentPosition(function (pos) {map.setView(L.latLng(pos.coords.latitude,pos.coords.longitude), 18);},
- 										 function onerror(error) {console.log(error.message);}, 
- 										 {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
- 										);
+ navigator.geolocation.getCurrentPosition
+                     (
+                      function (pos) 	
+ 						{
+ 						 set_gps_signal_icon(pos.coords.accuracy);
+ 						 map.setView(L.latLng(pos.coords.latitude,pos.coords.longitude), 18);},
+ 					  function onerror(error) {console.log(error.message);}, 
+ 					    {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
+ 					 );
  // fix the zoom at 18! so, with a big PacMan and a thick line,  it's easyer cover all the points
  map.touchZoom.disable();
  map.doubleClickZoom.disable();
@@ -34,6 +39,7 @@ function init_page_PacMan()
   					         {handle_photo(event);}
   				);
 }  
+
 
 
 

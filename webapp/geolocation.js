@@ -40,6 +40,7 @@ function handleError(error)
 	
 function handle_gps(pos)
 {
+ set_gps_signal_icon(pos.coords.accuracy);
  lat = pos.coords.latitude;
  lng = pos.coords.longitude;
  currentPoint = L.latLng([lat,lng]);
@@ -48,6 +49,26 @@ function handle_gps(pos)
  add_new_position(currentPoint);
 			 
 }	
+
+
+function set_gps_signal_icon(accuracy)
+{
+ if (accuracy <= 0)
+  {
+   $('#gps-signal').css('color', 'red');    
+   $('#gps-signal').html('no-gps');     	  
+  }
+ else if (accuracy <= HIGH_ACCURACY)
+  {
+   $('#gps-signal').css('color', 'green');    
+   $('#gps-signal').html('h-gps');
+  }  
+ else
+  {
+   $('#gps-signal').css('color', 'rgb(241,142,11)');            
+   $('#gps-signal').html('low-gps');
+  }
+}
 
 
 

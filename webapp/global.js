@@ -3,7 +3,7 @@ $.support.cors = true; // tell $.ajax to load cross-domain pages.
 $.mobile.allowCrossDomainPages = true;
 
 var currentBlockIndex = -1; //blocks[] index of the block clicked
-var proximity = 15;  // min distance required for a vertex from the user position, to become visited
+var proximity = 15;  // min distance in meters required for a vertex from the user position, to become visited
 var LAST_POSITION = false;
 var POSITION_TIME_INTERVAL = 3000; // how often (in milliseconds) the current position is updated
 var SEGMENT_DISTANCE=20;
@@ -12,6 +12,7 @@ var TRIP_ID; // got by db when a user sign in
 var USERNAME;
 var USERSURNAME;
 var USERTYPE;
+var HIGH_ACCURACY = 20; // min accuracy (in meters) to be considered high
 
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks
@@ -113,13 +114,12 @@ function add_new_position(point)
 
 function initialize_map()
 {
- 
- map = L.mapbox.map('map', null,{minZoom: 15,maxZoom: 19}).setView([34.4141859, -119.859201], 18);
+ map = L.mapbox.map('map', null,{minZoom: 15,maxZoom: 19, trackResize: true}).setView([34.4141859, -119.859201], 18);
  mapTile = L.tileLayer('http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {
   attribution: 'Map tiles by <a href="http://stamen.com">Stamen</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>'
 }).addTo(map);
  mapTile.setZIndex(0);
- pacman_layer = L.mapbox.tileLayer('de-lac.OSMBright');  //I'll add it later only in the right page
+ pacman_layer = L.mapbox.tileLayer('de-lac.VillaRosa'); // or de-lac.OSMBright; I'll add it later only in the right page
  pacman_layer.setZIndex(1);
 
   drawnPath = new L.FeatureGroup(); // Initialise the FeatureGroup to store editable layers   

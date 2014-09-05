@@ -3,7 +3,7 @@
 // $.mobile.allowCrossDomainPages = true;
 
 var currentBlockIndex = -1; //blocks[] index of the block clicked
-var proximity = 15;  // min distance required for a vertex from the user position, to become visited
+var proximity = 15;  // min distance in meters required for a vertex from the user position, to become visited
 var LAST_POSITION = false;
 var POSITION_TIME_INTERVAL = 3000; // how often (in milliseconds) the current position is updated
 var SEGMENT_DISTANCE=20;
@@ -12,6 +12,7 @@ var TRIP_ID; // got by db when a user sign in
 var USERNAME;
 var USERSURNAME;
 var USERTYPE;
+var HIGH_ACCURACY = 20; // min accuracy (in meters) to be considered high
 
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks

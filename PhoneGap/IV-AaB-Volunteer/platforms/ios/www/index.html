@@ -63,6 +63,7 @@
 <!-- header -->
   <div data-role="header" data-position="fixed" data-fullscreen="false"> 
        <h1 id="sitename">IV AaB Volunteer Page</h1>
+       <a href="#" id ="gps-signal" style="color:red;" class="ui-btn-left">no gps</a>       
   </div><!-- /header -->
 
  
@@ -98,7 +99,11 @@
 			</select>
 		    
 		    <input type="button" data-icon="check" value="START" 
-		           onclick="db_start_trip($('#volname').val(), $('#volsurname').val(), $('#voltype').val());">
+		           onclick="watchGPS(); // stop old watch used to center the map
+                            db_start_trip($('#volname').val(), 
+                                          $('#volsurname').val(), 
+                                          $('#voltype').val()
+                                         );">
         </div>
    </div>   
 

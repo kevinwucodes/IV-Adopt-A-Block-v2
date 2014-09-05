@@ -27,6 +27,27 @@ function init_page_editor()
  try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
  try {map.removeControl(drawControl);} //remove the old drawControl with markers
  catch(control_not_present){/*ignore*/}
+ navigator.geolocation.getCurrentPosition(function (pos)
+                                             {
+                                              map.setView(L.latLng(pos.coords.latitude,
+                                                                   pos.coords.longitude),
+                                                                   18
+                                                                  );
+                                              },
+                                           function onerror(error)
+                                              {
+                                               console.log(error.message);
+                                               if (error.code == error.PERMISSION_DENIED)
+                                                {
+                                                 console.log("geolocalization not allowed");
+                                                 alert("turn on your GPS service!");
+                                                }
+                                               },
+                                           {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
+                                          );
+ // fix the zoom at 18! so, with a big PacMan and a thick line,  it's easyer cover all the points
+  
+   
    
  // add the Leaf tool to draw shapes on the map
  var options = 
@@ -62,6 +83,7 @@ function init_page_editor()
  drawControl = new L.Control.Draw(options);
  map.addControl(drawControl); 
  pacman_layer.addTo(map); 
+ map.invalidateSize(); // changing page could give problems so I redraw the map to fit the right size.
  
  
  $( "#left-panel" ).panel( "close" ); 
@@ -82,6 +104,7 @@ function init_page_realTime()
  try {map.removeControl(drawControl);} //remove every draw control present
  catch(control_not_present){/*ignore*/}
  $( "#left-panel" ).panel( "close" ); 
+ map.invalidateSize(); // changing page could give problems so I redraw the map to fit the right size.
 }
 
 
