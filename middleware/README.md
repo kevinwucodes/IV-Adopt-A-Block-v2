@@ -90,6 +90,58 @@ Examples of properties are:
 
 (work in progress)
 
+
+
 #### Get Routes
 
-(work in progress)
+GET /users/completed/:start/:end
+
+```
+This gets only COMPLETED routes based on timestamp between :start and :end
+  {
+    firstname: #firstname#,
+    lastname: #lastname#,
+    trips: [
+      {
+        tripID: #tripID#,
+        completed: #completed#
+      }, ...
+    ]
+  }
+```
+
+GET /users/incomplete
+
+```
+This returns all tripIDs where they are not complete
+  {
+    firstname: #firstname#,
+    lastname: #lastname#,
+    trips: [
+      {
+        tripID: #tripID#
+      }, ...
+    ]
+  }
+```
+
+GET /users/waypoints/:tripID
+
+```
+This returns all the waypoings from a :tripID
+  {
+    firstname: #firstname#,
+    lastname: #lastname#,
+    trips: {
+      tripID: #tripID#,
+      points: [ 
+                {
+                    "lat" : #lat#,
+                    "long" : #long#,
+                    "epoch" : #epoch#,
+                    "received" : #received#
+                }, ...
+      ]
+    }
+  }
+```
