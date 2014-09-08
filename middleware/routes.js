@@ -43,8 +43,6 @@ module.exports.users = function(req, res, next) {
     return next(err);
   }
 
-  var now = new Date().getTime();
-
   // uuid v4 generation
   var uniqueid = uuid.v4();
 
@@ -54,7 +52,8 @@ module.exports.users = function(req, res, next) {
       lastname: req.body.lastname
     },
     tripCategory: req.body.tripCategory,
-    uuid: uniqueid
+    uuid: uniqueid,
+    now: new Date().getTime()
   }
 
   // if we have the user, append a new trip.  If not, we need to create a new user
@@ -71,7 +70,7 @@ module.exports.users = function(req, res, next) {
       $push: {
         trips: {
           tripID: payload.uuid,
-          created: now,
+          created: payload.now,
           tripCategory: payload.tripCategory
         }
       }
@@ -93,7 +92,7 @@ module.exports.users = function(req, res, next) {
     // verify that we have the new tripID inserted
     var wasTripInserted = _.where(doc.trips, {
       tripID: payload.uuid,
-      created: now,
+      created: payload.now,
       tripCategory: payload.tripCategory
     });
 
