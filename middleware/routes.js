@@ -508,7 +508,7 @@ module.exports.usersImages = function(req, res, next) {
     payload.point.epoch === undefined || payload.point.epoch <= 1000000000000) {
     var err = new Error();
     err.status = 403;
-    err.message = "required values missing "+JSON.stringify(req);
+    err.message = "required values missing";
     return next(err);
   }
 
