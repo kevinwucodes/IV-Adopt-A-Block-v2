@@ -1,26 +1,17 @@
 "use strict";
 
 // includes
-var mongojs = require('mongojs');
 var uuid = require('node-uuid');
 var fs = require('fs');
 var path = require('path');
-var _ = require('underscore');
 
 
 // include local
 var config = require('./config');
 var mediafire = require('./mediafire');
 var mailer = require('./mailer');
+var db = require('./db');
 
-// var dbCalls = require('./db');
-
-// mongo collections config
-var db = mongojs(config.MONGO_URI);
-
-/////////////////
-// exports
-/////////////////
 
 module.exports.users = function(req, res, next) {
 
@@ -43,75 +34,30 @@ module.exports.users = function(req, res, next) {
     return next(err);
   }
 
-  // uuid v4 generation
-  var uniqueid = uuid.v4();
-
   var payload = {
     name: {
       firstname: req.body.firstname,
       lastname: req.body.lastname
     },
     tripCategory: req.body.tripCategory,
-    uuid: uniqueid,
+    uuid: uuid.v4(),
     now: new Date().getTime()
   }
 
-  // if we have the user, append a new trip.  If not, we need to create a new user
-  db.collection('users').findAndModify({
-    query: payload.name,
-    update: {
-
-      // the problem with this is that it updates the created every time, not sure how to turn this off
-      //       $set: {
-      //         created: new Date().getTime()
-      //       },      
-
-      // add new tripID to trips array
-      $push: {
-        trips: {
-          tripID: payload.uuid,
-          created: payload.now,
-          tripCategory: payload.tripCategory
-        }
-      }
-    },
-
-    // returns the modified document instead of the original
-    new: true,
-
-    // if it doesn't find, then create a new object of the query
-    upsert: true
-  }, function(err, doc, lastErrorObject) {
-
+  db.saveUsers(payload, function(err, result) {
     if (err) {
-      return next(err);
-    }
-
-    // confirm that everything was truly saved by validating the doc object
-
-    // verify that we have the new tripID inserted
-    var wasTripInserted = _.where(doc.trips, {
-      tripID: payload.uuid,
-      created: payload.now,
-      tripCategory: payload.tripCategory
-    });
-
-    // was everything saved?
-    if (doc.firstname === payload.name.firstname && doc.lastname === payload.name.lastname && wasTripInserted.length) {
-      // yup, lets tell the user it's a-ok    
-      res.send(201, {
-        status: "success",
-        UUID: wasTripInserted[0].tripID
-      });
-    } else {
-      // uh oh, we couldn't save this in the db
       res.send(500, {
         status: "error",
         message: "something went horribly wrong"
       });
+    } else {
+      res.send(result.statusCode, {
+        status: result.status,
+        message: result.message,
+        UUID: result.UUID
+      });
     }
   });
-
   return next();
 }
 
@@ -140,69 +86,29 @@ module.exports.usersWaypoints = function(req, res, next) {
     return next(err);
   }
 
-  var now = new Date().getTime();
-
   var payload = {
     tripID: req.body.tripID,
     point: {
       lat: req.body.point.lat,
       long: req.body.point.long,
       epoch: req.body.point.epoch,
-      received: now
+      received: new Date().getTime()
     }
   }
 
-  db.collection('users').findAndModify({
-
-    // we want to ensure that we search on a tripID that hasn't been completed
-    query: {
-      "trips": {
-        $elemMatch: {
-          "tripID": payload.tripID,
-          "completed": {
-            $exists: false
-          }
-        }
-      }
-    },
-
-    update: {
-      // add new point to points array
-      $push: {
-        "trips.$.points": payload.point
-      }
-    },
-
-    fields: {
-      "trips.$": 1
-    }
-  }, function(err, doc, lastErrorObject) {
-
+  db.saveUsersWaypoints(payload, function(err, result) {
     if (err) {
-      return next(err);
-    }
-
-    // can we find the tripID at all?
-    if (lastErrorObject.n === 0) {
-      // no, lets tell the user that we couldn't find anything to update/insert
       res.send(500, {
         status: "error",
-        message: "there was no such tripID"
+        message: "something went horribly wrong"
       });
-      return next();
-    }
-
-    // did mongo report back a single updated document?
-    if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
-      res.send(201, {
-        status: "success",
-        message: "added a point to tripID " + payload.tripID
+    } else {
+      res.send(result.statusCode, {
+        status: result.status,
+        message: result.message
       });
-      return next();
     }
-
   });
-
   return next();
 }
 
@@ -223,64 +129,24 @@ module.exports.usersResumed = function(req, res, next) {
     return next(err);
   }
 
-  var now = new Date().getTime();
-
   var payload = {
     tripID: req.body.tripID,
-    resumed: now
+    resumed: new Date().getTime()
   }
 
-
-  db.collection('users').findAndModify({
-    // we want to ensure that we search on a tripID that hasn't been completed
-    query: {
-      "trips": {
-        $elemMatch: {
-          "tripID": payload.tripID,
-          "completed": {
-            $exists: false
-          }
-        }
-      }
-    },
-
-    update: {
-      // add new point to points array
-      $push: {
-        "trips.$.gaps.resumed": payload.resumed
-      }
-    },
-
-    fields: {
-      "trips.$": 1
-    }
-  }, function(err, doc, lastErrorObject) {
-
+  db.saveUsersResumed(payload, function(err, result) {
     if (err) {
-      return next(err);
-    }
-
-    // can we find the tripID at all?
-    if (lastErrorObject.n === 0) {
-      // no, lets tell the user that we couldn't find anything to update/insert
       res.send(500, {
         status: "error",
-        message: "there was no such tripID"
+        message: "something went horribly wrong"
       });
-      return next();
-    }
-
-    // did mongo report back a single updated document?
-    if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
-      res.send(201, {
-        status: "success",
-        message: "added a resumed timestamp tripID " + payload.tripID
+    } else {
+      res.send(result.statusCode, {
+        status: result.status,
+        message: result.message
       });
-      return next();
     }
-
   });
-
   return next();
 }
 
@@ -301,64 +167,24 @@ module.exports.usersPaused = function(req, res, next) {
     return next(err);
   }
 
-  var now = new Date().getTime();
-
   var payload = {
     tripID: req.body.tripID,
-    paused: now
+    paused: new Date().getTime()
   }
 
-
-  db.collection('users').findAndModify({
-    // we want to ensure that we search on a tripID that hasn't been completed
-    query: {
-      "trips": {
-        $elemMatch: {
-          "tripID": payload.tripID,
-          "completed": {
-            $exists: false
-          }
-        }
-      }
-    },
-
-    update: {
-      // add new point to points array
-      $push: {
-        "trips.$.gaps.paused": payload.paused
-      }
-    },
-
-    fields: {
-      "trips.$": 1
-    }
-  }, function(err, doc, lastErrorObject) {
-
+  db.saveUsersPaused(payload, function(err, result) {
     if (err) {
-      return next(err);
-    }
-
-    // can we find the tripID at all?
-    if (lastErrorObject.n === 0) {
-      // no, lets tell the user that we couldn't find anything to update/insert
       res.send(500, {
         status: "error",
-        message: "there was no such tripID"
+        message: "something went horribly wrong"
       });
-      return next();
-    }
-
-    // did mongo report back a single updated document?
-    if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
-      res.send(201, {
-        status: "success",
-        message: "added a paused timestamp tripID " + payload.tripID
+    } else {
+      res.send(result.statusCode, {
+        status: result.status,
+        message: result.message
       });
-      return next();
     }
-
   });
-
   return next();
 }
 
@@ -384,69 +210,27 @@ module.exports.usersCompleted = function(req, res, next) {
     return next(err);
   }
 
-  var now = new Date().getTime();
-
   var payload = {
     tripID: req.body.tripID,
     comments: req.body.comments,
     buckets: req.body.buckets,
     blocks: req.body.blocks,
-    completed: now
+    completed: new Date().getTime()
   }
 
-  db.collection('users').findAndModify({
-    // we want to ensure that we search on a tripID that hasn't been completed
-    query: {
-      "trips": {
-        $elemMatch: {
-          "tripID": payload.tripID,
-          "completed": {
-            $exists: false
-          }
-        }
-      }
-    },
-
-    update: {
-      // finalizing trip route by adding buckets, blocks, and a completed value
-      $set: {
-        "trips.$.buckets": payload.buckets,
-        "trips.$.blocks": payload.blocks,
-        "trips.$.completed": payload.completed
-      }
-    },
-
-    fields: {
-      "trips.$": 1
-    }
-  }, function(err, doc, lastErrorObject) {
-
+  db.saveUsersCompleted(payload, function(err, result) {
     if (err) {
-      return next(err);
-    }
-
-    // can we find the tripID at all?
-    if (lastErrorObject.n === 0) {
-      // no, lets tell the user that we couldn't find anything to update/insert
       res.send(500, {
         status: "error",
-        message: "there was no such tripID"
+        message: "something went horribly wrong"
       });
-      return next();
-    }
-
-    // did mongo report back a single updated document?
-    if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
-      res.send(201, {
-        status: "success",
-        message: "completed trip for tripID " + payload.tripID
+    } else {
+      res.send(result.statusCode, {
+        status: result.status,
+        message: result.message
       });
-      return next();
     }
-
-
   });
-
   return next();
 }
 
@@ -474,12 +258,6 @@ module.exports.usersImages = function(req, res, next) {
   }
   */
 
-  console.log("****** userImages route ******");
-
-  var now = new Date().getTime();
-
-  // generate a UUID for this image
-  var uniqueid = uuid.v4();
 
   // need to parse req.body.point because this is coming in as a multipart/form-data
   var point = JSON.parse(req.body.point);
@@ -491,8 +269,8 @@ module.exports.usersImages = function(req, res, next) {
     comment: req.body.comment,
     point: point,
 
-    received: now,
-    imageID: uniqueid
+    received: new Date().getTime(),
+    imageID: uuid.v4()
   }
 
   // checking require inputs, we check this after due to JSON parsing issues
@@ -515,22 +293,17 @@ module.exports.usersImages = function(req, res, next) {
   // get the byte size of the image
   payload.size = req.files.blob.size;
 
-  // console.log(payload);
-
-
-
-
   // current full path of the image, including basename
   var currentPath = path.dirname(req.files.blob.path);
 
   // new full path of the image, using the UUID as name
-  var newBaseName = currentPath + "/" + uniqueid;
+  var newBaseName = currentPath + "/" + payload.imageID;
 
   // renaming the file from current to new full path name
   fs.rename(req.files.blob.path, newBaseName, function(err) {
     if (err) throw err;
 
-    // TODO: send mail to adam
+
     // TODO: delete the /tmp/ file
 
 
@@ -564,76 +337,24 @@ module.exports.usersImages = function(req, res, next) {
 
       console.log("mediafire upload details: ", details);
 
-      var fileKey = details.fileKey;
+      payload.fileKey = details.fileKey;
 
       // now save the details (filekey) to the db
-      db.collection('users').findAndModify({
-        // we want to ensure that we search on a tripID that hasn't been completed
-        query: {
-          "trips": {
-            $elemMatch: {
-              "tripID": payload.tripID,
-              "completed": {
-                $exists: false
-              }
-            }
-          }
-        },
-
-        update: {
-          // add image to image array
-          $push: {
-            "trips.$.images": {
-              imageID: payload.imageID,
-              imageType: payload.imageType,
-              type: payload.type,
-              size: payload.size,
-              comment: payload.comment,
-              point: payload.point,
-              mediafireFileKey: fileKey,
-              received: payload.received
-            }
-          }
-        },
-
-        fields: {
-          "trips.$": 1
-        }
-      }, function(err, doc, lastErrorObject) {
-
+      db.saveUsersImages(payload, function(err, result) {
         if (err) {
-          return next(err);
-        }
-
-        // can we find the tripID at all?
-        if (lastErrorObject.n === 0) {
-          // no, lets tell the user that we couldn't find anything to update/insert
           res.send(500, {
             status: "error",
-            message: "there was no such tripID"
+            message: "something went horribly wrong"
           });
-          // TODO: do we delete the image?  or have the administrator check out?
-          return next();
-        }
-
-        // did mongo report back a single updated document?
-        if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
-          res.send(201, {
-            status: "success",
-            message: "added image details for tripID " + payload.tripID
+        } else {
+          res.send(result.statusCode, {
+            status: result.status,
+            message: result.message
           });
-          return next();
         }
-      }); //db.collection
+      }); //db.saveUsersImages
     }); //mediafire.upload
   }); //fs.rename
-
-
-
-
-
-
-
 
 
   // res.send('done');
