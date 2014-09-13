@@ -104,6 +104,9 @@ This gets only COMPLETED routes based on timestamp between :start and :end
     trips: [
       {
         tripID: #tripID#,
+        created : #date#,
+        buckets: #buckets#,
+        blocks: #blocks#,
         completed: #completed#
       }, ...
     ]
