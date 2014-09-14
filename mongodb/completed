@@ -1,0 +1,31 @@
+db.users.aggregate([
+{
+    $match: {
+        "trips": {
+            $elemMatch: {
+              "completed": {
+                $exists: true
+              }
+            }
+      }
+    }
+}
+,{
+    $project: {
+        firstname: "$firstname"
+        ,lastname: "$lastname"
+        ,"trips.completed": 1
+    }
+}
+,{
+    $unwind: "$trips"
+}
+,{
+    $match: {
+        "trips.completed": {
+                $exists: true
+              }     
+    }
+}
+  
+])
