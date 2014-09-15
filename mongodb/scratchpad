@@ -1,0 +1,26 @@
+//shows the number of completed and incompleted counts per _id (grouped by id, firstname, lastname)
+db.users.aggregate([
+{
+    $unwind: "$trips"
+}
+,{
+    $project: {
+        firstname: "$firstname"
+        ,lastname: "$lastname"        
+        ,  complete: { $cond: [ { $gt: ['$trips.completed',0] }, 1, 0 ] }
+        ,incomplete: { $cond: [ { $lt: ['$trips.completed',0] }, 1, 0 ] }
+    }
+
+}
+,{
+    $group: {
+        _id: {
+            id: "$_id"
+            ,firstname: "$firstname"
+            ,lastname: "$lastname"            
+        }
+        ,complete: {$sum: "$complete"}
+        ,incomplete: {$sum: "$incomplete"}
+    }
+}
+])
