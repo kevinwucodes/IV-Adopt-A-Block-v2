@@ -1,4 +1,6 @@
+//////////////////
 //shows the number of completed and incompleted counts per _id (grouped by id, firstname, lastname)
+//////////////////
 db.users.aggregate([
 {
     $unwind: "$trips"
@@ -24,3 +26,43 @@ db.users.aggregate([
     }
 }
 ])
+
+
+///////////////
+//shows only completed routes (with ISODate visibility)
+///////////////
+var results = db.users.aggregate([
+{
+    $unwind: "$trips"
+}
+,{
+    $project: {
+        firstname: "$firstname"
+        ,lastname: "$lastname"
+        ,trips: {
+            tripID: "$trips.tripID"
+            ,completed: "$trips.completed"
+            ,created: "$trips.created"
+            ,buckets: "$trips.buckets"
+            ,blocks: "$trips.blocks"
+        }
+    }
+}
+,{
+    $match: {
+        "trips.completed": {$exists: true}
+    }
+}
+,{
+    $sort: {
+        "trips.completed": 1
+    }
+}
+])
+
+results.result.forEach(function(doc){
+    doc.trips.isocompleted = new Date(doc.trips.completed)
+});
+
+
+results;
