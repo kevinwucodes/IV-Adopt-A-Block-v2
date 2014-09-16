@@ -99,15 +99,21 @@ GET /users/completed/:start/:end
 ```
 This gets only COMPLETED routes based on timestamp between :start and :end
   {
-    firstname: #firstname#,
-    lastname: #lastname#,
-    trips: [
+    start: #:start#,
+    end: #:end#,
+    data: [
       {
-        tripID: #tripID#,
-        created : #date#,
-        buckets: #buckets#,
-        blocks: #blocks#,
-        completed: #completed#
+        firstname: #firstname#,
+        lastname: #lastname#,
+        trips: [
+          {
+            tripID: #tripID#,
+            created : #date#,
+            buckets: #buckets#,
+            blocks: #blocks#,
+            completed: #completed#
+          }, ...
+        ]
       }, ...
     ]
   }
