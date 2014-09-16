@@ -19,7 +19,7 @@ function init_page_PacMan()
        if (error.code == error.PERMISSION_DENIED)
         {
          console.log("geolocalization not allowed");
-         alert("turn on your GPS service!");
+         alert(GPS_NOT_ALLOWED);
         }
       },
      {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
@@ -44,12 +44,12 @@ function init_page_PacMan()
   };
  drawControl = new L.Control.Draw(options);
  map.addControl(drawControl); 
-  /* ===============================*/
+  /* ====================================*/
   
-  /*document.querySelector("#take-picture").addEventListener
+  document.querySelector("#take-picture").addEventListener
                 ('change', function(event)
   					         {handle_photo(event);}
-  				); */
+  				);
 }  
 
 
@@ -136,7 +136,7 @@ function db_complete_trip_callback ()
   covered_points=[];
   completed_blocks=[];
   LAST_POSITION = false;
-  timer=false;
+  watchGPS=false;
   destroyPacman();
     
   
@@ -147,108 +147,86 @@ function db_complete_trip_callback ()
 
 function db_post_image_callback ()
 {
- uploading=false; // reset
+    uploading=false; // reset
+    $('#hazardPhoto').attr('src', '');
+    progressElement.css("width", "0"); //not useful, I set 0 for each upload
+    $('#popupPhoto').popup('close');
 }
 
-function db_post_image_fail_callback ()
+
+
+function loadSummary(tripId, bucket, comment, blocks)
 {
- imageElement.parentNode.removeChild(imageElement);
+    stop_tracking(); /* stop tracking my position */
+    $('#summary_tripid').text(tripId);
+    $('#summary_bucket').text(bucket);
+    $('#summary_block').text(blocks);
+    $('#summary_comment').text(comment);
 }
 
 
 
-function loadSummary(tripId, bucket, comment)
-{
- $('#summary').html("TRIP: "+tripId+"<br>BUCKETS: "+bucket+"<br>COMMENT: "+comment);
-}
 
 
+// ===========================================================================================
+// ============== PHOTO UPLOAD ==================================
+// ===========================================================================================
 
-
-
-
-
-var photo_lat;
-var photo_lng;
 var uploading = false;
-var imageUrl="";
 var progressElement; // progress bar of uploaded photos
-var imageElement;
 
 function handle_photo(event)
 {
-    
     if (uploading)
-  	{alert('you can upload just one photo per time'); return;}
-    // open popup #popupPhoto
-    uploading=true; // just one photo at time
-    photo_lat = LAST_POSITION.lat;
-    photo_lng = LAST_POSITION.lng;
+        {alert(ALREADY_UPLOADING); return;}
+    if (!TRIP_ID)
+      {
+        alert(NO_TRIP_FOUND);
+        db_post_image_callback();
+        return;
+      }
+    if (!LAST_POSITION)
+      {
+        alert(NO_POSITION_FOUND);
+        db_post_image_callback();
+        return;
+      }
+
+
 	// Read files
-	var files = event.target.files;
-    
-	// Iterate through files
-	for (var i = 0; i < files.length; i++) {
-        
-		// Ensure it's an image
-		if (files[i].type.match(/image.*/)) {
-            
-			// Load image
-			var reader = new FileReader();
-			reader.onload = function (readerEvent) {
-				var image = new Image();
-				image.onload = function (imageEvent) {
-                    
-                    // Add elemnt to page
-					imageElement = document.createElement('div');
-					imageElement.classList.add('uploading');
-					imageElement.innerHTML = '<span class="progress"><span></span></span>';
-					$('#show-picture').append(imageElement);
-					progressElement = imageElement.querySelector('span.progress span');
-					progressElement.style.width = 0;
-					document.querySelector('#show-picture').appendChild(imageElement);
-                    
-					// Resize image
-					
-					var MAX_WIDTH = 400;
-					var MAX_HEIGHT = 300;
-					var tempW = image.width;
-					var tempH = image.height;
-			        if (tempW > tempH)
-                    {
-			            if (tempW > MAX_WIDTH)
-                        {
-                            tempH = tempH*MAX_WIDTH / tempW;
-                            tempW = MAX_WIDTH;
-                        }
-                    }
-			        else
-                    {
-			            if (tempH > MAX_HEIGHT)
-			            {
-                            tempW = tempW*MAX_HEIGHT / tempH;
-                            tempH = MAX_HEIGHT;
-			            }
-                    }
-                    
-			        var canvas = document.createElement('canvas');
-			        canvas.width = tempW;
-			        canvas.height = tempH;
-			        var ctx = canvas.getContext("2d");
-			        ctx.drawImage(image, 0, 0, tempW, tempH);
-					db_post_image(canvas.toDataURL('images/jpeg', 0.7), TRIP_ID, LAST_POSITION, "this is a comment", "hazard");
-				}
-                
-				image.src = readerEvent.target.result;
-                
-			}
-			reader.readAsDataURL(files[i]);
-		}
-        
-	}
-    
-	// Clear files
-	event.target.value = '';
-    
-    
+	var file = event.target.files[0];
+	// Ensure it's an image
+	if (file.type.match(/image.*/)) 
+	     {
+	       $('#popupPhoto').popup('open');
+	      uploading=true; // just one photo at time	
+	      photo_lat = LAST_POSITION.lat;
+	      photo_lng = LAST_POSITION.lng;
+	      progressElement = $('#progressElement'); 
+	      // Add progress bar to the page				
+		  progressElement.css("width", "0");
+
+	     
+          // prepare the formData to POST to the server
+	      var formData = new FormData();
+		  formData.append("tripID", TRIP_ID);
+          formData.append("point", '{"lat": '+photo_lat+', "long": '+photo_lng+', "epoch": '+new Date().getTime()+'}');
+		  formData.append("imageType", "JPG");
+		  formData.append("type", "hazard");
+		  formData.append("comment", "this is a comment");			        			        
+		  formData.append("blob", file);				        
+		  db_post_image(formData);
+	     
+         var reader = new FileReader();
+         reader.onload = function (e) 
+           { $('#hazardPhoto').attr('src', e.target.result); }
+
+        reader.readAsDataURL(file);
+       }
+    else {alert(WRONG_FILE+' '+file.type);}
 }
+
+
+
+
+

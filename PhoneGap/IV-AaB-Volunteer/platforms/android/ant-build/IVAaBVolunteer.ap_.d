@@ -50,6 +50,7 @@
 /Users/deLac/Desktop/siti/IV-Adopt-A-Block-v2/PhoneGap/IV-AaB-Volunteer/platforms/android/assets/www/js/index.js \
 /Users/deLac/Desktop/siti/IV-Adopt-A-Block-v2/PhoneGap/IV-AaB-Volunteer/platforms/android/assets/www/js/init_client_page.js \
 /Users/deLac/Desktop/siti/IV-Adopt-A-Block-v2/PhoneGap/IV-AaB-Volunteer/platforms/android/assets/www/js/mapDrawings.js \
+/Users/deLac/Desktop/siti/IV-Adopt-A-Block-v2/PhoneGap/IV-AaB-Volunteer/platforms/android/assets/www/js/messages.js \
 /Users/deLac/Desktop/siti/IV-Adopt-A-Block-v2/PhoneGap/IV-AaB-Volunteer/platforms/android/assets/www/js/objectToJson.js \
 /Users/deLac/Desktop/siti/IV-Adopt-A-Block-v2/PhoneGap/IV-AaB-Volunteer/platforms/android/assets/www/js/pacman.js \
 /Users/deLac/Desktop/siti/IV-Adopt-A-Block-v2/PhoneGap/IV-AaB-Volunteer/platforms/android/assets/www/plugins/org.apache.cordova.camera \

@@ -30,19 +30,19 @@ function handleError(error)
     {
 		case error.PERMISSION_DENIED:
 			console.log("geolocalization not allowed");
-			alert("turn on your GPS service!");
+			alert(GPS_NOT_ALLOWED);
 			break;
 		case error.POSITION_UNAVAILABLE:
-			console.log('POSITION_UNAVAILABLE, I try again');
+			console.log(GPS_NOT_AVAILABLE);
 			break;
 		case error.TIMEOUT:
-			console.log("geolocalization timeout");
+			console.log(GPS_TIMEOUT);
 			break;
 		case error.UNKNOWN_ERROR:
-		    console.log("geolocalization UNKNOWN_ERROR "+error.message);
+		    console.log(GPS_UNK_ERR+' '+error.message);
 			break;
 		default:
-			console.log("geolocalization UNKNOWN_ERROR "+error.message);
+			console.log(GPS_UNK_ERR+' '+error.message);
 			break;
     }
 }

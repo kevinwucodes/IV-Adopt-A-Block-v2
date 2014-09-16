@@ -58,34 +58,35 @@ function db_resume_trip(tripId)
 }
 
 
-function db_complete_trip(tripId, bucket, comment)
+function db_complete_trip(tripId, bucket, comment, blocks)
 {
- if (!tripId || !bucket)
-   {return;}
- loading();
- $.ajax(
-  {
-	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/completed",
-	  data: '{ "tripID": "'+tripId+'", "buckets": '+bucket+',  "blocks": '+completed_blocks.length+', "comments": "'+comment+'" }',
-	  headers: {
-	           "Content-Type": "application/json",
-	           "Accept-Version": "~1"
-	          },		
-	  dataType: 'json',          	
-	  success: function(response)
-	                 {alert(JSON.stringify(response));
-	                  db_complete_trip_callback();
-	                  stopLoading(); 
-	                 },
-	  error: function(response)
-	                 {
-	                  alert('db_complete_trip '+JSON.stringify(response)); 
-	                  stopLoading();
-	                 }
-  });
+    if (!tripId || !bucket)
+    {return;}
+    loading();
+    $.ajax(
+        {
+           type: "POST",
+           url: "https://iv-adopt-a-block-v2.jit.su/users/completed",
+           data: '{ "tripID": "'+tripId+'", "buckets": '+bucket+',  "blocks": '+blocks+', "comments": "'+comment+'" }',
+           headers:
+            {
+             "Content-Type": "application/json",
+             "Accept-Version": "~1"
+            },
+           dataType: 'json',
+           success: function(response)
+            {
+             alert(JSON.stringify(response));
+             db_complete_trip_callback();
+             stopLoading();
+            },
+           error: function(response)
+           {
+            alert('db_complete_trip '+JSON.stringify(response));
+            stopLoading();
+           }
+        });
 }
-
 
 function db_pause_trip(tripId)
 {
@@ -135,45 +136,45 @@ function db_post_waypoint(tripId, point)
 
  
 
-function db_post_image(image, tripId, point, comment, type)
+function db_post_image(formData)
 {
- if (!tripId || !point)
-   {return;}
- $.ajax(
-  {
-	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/images",
-	  data: '{"tripID": "'+tripId+'","point": {"lat": '+point.lat+',"long": '+point.lng+',"epoch": '+(new Date).getTime()+' }, "imageType": "JPG", "type": "'+type+'", "comment" : "'+comment+'", "blob" : '+image+'}',
-	  headers: {
-	           "Content-Type": "multipart/form-data",
-	           "Accept-Version": "~1"
-	          },		
-	  dataType: 'json',
-	  processData: false,       
-	  
-	  xhrFields: {
-		  	      onprogress: function (event) 
-		  	       {
-			  	    if (event.lengthComputable) 
-			  	    {
-			  	     var percent = parseInt(event.loaded / event.total * 100);
-					 progressElement.style.width = percent+'%'; //refer to handle_photo()
-				  	}
-				   }
-				 },
-	  
-	  
-	     	
-	  success: function(response)
-	                 {alert(JSON.stringify(response));
-	                  db_post_image_callback(); 
-	                 },
-	  error: function(response)
-	                 {alert(JSON.stringify(response)); 
-		              db_post_image_fail_callback();
-	                 }
-  });
+    $.ajax(
+         {
+           type: "POST",
+           url: "https://iv-adopt-a-block-v2.jit.su/users/images",
+           data: formData,
+           contentType: false,
+           cache: false,
+           processData:false,
+           
+           xhr: function()
+           {
+            var myXhr = $.ajaxSettings.xhr();
+            if(myXhr.upload)
+             {
+              myXhr.upload.addEventListener('progress',
+                                            function (event)
+                                             {
+                                              var percent = parseInt(event.loaded / event.total * 100);
+                                               progressElement.css("width", percent+'%'); //refer to handle_photo()
+                                             },
+                                            false
+                                            );
+             }
+            return myXhr;
+           },
+           success: function(response)
+            { console.log(JSON.stringify(response));
+              db_post_image_callback();
+            },
+           error: function(response)
+            {
+             alert(JSON.stringify(response));
+             db_post_image_callback();
+            }
+         });
 }
+
 
 
 

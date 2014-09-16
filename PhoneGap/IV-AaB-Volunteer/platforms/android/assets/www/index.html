@@ -39,6 +39,7 @@
 <script src="./js/pacman.js"></script>
 <link rel="stylesheet" href="./css/pacman.css" />
 <!-- my js functions -->
+<script src="./js/messages.js"></script>
 <script src="./js/global.js"></script>
 <script src="./js/mapDrawings.js"></script>
 <script src="./js/geolocation.js"></script>
@@ -72,13 +73,18 @@
  <div class="ui-content" role="main">
 
 <!-- PHOTO POPUP -->
-	<div data-role="popup" id="popupPhoto" data-theme="a" class="ui-corner-all" 
-	     style="width:250px; height:100%; padding:10px;" >
-        <div id="show-picture" class="photos">
+<div data-role="popup"  id="popupPhoto" data-theme="a"
+    class="ui-corner-all"
+    style="width:250px; height:100%; padding:20px; box-shadow: 0px 0px 100px #000;" >
+    <div id="show-picture" class="photos">
+        <img id="hazardPhoto" height="200px"/> <!-- image preview -->
+        <div class="uploading"> <!-- progress bar -->
+	        <span class="progress"><span id="progressElement"></span></span>
         </div>
-   </div>
-   
-   
+    </div>
+</div>
+
+
 <!-- SIGN IN -->
 	<div data-role="popup" style="box-shadow: 0px 0px 100px #000;"   id="popupSignin" data-theme="a" class="ui-corner-all" 
 	     style="width:250px; height:100%;" >
@@ -99,7 +105,7 @@
 			</select>
 		    
 		    <input type="button" data-icon="check" value="START" 
-		           onclick="watchGPS(); // stop old watch used to center the map
+		           onclick="stop_tracking(); // stop old watch used to center the map
                             db_start_trip($('#volname').val(), 
                                           $('#volsurname').val(), 
                                           $('#voltype').val()
@@ -120,30 +126,36 @@
 
 
 <!-- ## PAGE2  bucket number## -->
-<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="bucket-page"  style="backgrond-color:grey;">     
-  <div class="ui-content" role="main" style="padding:40px;">
-	 <label for="text-basic">How many buckets:</label>   
-	 <input type="text" id="buckets" name="text-basic" id="text-basic" value="">
-	 <label for="text-basic">comment:</label>   
-	 <input type="text" id="comment" name="text-basic" id="text-basic" value="">	 
-
-   <a href="#summary-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a" data-transition="slide"
-    onclick=" stop_tracking(); // stop tracking my position
-              loadSummary(TRIP_ID, $('#buckets').val(), $('#comment').val());
-            ">Ok</a>
- </div>
+<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="bucket-page"  style="backgrond-color:grey;">
+    <div class="ui-content" role="main" style="padding:60px;">
+        <label for="text-basic">How many buckets:</label>
+        <input type="text" id="buckets" name="text-basic" id="text-basic" value="">
+        <label for="text-basic">comment:</label>
+        <input type="text" id="comment" name="text-basic" id="text-basic" value="">
+                
+        <a href="#summary-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a" data-transition="slide"
+                    onclick="loadSummary(TRIP_ID, $('#buckets').val(), $('#comment').val(), completed_blocks.length);">Ok</a>
+    </div>
 </div>
 
 
 
+
 <!-- ## PAGE3  summary ## -->
-<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="summary-page"  style="backgrond-color:grey;">   
- <div class="ui-content" role="main" style="padding:40px;">
-     <div id="summary" style="margin-left:auto; margin-right:auto; display:block;">
-     </div>
-     <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a" 
-        onclick="db_complete_trip(TRIP_ID, $('#buckets').val(), $('#comment').val());" data-transition="slide">Save</a>
- </div>
+<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="summary-page"  style="backgrond-color:grey;">
+    <div class="ui-content" role="main" style="padding:60px; color:white;">
+        <div id="summary" style="margin-left:auto; margin-right:auto; display:block; text-align:center;">
+            <div>
+                COMPLIMENTS!<br>in your trip <div id="summary_tripid"></div>
+                you have filled <div id="summary_bucket"></div> buckets, cleaning
+                <div id="summary_block"></div> blocks <br> <br>
+                <div id="summary_comment"></div>
+            </div>
+        </div>
+        <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a"
+            onclick="db_complete_trip(TRIP_ID, $('#buckets').val(), $('#comment').val(), completed_blocks.length);"
+            data-transition="slide">Save</a>
+    </div>
 </div>
 
 
@@ -159,7 +171,7 @@
                 </li>
                 <li>
                   <a id="menu_camera"
-                     href="#popupPhoto" data-icon="camera" 
+                     href="#" data-icon="camera" 
                      data-rel="popup" data-position-to="window" 
                      data-transition="pop"
                      onclick="$('#take-picture').click();">camera</a>
@@ -182,7 +194,7 @@
 	<!-- hidden div with the real input button for the camera -->
 	<div style="visibility:hidden;">
            <!--<input type="button" id="take-picture" value="camera" onclick=""/> -->
-            <input id="take-picture" type="file" accept="image/*" capture="camera" />
+           <input id="take-picture" type="file" accept="image/*;capture=camera" capture="camera" />
     </div>
     
     <!-- black panel -->

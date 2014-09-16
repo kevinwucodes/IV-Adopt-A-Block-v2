@@ -1,6 +1,110 @@
+/*
+{ 
+ firstname: daniele,
+ lastname: fani,
+ trips: 
+  [
+   {
+    tripID : 0001,
+    completed: 4985959
+   }, ....
+  ]
+}
+*/
+
+function db_get_all_trips(from, to)
+{
+ $.ajax(
+ {
+  url: "https://iv-adopt-a-block-v2.jit.su/users/completed/"+from+"/"+to,
+  type: "GET",
+  success: function(response)
+  			 { db_get_all_trips_callback(response); },
+  error: function(response) 
+  			{ alert('db_get_all_trips: '+JSON.stringify(response)); }
+ });
+}
 
 
-function db_get_all_trips()
+
+
+/*
+{
+ firstname: daniele,
+ lastname: fani,
+ trips: 
+  [
+   {
+    tripID : 0001,
+   }, ....
+  ]
+}
+*/
+function db_get_all_current_trips()
+{
+ $.ajax(
+ {
+  url: "https://iv-adopt-a-block-v2.jit.su/users/incomplete",
+  success: function(response)
+  			 {db_get_all_current_trips_callback(response); },
+  error: function(response) 
+  			{ alert('db_get_all_current_trips: '+JSON.stringify(response)); }
+ });
+}
+
+
+
+
+
+/*
+{
+ firstname: daniele,
+ lastname: fani,
+ trips:
+    {
+     tripID: 300234023,
+     points: 
+     	[
+     	 {
+     	  lat: 45.23432
+     	  long: 113.343
+     	  epoch: 343242342
+     	  received: 343242343
+     	 }, ....
+     	]
+    }
+}	
+*/
+function db_get_waypoints(tripID)
+{
+ $.ajax(
+ {
+  url: "https://iv-adopt-a-block-v2.jit.su/users/waypoints",
+  data: '{"tripID":'+tripID+'}',
+  success: function(response)
+  			 {db_get_waypoints_callback(response); },
+  error: function(response) 
+  			{ alert('db_get_waypoints: '+JSON.stringify(response)); }
+ });
+}
+
+
+function db_get_all_volunteer_trips(name, surname)
+{
+ $.ajax(
+ {
+  url: "https://iv-adopt-a-block-v2.jit.su/users",
+  data: '{"name":'+start+', "surname":'+end+'}',
+  type: "GET",
+  success: function(response)
+  			 {db_get_all_volunteer_trips_callback(response); },
+  error: function(response) 
+  			{ alert('db_get_all_volunteer_trips: '+JSON.stringify(response)); }
+ });
+}
+
+
+function db_get_all_trips2()
 {
  
  trips={ 

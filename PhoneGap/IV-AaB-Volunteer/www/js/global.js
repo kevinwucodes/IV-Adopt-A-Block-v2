@@ -6,13 +6,13 @@ var currentBlockIndex = -1; //blocks[] index of the block clicked
 var proximity = 15;  // min distance in meters required for a vertex from the user position, to become visited
 var LAST_POSITION = false;
 var POSITION_TIME_INTERVAL = 3000; // how often (in milliseconds) the current position is updated
-var SEGMENT_DISTANCE=20;
-var POINT_DISTANCE=5; // distance between 2 points of the same segment
+var SEGMENT_DISTANCE = 20;
+var POINT_DISTANCE = 5; // distance between 2 points of the same segment
 var TRIP_ID; // got by db when a user sign in
 var USERNAME;
 var USERSURNAME;
 var USERTYPE;
-var HIGH_ACCURACY = 20; // min accuracy (in meters) to be considered high
+var HIGH_ACCURACY = 10; // min accuracy (in meters) to be considered high
 
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks
@@ -100,6 +100,8 @@ function add_new_position(point)
 			    checkVertexesCovered( point, j);
 			   }
 			}
+            // if you want to consider just points into blocks,
+            // delete the 'true' below
 			if (true || isInside) 
 			     {  
 			      addCoveredPath(point);
@@ -213,7 +215,7 @@ function checkVertexesCovered(marker_latlng, blockIndex)
 			 blocks[blockIndex].setStyle( {color: COVERED_BLOCK_STROKE_COLOR} );
 			 blocks[blockIndex].setStyle( {fillOpacity: 0.7} );					     	 
 			 completed_blocks.push(blocks[blockIndex]);
-			 alert('compliments, you have completed '+completed_blocks.length+' blocks');
+			 console.log('compliments, you have completed '+completed_blocks.length+' blocks');
 			}
 	   }
 	}
