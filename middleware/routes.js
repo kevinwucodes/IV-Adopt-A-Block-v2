@@ -12,6 +12,9 @@ var mediafire = require('./mediafire');
 var mailer = require('./mailer');
 var db = require('./db');
 
+//
+// POST request
+//
 
 module.exports.users = function(req, res, next) {
 
@@ -258,7 +261,6 @@ module.exports.usersImages = function(req, res, next) {
   }
   */
 
-
   // need to parse req.body.point because this is coming in as a multipart/form-data
   var point = JSON.parse(req.body.point);
 
@@ -361,3 +363,42 @@ module.exports.usersImages = function(req, res, next) {
   // next();
 
 };
+
+
+//
+// GET request
+//
+
+module.exports.getCompletedRoutesWithRange = function(req, res, next) {
+  
+  if ( req.params.start === undefined || req.params.start <= 1000000000000
+    || req.params.end === undefined || req.params.end <= 1000000000000) {
+    var err = new Error();
+    err.status = 403;
+    err.message = "required values missing";
+    return next(err);
+  }
+
+
+
+  var payload = {
+    start: parseInt(req.params.start),
+    end: parseInt(req.params.end) 
+  }
+
+  //retrieve from DB
+  db.getCompletedRoutesWithRange(payload, function(err, result) {
+    if (err) {
+      res.send(500, {
+        status: "error",
+        message: "something went horribly wrong"
+      });
+    } else {
+      res.send(200, {
+        start: payload.start
+        ,end: payload.end
+        ,data: result
+      });
+    }
+  });
+}

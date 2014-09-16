@@ -2,6 +2,7 @@
 
 // includes
 var restify = require('restify');
+var fs = require('fs');
 
 // include local
 var config = require('./config');
@@ -21,6 +22,18 @@ var server = restify.createServer(
 // restify options
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
+
+/*
+// CORS 
+// TODO: (confirm that we need this for a specific domain rather than accept everything) 
+server.use(
+  function crossOrigin(req,res,next){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    return next();
+  }
+);
+*/
 
 /////////////////////////////
 // begin requests
@@ -60,35 +73,49 @@ server.post({
   version: '1.0.0'
 }, r.usersResumed);
 
-//
-// UPLOAD images
-//
-
+// images route
 server.post({
   path: '/users/images',
   version: '1.0.0'
 }, r.usersImages);
-
-//
-// GET requests
-//
-
-server.get('/', function(req, res, next) {  
-  res.send(200, "get");
-  return next();
-});
 
 
 //
 // GET static requests
 //
 
-server.get('/static/properties/v1/mapboxProperties.json', function(req, res, next) {
+server.get({
+  path: '/static/properties/v1/mapboxProperties.json',
+  version: '1.0.0'
+}, function(req, res, next) {
   var file = "".concat(__dirname, '/static/properties/v1/mapboxProperties.json');
 
   res.setHeader("content-type", "application/json");
   fs.createReadStream(file).pipe(res);
 });
+
+//
+// GET requests
+//
+
+server.get({
+  path: '/',
+  version: '1.0.0'
+}, function(req, res, next) {  
+  res.send(200, "get");
+  return next();
+});
+
+server.get({
+  path: '/users/completed/:start/:end',
+  version: '1.0.0'
+}, r.getCompletedRoutesWithRange);
+
+
+
+
+
+
 
 
 /////////////////////////////

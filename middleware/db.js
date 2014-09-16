@@ -2,6 +2,7 @@
 
 // includes
 var mongojs = require('mongojs');
+var MongoClient = require('mongodb').MongoClient; //this is present because mongojs doesn't have aggregate yet
 var _ = require('underscore');
 
 // include local
@@ -121,13 +122,9 @@ module.exports.saveUsersWaypoints = function(payload, callback) {
       });
     }
 
-  })
-
-
-
-
-
+  });
 };
+
 module.exports.saveUsersResumed = function(payload, callback) {
   db.collection('users').findAndModify({
     // we want to ensure that we search on a tripID that hasn't been completed
@@ -349,3 +346,77 @@ module.exports.saveUsersImages = function(payload, callback) {
     }
   }); //db.collection
 };
+
+// GETs
+
+module.exports.getCompletedRoutesWithRange = function(payload, callback) {
+
+  MongoClient.connect(config.MONGO_URI, function(err, db) {
+    if (err) throw err;
+
+    db.collection('users', function(err, collection) {
+
+      collection.aggregate([{
+        $match: {
+          "trips": {
+            $elemMatch: {
+              "completed": {
+                $exists: true
+              }
+            }
+          }
+        }
+      }, {
+        $project: {
+          firstname: "$firstname",
+          lastname: "$lastname",
+          "trips.completed": 1,
+          "trips.tripID": 1,
+          "trips.created": 1,
+          "trips.buckets": 1,
+          "trips.blocks": 1
+        }
+      }, {
+        $unwind: "$trips"
+      }, {
+        $match: {
+          "trips.completed": {
+            $gte: payload.start,
+            $lte: payload.end
+          }
+        }
+      }, {
+        $sort: {
+          "trips.completed": 1
+        }
+      }, {
+        $group: {
+          _id: {
+            _id: "$_id",
+            firstname: "$firstname",
+            lastname: "$lastname"
+          },
+          trips: {
+            $push: "$trips"
+          }
+        }
+      }], function(err, result) {
+
+        var formattedResult = [];
+
+        //lets clean up the result a bit better
+        result.forEach(function(user) {
+          var newobj = {
+            firstname: user._id.firstname,
+            lastname: user._id.lastname,
+            trips: user.trips
+          }
+          formattedResult.push(newobj);
+        })
+
+        callback(err, formattedResult);
+        db.close();
+      });
+    }); //db.collection('users')
+  }); //MongoClient.connect
+}

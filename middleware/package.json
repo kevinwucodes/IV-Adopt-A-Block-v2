@@ -1,6 +1,6 @@
 {
   "name": "iv-aab-middleware",
-  "version": "0.0.0-7",
+  "version": "0.0.0-12",
   "description": "REST layer for iv-aab",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   "dependencies": {
     "restify": ">= 2.8.2",
     "mongojs": ">= 0.13.1",
+    "mongodb": ">= 1.4.10",
     "node-uuid": ">= 1.4.1",
     "underscore": ">= 1.6.0",
     "superagent": ">= 0.18.2",
