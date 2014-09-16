@@ -15,6 +15,10 @@ db.users.aggregate([
         firstname: "$firstname"
         ,lastname: "$lastname"
         ,"trips.completed": 1
+        ,"trips.tripID": 1
+        ,"trips.created": 1
+        ,"trips.buckets": 1
+        ,"trips.blocks": 1
     }
 }
 ,{
@@ -25,6 +29,18 @@ db.users.aggregate([
         "trips.completed": {
                 $exists: true
               }     
+    }
+}
+,{
+    $group: {
+        _id: {
+            _id: "$_id"
+            ,firstname: "$firstname"
+            ,lastname: "$lastname"
+        }
+        ,trips: {
+            $push: "$trips"
+        }
     }
 }
   
