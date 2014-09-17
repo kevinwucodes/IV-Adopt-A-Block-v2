@@ -69,7 +69,13 @@ POST /users/completed
   "comments": "I love picking up trash"
 }
 ```
-
+POST /users/blocks
+```
+{
+  "tripID": "",
+  "blockID": 4
+}
+```
 
 
 #### GET App Properties
