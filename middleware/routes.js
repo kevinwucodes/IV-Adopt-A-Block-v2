@@ -370,9 +370,8 @@ module.exports.usersImages = function(req, res, next) {
 //
 
 module.exports.getCompletedRoutesWithRange = function(req, res, next) {
-  
-  if ( req.params.start === undefined || req.params.start <= 1000000000000
-    || req.params.end === undefined || req.params.end <= 1000000000000) {
+  // no payload expected
+  if (req.params.start === undefined || req.params.start <= 1000000000000 || req.params.end === undefined || req.params.end <= 1000000000000) {
     var err = new Error();
     err.status = 403;
     err.message = "required values missing";
@@ -383,7 +382,7 @@ module.exports.getCompletedRoutesWithRange = function(req, res, next) {
 
   var payload = {
     start: parseInt(req.params.start),
-    end: parseInt(req.params.end) 
+    end: parseInt(req.params.end)
   }
 
   //retrieve from DB
@@ -395,9 +394,28 @@ module.exports.getCompletedRoutesWithRange = function(req, res, next) {
       });
     } else {
       res.send(200, {
-        start: payload.start
-        ,end: payload.end
-        ,data: result
+        start: payload.start,
+        end: payload.end,
+        data: result
+      });
+    }
+  });
+}
+
+module.exports.getIncompleteToday = function(req, res, next) {
+  // no payload expected
+
+  //retrieve from DB
+  db.getIncompleteToday(function(err, result, todayInMidnight) {
+    if (err) {
+      res.send(500, {
+        status: "error",
+        message: "something went horribly wrong"
+      });
+    } else {
+      res.send(200, {
+        since: todayInMidnight,
+        data: result
       });
     }
   });

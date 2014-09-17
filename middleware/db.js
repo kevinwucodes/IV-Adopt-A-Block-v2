@@ -420,3 +420,80 @@ module.exports.getCompletedRoutesWithRange = function(payload, callback) {
     }); //db.collection('users')
   }); //MongoClient.connect
 }
+
+
+
+module.exports.getIncompleteToday = function(callback) {
+  var now = new Date();
+  //todays date at top of midnight
+  now.setHours(0, 0, 0, 0);
+
+  MongoClient.connect(config.MONGO_URI, function(err, db) {
+    if (err) throw err;
+
+    db.collection('users', function(err, collection) {
+
+      collection.aggregate([{
+        $match: {
+          "trips": {
+            $elemMatch: {
+              "completed": {
+                $exists: false
+              }
+            }
+          }
+        }
+      }, {
+        $project: {
+          firstname: "$firstname",
+          lastname: "$lastname",
+          "trips.tripID": 1,
+          "trips.created": 1
+        }
+      }, {
+        $unwind: "$trips"
+      }, {
+        $match: {
+          "trips.completed": {
+            $exists: false
+          },
+          "trips.created": {
+            $gte: now.getTime()
+          }
+        }
+      }, {
+        $sort: {
+          "trips.created": 1
+        }
+      }, {
+        $group: {
+          _id: {
+            _id: "$_id",
+            firstname: "$firstname",
+            lastname: "$lastname"
+          },
+          trips: {
+            $push: "$trips"
+          }
+        }
+      }], function(err, result) {
+
+        var formattedResult = [];
+
+        //lets clean up the result a bit better
+        result.forEach(function(user) {
+          var newobj = {
+            firstname: user._id.firstname,
+            lastname: user._id.lastname,
+            trips: user.trips
+          }
+          formattedResult.push(newobj);
+        })
+
+        callback(err, formattedResult, now.getTime());
+        db.close();
+      });
+
+    }); //db.collection('users')
+  }); //MongoClient.connect
+}

@@ -23,17 +23,16 @@ var server = restify.createServer(
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
 
-/*
+
 // CORS 
-// TODO: (confirm that we need this for a specific domain rather than accept everything) 
 server.use(
-  function crossOrigin(req,res,next){
-    res.header("Access-Control-Allow-Origin", "*");
+  function crossOrigin(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "danielefani.altervista.org");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     return next();
   }
 );
-*/
+
 
 /////////////////////////////
 // begin requests
@@ -101,7 +100,7 @@ server.get({
 server.get({
   path: '/',
   version: '1.0.0'
-}, function(req, res, next) {  
+}, function(req, res, next) {
   res.send(200, "get");
   return next();
 });
@@ -111,6 +110,10 @@ server.get({
   version: '1.0.0'
 }, r.getCompletedRoutesWithRange);
 
+server.get({
+  path: '/users/incomplete/today',
+  version: '1.0.0'
+}, r.getIncompleteToday);
 
 
 
