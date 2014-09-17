@@ -8,7 +8,8 @@ var config = require('./config');
 
 var url = {
   getSession: "https://www.mediafire.com/api/1.1/user/get_session_token.php",
-  postSimpleImage: "http://www.mediafire.com/api/1.1/upload/simple.php"
+  postSimpleImage: "http://www.mediafire.com/api/1.1/upload/simple.php",
+  getFileLink: "http://www.mediafire.com/api/1.1/file/get_links.php"
 }
 
 
@@ -81,7 +82,7 @@ var getSession = function(callback) {
 };
 
 
-var upload = function(filepath, callback) {
+module.exports.upload = function(filepath, callback) {
   // get a mediafire session
   getSession(function(err, res) {
     if (err) throw err;
@@ -102,4 +103,6 @@ var upload = function(filepath, callback) {
 }
 
 
-module.exports.upload = upload;
+module.exports.getFileLink = function() {
+  
+}

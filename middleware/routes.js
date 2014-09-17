@@ -446,6 +446,19 @@ module.exports.getTripIdDetails = function(req, res, next) {
       res.send(200, result);
     }
   });
+}
 
+module.exports.getFileLink = function(req, res, next) {
+  //no payload expected
 
+  if (req.params.imageID === undefined || req.params.imageID.length !== 36) {
+    var err = new Error();
+    err.status = 403;
+    err.message = "required values missing";
+    return next(err);
+  }
+
+  var payload = {
+    imageID: req.params.imageID
+  }
 }
