@@ -115,6 +115,13 @@ server.get({
   version: '1.0.0'
 }, r.getIncompleteToday);
 
+server.get({
+  path: '/users/waypoints/:tripID',
+  version: '1.0.0'
+}, r.getTripIdDetails);
+
+
+
 
 
 

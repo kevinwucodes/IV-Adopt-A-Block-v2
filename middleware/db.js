@@ -497,3 +497,33 @@ module.exports.getIncompleteToday = function(callback) {
     }); //db.collection('users')
   }); //MongoClient.connect
 }
+
+module.exports.getTripIdDetails = function(payload, callback) {
+
+  MongoClient.connect(config.MONGO_URI, function(err, db) {
+    if (err) throw err;
+
+    db.collection('users', function(err, collection) {
+
+      collection.aggregate([{
+        $match: {
+          "trips": {
+            $elemMatch: {
+              "tripID": payload.tripID
+            }
+          }
+        }
+      }, {
+        $unwind: "$trips"
+      }, {
+        $match: {
+          "trips.tripID": payload.tripID
+        }
+      }], function(err, result) {
+
+        callback(err, result[0]);
+        db.close();
+      });
+    }); //db.collection('users')
+  }); //MongoClient.connect
+}

@@ -420,3 +420,32 @@ module.exports.getIncompleteToday = function(req, res, next) {
     }
   });
 }
+
+module.exports.getTripIdDetails = function(req, res, next) {
+  //no payload expected
+
+  if (req.params.tripID === undefined || req.params.tripID.length !== 36) {
+    var err = new Error();
+    err.status = 403;
+    err.message = "required values missing";
+    return next(err);
+  }
+
+  var payload = {
+    tripID: req.params.tripID
+  }
+
+  //retrieve from DB
+  db.getTripIdDetails(payload, function(err, result) {
+    if (err) {
+      res.send(500, {
+        status: "error",
+        message: "something went horribly wrong"
+      });
+    } else {
+      res.send(200, result);
+    }
+  });
+
+
+}
