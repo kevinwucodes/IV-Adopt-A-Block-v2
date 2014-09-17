@@ -131,7 +131,8 @@ This returns all tripIDs where they are not complete since 12:00am of today's da
         lastname: #lastname#,
         trips: [
           {
-            tripID: #tripID#
+            tripID: #tripID#,
+            created : #date#
           }, ...
         ]
       }, ...
