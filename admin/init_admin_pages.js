@@ -25,13 +25,11 @@ var volunteerTripLayer; // trip choosen clicking on the table of page2
 function init_page_editor()
 {	
  console.log("init_admin_pages.js#init_page_editor().");
- try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
-  //remove the old drawControl with markers
- try {map.removeControl(drawControl);}catch(control_not_present){/*ignore*/}
- try {currentVolunteersLayer.clear(); map.removeLayer(currentVolunteersLayer);}
-      catch(layer_not_present){/*ignore*/}
- try {volunteerTripLayer.clear(); map.removeLayer(volunteerTripLayer);}
-      catch(layer_not_present){/*ignore*/}
+ try {map.removeLayer(pacman_layer);}        catch(layer_not_present){/*ignore*/}
+ try {map.removeControl(drawControl);}       catch(control_not_present){/*ignore*/}
+ try {currentVolunteersLayer.clearLayers();} catch(layer_not_present){/*ignore*/}
+ try {volunteerTripLayer.clearLayers();}     catch(layer_not_present){/*ignore*/}
+ 
  
  navigator.geolocation.getCurrentPosition(function (pos)
                                              {
@@ -51,6 +49,7 @@ function init_page_editor()
                                                },
                                            {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
                                           );
+
  // fix the zoom at 18! so, with a big PacMan and a thick line,  it's easyer cover all the points
    
  // add the Leaf tool to draw shapes on the map
@@ -102,14 +101,20 @@ function init_page_editor()
 function init_page_Map()
 {
  console.log("init_admin_pages.js#init_page_Map().");
- try {map.removeLayer(pacman_layer);} catch(layer_not_present){/*ignore*/}
- //remove every draw control present
- try {map.removeControl(drawControl);} catch(layer_not_present){/*ignore*/}
- try {volunteerTripLayer.clear(); map.removeLayer(volunteerTripLayer);}
-      catch(layer_not_present){/*ignore*/}
+ db_get_all_current_trips();
+ try {map.removeLayer(pacman_layer);}    catch(layer_not_present){/*ignore*/}
+ try {map.removeControl(drawControl);}   catch(layer_not_present){/*ignore*/}
+ try {volunteerTripLayer.clearLayers();} catch(layer_not_present){/*ignore*/}
+ 
+  if(!currentVolunteersLayer)
+     { 
+      currentVolunteersLayer = L.mapbox.featureLayer(); 
+      currentVolunteersLayer.on('mouseover', function(e) { e.layer.openPopup();  } );
+      currentVolunteersLayer.on('mouseout',  function(e) { e.layer.closePopup(); } );
+      currentVolunteersLayer.addTo(map);
+     }      
  map.invalidateSize(); // changing page could give problems so I redraw the map to fit the right size.
  $( "#left-panel" ).panel( "close" ); 
- //################ db_get_all_current_trips(); ####################################
 }
 
 
@@ -117,6 +122,8 @@ function init_page_Map()
 
 function init_page_dailyReport ()
 {
+ // I must change page now, before build the table, otherwise the search will not work
+ $('body').pagecontainer('change', '#daily_report_page', {transition: 'slide'});
  $( "#left-panel" ).panel( "close" );
  from =1000000000001;
  to = new Date().getTime();
@@ -177,13 +184,33 @@ function db_get_all_trips_callback (result)
 		 tbody+="  <td>"+new Date(trip.completed).customFormat( "#MMM#/#DD#/#YYYY# <br> #hh#:#mm#" )+"</td>";
 		 tbody+="  <td>"+trip.buckets+"</td>";
 		 tbody+="  <td>"+trip.blocks+"</td>";
+		 // last column has a button to show the trip on the map
+		 tbody+="  <td> "+
+		        "      <a href='#' onclick='db_get_waypoints(\" "+trip.tripID+" \");'> "+
+		        "         <img src='http://files.softicons.com/download/toolbar-icons/fatcow-hosting-icons-by-fatcow/png/32/google_map.png' border='0'/>"
+		        "      </a>"+
+		        "  </td>";
 		 tbody+="</tr>";
  	   }
  	} 	
     
  $('#table_daily_tbody').html(tbody);
  $('#table_daily').DataTable();
- $('body').pagecontainer('change', '#daily_report_page', {transition: 'slide',});
+ var tableTools = new $.fn.dataTable.TableTools( $('#table_daily'), 
+      {
+		 "sSwfPath": "http://cdn.datatables.net/tabletools/2.2.2/swf/copy_csv_xls_pdf.swf",
+         "aButtons": 
+           [  /* export just the rows filtered by the search field.  http://datatables.net/docs/DataTables/1.9.4/#%24 */
+	         { "sExtends": "copy", "mColumns": "visible", "oSelectorOpts":  { filter: 'applied', page: "all" } },
+	         { "sExtends": "csv", "mColumns": "visible", "oSelectorOpts":   { filter: 'applied', page: "all" } },
+	         { "sExtends": "xls", "mColumns": "visible", "oSelectorOpts":   { filter: 'applied', page: "all" } },
+	         { "sExtends": "pdf", "mColumns": "visible", "oSelectorOpts":   { filter: 'applied', page: "all" } },
+	         { "sExtends": "print", "mColumns": "visible", "oSelectorOpts": { filter: 'applied', page: "all" } }                                 
+	       ]
+       });
+ $( tableTools.fnContainer() ).insertAfter('#table_daily');
+ // $('body').pagecontainer('change', '#daily_report_page', {transition: 'slide'});
+ // I can't change page here, I must change page before build the table, otherwise the Search will not work
 }
 
 
@@ -191,10 +218,48 @@ function db_get_all_trips_callback (result)
 
 function db_get_all_current_trips_callback (result)
 {
-  currentVolunteersLayer = new L.FeatureGroup();
+   console.log("init_admin_pages.js#db_get_all_current_trips_callback().");
+  currentVolunteersLayer.clearLayers();
+  for (i=0; i< result.data.length; i++)
+  	{
+	  tripID = result.data[i].trips[0].tripID;
+	  db_get_last_waypoint(tripID);
+  	}
   $('body').pagecontainer('change', '#map-page', {transition: 'slide',}); 
 }
 
+
+
+/*
+* put a marker to show the current position of a volunteer 	
+**/
+function db_get_last_waypoint_callback (result)
+{
+ if (!result.trips.points || result.trips.points.length ==0)
+ 	{return;} //just started, not yet points available
+ name = result.firstname;
+ name += ' '+result.lastname;
+ lat = result.trips.points[result.trips.points.length-1].lat;
+ lng = result.trips.points[result.trips.points.length-1].long;
+    map.setView([lat, lng]); 
+ var marker_json  = {
+					    type: "Feature",
+					    geometry: 
+					      {
+					       type: "Point",
+					       coordinates: [lng, lat]
+					      },
+					    properties: 
+					      { 
+					        title: name,
+	                        'marker-color' : "#A52A2A"
+					      }
+					};
+
+  var marker = L.geoJson(marker_json, {style: function(feature) { return feature.properties; }});			  
+  currentVolunteersLayer.addLayer(marker);
+ // currentVolunteersLayer.setGeoJSON(marker_json); 
+}
 
 
 

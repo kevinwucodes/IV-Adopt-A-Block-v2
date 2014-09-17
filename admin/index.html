@@ -17,13 +17,17 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
 <link rel="stylesheet" href="../webapp/theme.css" />
 <link rel="stylesheet" href="../webapp/jquery.mobile.icons.min.css"/>
-<!-- DataTables -->
-<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.2/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
 <!-- DatePicker -->
 <link rel="stylesheet" href="https://rawgithub.com/arschmitz/jquery-mobile-datepicker-wrapper/v0.1.1/jquery.mobile.datepicker.css">
 <script src="https://rawgithub.com/jquery/jquery-ui/1.10.4/ui/jquery.ui.datepicker.js"></script>
 <script id="mobile-datepicker" src="https://rawgithub.com/arschmitz/jquery-mobile-datepicker-wrapper/v0.1.1/jquery.mobile.datepicker.js"></script>
+<!-- DataTables -->
+<link rel="stylesheet" type="text/css" href="./DataTables-1.10.2/media/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="./DataTables-1.10.2/media/js/jquery.dataTables.min.js"></script>
+<!-- TableTool -->
+<link rel="stylesheet" type="text/css" href="DataTables-1.10.2/extensions/TableTools/css/dataTables.tableTools.css">
+<script type="text/javascript" charset="utf8" src="DataTables-1.10.2/extensions/TableTools/js/dataTables.tableTools.min.js"></script>
+
 
 
 
@@ -81,7 +85,7 @@
 		    <thead>
 		        <tr>
 		            <th>BUCKETS</th>
-		            <th>BLOCKS</th>	
+		            <th>COMPLETED BLOCKS</th>	  
 		            <th>TIME</th>
 		        </tr>
 		    </thead>
@@ -102,34 +106,36 @@
 <!-- ## PAGE 2 ## -->
 <div data-role="page" data-title="daily report" id="daily_report_page" 
      data-url="dailyReport" style="backgrond-color:grey;">
-	<div class="ui-content" role="main">
+	<div class="ui-content" role="main" style="padding:25px;">
 	    <!-- date pickers div -->
 	    <div style="font-size:small; width:50%; 
 	                margin-right:auto; margin-left:auto; display:block; overflow:auto;">
-	      <div style="float:left; width:80px; text-align:center;"> 
-	          from<br>
-	          <input type="text" data-role="date">
-	      </div>
-	      <div style="float:right; width:80px; text-align:center;"> 
-	           to<br>
-	           <input type="text" data-role="date">
-	      </div>
+		      <div style="float:left; width:80px; text-align:center;"> from<br>
+		          <input type="text" data-role="date">
+		      </div>
+		      <div style="float:right; width:80px; text-align:center;"> to<br>
+		           <input type="text" data-role="date">
+		      </div>
 	    </div>
 	    
 	    <hr style="clear: both;"/>
 	    
-		<table id="table_daily" class="display">
-		    <thead>
-		        <tr>
-		            <th>volunteer:</th>
-		            <th>trip started on:</th>
-		            <th>endend on:</th>	
-		            <th>buckets:</th>
-		            <th>blocks:</th>		            			            	            
-		        </tr>
-		    </thead>
-		    <tbody id="table_daily_tbody"> </tbody>
-		</table>
+	    <span style="font-size:small;">tip: ordering by multiple columns can be activated using shift+click on a column</span>
+	    <div>
+			<table id="table_daily" class="display" style="text-align: center;">
+			    <thead>
+			        <tr>
+			            <th>volunteer:</th>
+			            <th>trip started on:</th>
+			            <th>endend on:</th>	
+			            <th>buckets:</th>
+			            <th>blocks:</th>	
+			            <th>show on map</th>			            	            			            	            
+			        </tr>
+			    </thead>
+			    <tbody id="table_daily_tbody"> </tbody>
+			</table>
+	    </div>
 	</div>
 </div><!-- /page2 -->
 
@@ -176,6 +182,10 @@
        
      </div>
 </div>
+
+    !-- black panel -->
+ <div id ="blackPanel" style="position:fixed; left:0px; top:0px; width:100%; height:2000px; background-color:rgba(3, 3, 3, 0.7);  z-index:-1;">
+ </div>
 
 <script>	 
 	    //Because external toolbars are not within the page they will not auto initalize. 

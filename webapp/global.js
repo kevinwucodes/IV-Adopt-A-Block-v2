@@ -16,6 +16,7 @@ var HIGH_ACCURACY = 10; // min accuracy (in meters) to be considered high
 
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks
+var id_blocks=[]; //array of IDs of all the blocks
 var covered_points=[]; // has all the GPS points of a segment covered by a volunteer
                        // a segment is a line with distance = SEGMENT_DISTANCE
                        // in a segment, pacman will keep the same direction
@@ -78,7 +79,7 @@ function loading()
 }
 
 function stopLoading()
-{
+{ 
  $.mobile.loading( "hide" ); 
  black_panel_style = $("#blackPanel").attr("style");
  black_panel_style = black_panel_style.replace("z-index:2000;", "z-index:-1;");

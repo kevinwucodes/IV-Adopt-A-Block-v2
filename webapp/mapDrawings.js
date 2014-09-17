@@ -77,7 +77,7 @@ for (p=0; p<polygons_json.polygons.length; p++)
 	   	 addVertex(point.lat, point.lng);
 	   	}
 	   	
-	addBlock(latlng_coordinates, polygons_json.polygons[p].polygon.name);
+	addBlock(latlng_coordinates, polygons_json.polygons[p].polygon.name, polygons_json.polygons[p].polygon.id);
     
     // if (polygons_json.polygons[p].polygon.pacman.length > 0)
 	//    {  addPacManLine(polygons_json.polygons[currentBlockIndex].polygon.pacman);	 }
@@ -131,7 +131,7 @@ function addVertex(lat, lng)
 * adds a polygon on the map, and at the blocks[] array.
 * polygons have binded popup with their name	
 */
-function addBlock(latlng_coordinates, name)
+function addBlock(latlng_coordinates, name, block_id)
 {
  var shape_json  = {
 					   type: "Feature",
@@ -159,6 +159,7 @@ function addBlock(latlng_coordinates, name)
     shape.bindPopup(getHTML_block_popup());
 
     blocks.push(shape);
+    id_blocks.push(block_id);
     
     //when click on a polygon, save it as currentBlock
     shape.on('click', function(e)
