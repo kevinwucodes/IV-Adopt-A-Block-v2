@@ -119,16 +119,21 @@ This gets only COMPLETED routes based on timestamp between :start and :end
   }
 ```
 
-GET /users/incomplete
+GET /users/incomplete/today
 
 ```
-This returns all tripIDs where they are not complete
+This returns all tripIDs where they are not complete since 12:00am of today's date
   {
-    firstname: #firstname#,
-    lastname: #lastname#,
-    trips: [
+    since: #since#, (would be epoch of 12:00am of the current date)
+    data: [
       {
-        tripID: #tripID#
+        firstname: #firstname#,
+        lastname: #lastname#,
+        trips: [
+          {
+            tripID: #tripID#
+          }, ...
+        ]
       }, ...
     ]
   }
