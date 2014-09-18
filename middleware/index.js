@@ -27,7 +27,7 @@ server.use(restify.gzipResponse());
 // CORS 
 server.use(
   function crossOrigin(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "danielefani.altervista.org");
+    res.header("Access-Control-Allow-Origin", "http://danielefani.altervista.org");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     return next();
   }
