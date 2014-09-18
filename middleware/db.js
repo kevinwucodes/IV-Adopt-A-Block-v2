@@ -7,6 +7,7 @@ var _ = require('underscore');
 
 // include local
 var config = require('./config');
+var mediafire = require('./mediafire');
 
 // mongo collections config
 var db = mongojs(config.MONGO_URI);
@@ -523,6 +524,69 @@ module.exports.getTripIdDetails = function(payload, callback) {
 
         callback(err, result[0]);
         db.close();
+      });
+    }); //db.collection('users')
+  }); //MongoClient.connect
+}
+
+
+module.exports.getImageIdDetails = function(payload, callback) {
+
+  MongoClient.connect(config.MONGO_URI, function(err, db) {
+    if (err) throw err;
+
+    db.collection('users', function(err, collection) {
+
+      collection.aggregate([{
+        $match: {
+          trips: {
+            $elemMatch: {
+              images: {
+                $elemMatch: {
+                  mediafireFileKey: {
+                    $exists: true
+                  },
+                  imageID: payload.imageID
+                }
+              }
+            }
+          }
+        }
+      }, {
+        $unwind: "$trips"
+      }, {
+        $unwind: "$trips.images"
+      }, {
+        $match: {
+          "trips.images.imageID": payload.imageID
+        }
+      }, {
+        $project: {
+          "_id": 0,
+          "trips.tripID": 1,
+          "trips.images.imageID": 1,
+          "trips.images.imageType": 1,
+          "trips.images.type": 1,
+          "trips.images.size": 1,
+          "trips.images.comment": 1,
+          "trips.images.point": 1,
+          "trips.images.mediafireFileKey": 1,
+          "trips.images.received": 1
+        }
+      }], function(err, result) {
+
+        if (err) throw err; // test this?
+
+        var mediafireFileKey = result[0].trips.images.mediafireFileKey;
+        mediafire.getFileLink(mediafireFileKey, function(err, fileKey) {
+          if (err) throw err; // test this?
+
+          // assign the URL to the imageURL key
+          result[0].trips.images.imageURL = fileKey;
+
+          callback(err, result[0]);
+          db.close();
+        }); //mediafire.getFileLink
       });
     }); //db.collection('users')
   }); //MongoClient.connect

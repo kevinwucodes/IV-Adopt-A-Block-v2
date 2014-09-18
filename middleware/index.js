@@ -120,11 +120,10 @@ server.get({
   version: '1.0.0'
 }, r.getTripIdDetails);
 
-//sample getlink
 server.get({
   path: '/image/:imageID',
   version: '1.0.0'
-}, r.getFileLink);
+}, r.getImageIdDetails);
 
 
 

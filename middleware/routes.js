@@ -448,7 +448,7 @@ module.exports.getTripIdDetails = function(req, res, next) {
   });
 }
 
-module.exports.getFileLink = function(req, res, next) {
+module.exports.getImageIdDetails = function(req, res, next) {
   //no payload expected
 
   if (req.params.imageID === undefined || req.params.imageID.length !== 36) {
@@ -461,4 +461,18 @@ module.exports.getFileLink = function(req, res, next) {
   var payload = {
     imageID: req.params.imageID
   }
+
+  //retrieve from DB
+  db.getImageIdDetails(payload, function(err, result) {
+    if (err) {
+      res.send(500, {
+        status: "error",
+        message: "something went horribly wrong"
+      });
+    } else {
+      res.send(200, result);
+    }
+  });
+
+
 }
