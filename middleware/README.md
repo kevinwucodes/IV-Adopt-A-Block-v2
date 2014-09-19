@@ -69,6 +69,13 @@ POST /users/completed
   "comments": "I love picking up trash"
 }
 ```
+POST /users/validatedBlocks
+```
+{
+  "tripID": "",
+  "validatedBlocks": 1
+}
+```
 POST /users/blocks
 ```
 {
