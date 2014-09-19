@@ -78,6 +78,12 @@ server.post({
   version: '1.0.0'
 }, r.usersImages);
 
+// blocks route
+server.post({
+  path: '/users/validatedBlocks',
+  version: '1.0.0'
+}, r.usersValidatedBlocks);
+
 
 //
 // GET static requests

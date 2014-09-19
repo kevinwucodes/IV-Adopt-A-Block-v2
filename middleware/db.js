@@ -348,6 +348,55 @@ module.exports.saveUsersImages = function(payload, callback) {
   }); //db.collection
 };
 
+module.exports.saveUsersValidatedBlocks = function(payload, callback) {
+  db.collection('users').findAndModify({
+    // we dont care if the tripID has or hasn't been completed
+    query: {
+      "trips": {
+        $elemMatch: {
+          "tripID": payload.tripID
+        }
+      }
+    },
+
+    update: {
+      // add new point to points array
+      $push: {
+        "trips.$.validatedBlocks": payload.validatedBlocks
+      }
+    },
+
+    fields: {
+      "trips.$": 1
+    }
+  }, function(err, doc, lastErrorObject) {
+
+    if (err) {
+      callback("error", null);
+    }
+
+    // can we find the tripID at all?
+    if (lastErrorObject.n === 0) {
+      // no, lets tell the user that we couldn't find anything to update/insert
+      callback(null, {
+        statusCode: 403,
+        status: "oops",
+        message: "there was no such tripID"
+      });
+    }
+
+    // did mongo report back a single updated document?
+    if (lastErrorObject.updatedExisting === true && lastErrorObject.n === 1) {
+      callback(null, {
+        statusCode: 201,
+        status: "success",
+        message: "added a validatedBlock to tripID " + payload.tripID
+      });
+    }
+
+  });
+};
+
 // GETs
 
 module.exports.getCompletedRoutesWithRange = function(payload, callback) {

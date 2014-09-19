@@ -364,6 +364,45 @@ module.exports.usersImages = function(req, res, next) {
 
 };
 
+module.exports.usersValidatedBlocks = function(req, res, next) {
+  /*
+  expecting:
+  {
+    tripID: "a23e5bed-658c-4d0d-8622-8ea8a6e9c8ae",
+    validatedBlocks: 4
+  }
+  */
+
+  // checking require inputs
+  if (req.body.tripID === undefined || req.body.tripID.length !== 36 ||
+    req.body.validatedBlocks === undefined || req.body.validatedBlocks.length === 0) {
+    var err = new Error();
+    err.status = 403;
+    err.message = "required values missing";
+    return next(err);
+  }
+
+  var payload = {
+    tripID: req.body.tripID,
+    validatedBlocks: req.body.validatedBlocks
+  };
+
+  // save the data
+  db.saveUsersValidatedBlocks(payload, function(err, result) {
+    if (err) {
+      res.send(500, {
+        status: "error",
+        message: "something went horribly wrong"
+      });
+    } else {
+      res.send(result.statusCode, {
+        status: result.status,
+        message: result.message
+      });
+    }
+  }); //db.saveUsersValidatedBlocks
+}
+
 
 //
 // GET request
