@@ -162,6 +162,9 @@ This returns all the waypoings from a :tripID
     lastname: #lastname#,
     trips: {
       tripID: #tripID#,
+      validatedBlocks: [13, 15],
+      completed: #completed#,
+      created: #created#,
       points: [ 
                 {
                     "lat" : #lat#,
