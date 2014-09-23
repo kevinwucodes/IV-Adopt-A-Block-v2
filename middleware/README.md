@@ -156,13 +156,13 @@ This returns all tripIDs where they are not complete since 12:00am of today's da
 GET /users/waypoints/:tripID
 
 ```
-This returns all the waypoings from a :tripID
+This returns all the waypoints from a :tripID
   {
     firstname: #firstname#,
     lastname: #lastname#,
     trips: {
       tripID: #tripID#,
-      validatedBlocks: [13, 15],
+      validatedBlocks: [#blockID#, #blockID#, ...],
       completed: #completed#,
       created: #created#,
       points: [ 
