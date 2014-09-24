@@ -286,7 +286,7 @@ function db_get_last_waypoint_callback (result)
 					    properties: 
 					      { 
 					        title: name,
-	                        'marker-color' : "#A52A2A"
+	                        'marker-color' : "#E4287C"
 					      }
 					}; 
  

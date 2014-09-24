@@ -153,7 +153,7 @@ function addBlock(latlng_coordinates, name)
 	shape = L.geoJson(shape_json, {style: function(feature) { return feature.properties; }});
     drawnBlocks.addLayer(shape);
     shape.bindLabel(name);
-    shape.bindPopup(getHTML_block_popup());
+    //shape.bindPopup(getHTML_block_popup());
 
     blocks.push(shape);
     id_blocks.push(block_id);
