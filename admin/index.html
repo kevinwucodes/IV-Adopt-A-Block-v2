@@ -15,8 +15,8 @@
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script> 
 <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
-<link rel="stylesheet" href="../webapp/theme.css" />
-<link rel="stylesheet" href="../webapp/jquery.mobile.icons.min.css"/>
+<link rel="stylesheet" href="../webapp/css/theme.css" />
+<link rel="stylesheet" href="../webapp/css/jquery.mobile.icons.min.css"/>
 <!-- DatePicker -->
 <link rel="stylesheet" href="https://rawgithub.com/arschmitz/jquery-mobile-datepicker-wrapper/v0.1.1/jquery.mobile.datepicker.css">
 <script src="https://rawgithub.com/jquery/jquery-ui/1.10.4/ui/jquery.ui.datepicker.js"></script>
@@ -42,10 +42,10 @@
 
 
 <!-- my js functions -->
-<script src="../webapp/global.js"></script>
-<script src="../webapp/mapDrawings.js"></script>
-<script src="../webapp/objectToJson.js"></script>
-<script src="../webapp/db_handler.js"></script>
+<script src="../webapp/js/global.js"></script>
+<script src="../webapp/js/mapDrawings.js"></script>
+<script src="../webapp/js/objectToJson.js"></script>
+<script src="../webapp/js/db_handler.js"></script>
 <script src="./init_admin_pages.js"></script>
 <script src="./db_handler.js"></script>
 <script src="./convertDate.js"></script>
@@ -71,8 +71,10 @@
 	                                ui-btn-icon-right ui-icon-bullets">menu</a>
   </div><!-- /header -->
 
+
+
 <!-- ## PAGE 1 ## -->
-<div data-role="page" data-title="map-page" id="map-page" data-url="map-page" style="backgrond-color:grey;">
+<div data-role="page" data-title="IV-AaB map" id="map-page" data-url="map-page" style="backgrond-color:grey;">
    
    <!-- map -->
    <div class="ui-content" role="main">
@@ -80,7 +82,7 @@
    </div>
    
    <!-- ## report stats ## -->
-   <div data-role="footer" data-position="fixed">
+   <div data-role="footer" data-position="fixed" data-fullscreen="false">
 		<table style="width:100%; font-size:small; text-align:center; table-layout:fixed;">
 		    <thead>
 		        <tr>
@@ -91,9 +93,9 @@
 		    </thead>
 		    <tbody> 
 			   <tr>
-			     <td>-</td>
-			     <td>4</td>
-			     <td>-</td>			     			     
+			     <td id="trip_statistics_buckets">-</td>
+			     <td id="trip_statistics_blocks">-</td>
+			     <td id="trip_statistics_time">-</td>			     			     
 			   </tr> 
 		    </tbody>
 		</table>
@@ -104,22 +106,29 @@
 
 
 <!-- ## PAGE 2 ## -->
-<div data-role="page" data-title="daily report" id="daily_report_page" 
+<div data-role="page" data-title="IV-AaB daily report" id="daily_report_page" 
      data-url="dailyReport" style="backgrond-color:grey;">
 	<div class="ui-content" role="main" style="padding:25px;">
 	    <!-- date pickers div -->
 	    <div style="font-size:small; width:50%; 
 	                margin-right:auto; margin-left:auto; display:block; overflow:auto;">
-		      <div style="float:left; width:80px; text-align:center;"> from<br>
-		          <input type="text" data-role="date">
+		      <div style="float:left; width:80px; text-align:center;"> from
+		          <input type="text" data-role="date" id="from_date">
 		      </div>
-		      <div style="float:right; width:80px; text-align:center;"> to<br>
-		           <input type="text" data-role="date">
+		      <div style="float:right; width:80px; text-align:center;"> to
+		           <input type="text" data-role="date" id="to_date">
 		      </div>
 	    </div>
-	    
+	    <div style="min-width:80px; width:10%; margin-left:auto; margin-right:auto; display:block;">
+	      <input type="button" value="show" 
+	             onclick="
+	                      from_epoch = new Date($('#from_date').val()+' 01:00:00').getTime();
+	                      to_epoch = new Date($('#to_date').val()+' 23:59:00').getTime();
+	                      db_get_all_trips(from_epoch, to_epoch);
+	                      ">
+	    </div>	    
 	    <hr style="clear: both;"/>
-	    
+
 	    <span style="font-size:small;">tip: ordering by multiple columns can be activated using shift+click on a column</span>
 	    <div>
 			<table id="table_daily" class="display" style="text-align: center;">
@@ -142,26 +151,6 @@
 
 
 
-<!-- ## PAGE 3 ## -->
-<div data-role="page" data-title="volunteer report" id="vol_report_page" 
-     data-url="volReport" style="backgrond-color:grey;">
-	<div class="ui-content" role="main">
-		<table id="table_vol" class="display">
-		    <thead>
-		        <tr>
-		            <th>trip started on:</th>
-		            <th>endend on:</th>	
-		            <th>buckets:</th>
-		            <th>blocks:</th>		            			            	            
-		        </tr>
-		    </thead>
-		    <tbody id="table_vol_tbody"> </tbody>
-		</table>
-	</div>
-</div><!-- /page2 -->
-
-
-
 
 
 
@@ -170,16 +159,12 @@
 <div data-role="panel" id="left-panel" data-position="left" data-theme="a" data-display="overlay"
      style="box-shadow: 3px 4px 5px #555555; ">
      <div>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-bottom:25%;" 
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-bottom:33%;" 
                onclick="init_page_Map();">MAP</button>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-bottom:25%;" 
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-bottom:33%;" 
                onclick="init_page_editor();">EDITOR</button>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-bottom:25%;"
-               onclick="init_page_dailyReport();">DAILY REPORT</button>
-       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-bottom:25%;"
-               onclick="init_page_VolunteerReport();">VOLUNTEER REPORT</button>               
-       
-       
+       <button class="ui-btn ui-corner-all ui-btn ui-shadow" style="margin-bottom:33%;"
+               onclick="init_page_dailyReport();">REPORT</button>
      </div>
 </div>
 
@@ -188,25 +173,27 @@
  </div>
 
 <script>	 
+
 	    //Because external toolbars are not within the page they will not auto initalize. 
 	    // You must call the toolbar plugin yourself and stylyze it
 	   $( "[data-role='header']" ).toolbar({ theme: "a" });
+
 	   // same thing for the external left panel (menu)	            
        $("#left-panel").panel();
-         // open it also with a swipe to right
-//	    $("#left-panel").panel().enhanceWithin();
-	    	    
+         // open it also with a swipe to right	    	    
 	   $( document ).on( "swiperight", "body", function( e ) 
 	         	{ $( "#left-panel" ).panel( "open" );}
-	         	           );	 
-	    
-       //$( '#map-page' ).on( "pagebeforeshow", function() {initialize_map();});	  
+	         	       );	 
+    
        $( '#map-page' ).on( "pageshow", function() 
          {
-          // $('.ui-panel-wrapper')[0].height();
+          map.invalidateSize(); // changing page could give problems so I redraw the map to fit the right size.
+         }); 
+            
           initialize_map();
-          init_page_Map(); 
-          });	 
+ 	      init_page_Map(); 
+                     	 
+
       	           
  </script>
 

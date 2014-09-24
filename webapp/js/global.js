@@ -1,26 +1,27 @@
 // ====== VARIABLES ======
-$.support.cors = true; // tell $.ajax to load cross-domain pages.  
-$.mobile.allowCrossDomainPages = true;
-
+//$.support.cors = true; // tell $.ajax to load cross-domain pages.  
+//$.mobile.allowCrossDomainPages = true;
+ 
 var currentBlockIndex = -1; //blocks[] index of the block clicked
 var proximity = 15;  // min distance in meters required for a vertex from the user position, to become visited
 var LAST_POSITION = false;
 var POSITION_TIME_INTERVAL = 3000; // how often (in milliseconds) the current position is updated
-var SEGMENT_DISTANCE=20;
+var SEGMENT_DISTANCE=20;  // pacman start moving after SEGMENT_DISTANCE meters have been cleaned
 var POINT_DISTANCE=5; // distance between 2 points of the same segment
 var TRIP_ID; // got by db when a user sign in
 var USERNAME;
-var USERSURNAME;
+var USERSURNAME; 
 var USERTYPE;
 var HIGH_ACCURACY = 10; // min accuracy (in meters) to be considered high
-
+ 
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks
 var id_blocks=[]; //array of IDs of all the blocks
-var covered_points=[]; // has all the GPS points of a segment covered by a volunteer
-                       // a segment is a line with distance = SEGMENT_DISTANCE
-                       // in a segment, pacman will keep the same direction
-var completed_blocks=[];
+var covered_points=[]; /* has all the GPS points of a segment covered by a volunteer
+                        * a segment is a line with distance = SEGMENT_DISTANCE
+                        * in a segment, pacman will keep the same direction 
+                        */
+var completed_blocks=[]; // array of id of completed blocks
 var vertex=[]; // array of array.  vertex[j] is an array of all the circles of blocks[j]
 
 // ====== LAYERS ======
@@ -30,12 +31,13 @@ var drawnPath;
 var drawnBlocks; //layer hat owns all the shapes (circles, polygons, markers)
 var drawnVertexes; 
 var drawnMarkers;
+var drawnRoadLabels; // layer with the labels of the roads and lands
 
 var pacman_layer; //MapTie with yellow dotted streets
 
 // ====== OBJECETS ======
 var map; //MapBox map. to be initialized. drawnItems should be added to this map
-var timer;  // timer that checks current user position 
+var watchGPS;  // timer that checks current user position 
 var pacman;
 
  
@@ -57,6 +59,7 @@ var VERTEX_RADIUS = "4";
 
 var COVERED_BLOCK_STROKE_COLOR = 'rgb(52,123,79)';
 var COVERED_BLOCK_FILL_COLOR = 'rgb(72,173,110	)';
+var COVERED_BLOCK_FILL_OPACITY = 0.6;
 
 var USER_PATH_COLOR = '#a79c9c';
 var USER_PATH_OPACITY = 1;
@@ -122,20 +125,22 @@ function initialize_map()
   attribution: 'Map tiles by <a href="http://stamen.com">Stamen</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>'
 }).addTo(map);
  mapTile.setZIndex(0);
- pacman_layer = L.mapbox.tileLayer('de-lac.VillaRosa'); // or de-lac.OSMBright; I'll add it later only in the right page
+ pacman_layer = L.mapbox.tileLayer('de-lac.IslaVista'); // or de-lac.VillaRosa; I'll add it later only in the right page
  pacman_layer.setZIndex(1);
 
   drawnPath = new L.FeatureGroup(); // Initialise the FeatureGroup to store editable layers   
   drawnBlocks = new L.FeatureGroup();
   drawnVertexes = new L.FeatureGroup();
   drawnMarkers = new L.FeatureGroup();
-
+  drawnRoadLabels = L.mapbox.tileLayer('de-lac.IslaVistaLabels');
+  
  readAndLoadBlocks(); //reads blocks from db
  
  drawnPath.addTo(map).setZIndex(0); // Initialise the FeatureGroup to store editable layers 
  drawnBlocks.addTo(map).setZIndex(1);   
  drawnVertexes.addTo(map).setZIndex(2);   
  drawnMarkers.addTo(map).setZIndex(3);
+ drawnRoadLabels.addTo(map).setZIndex(300);
 
 
 
@@ -167,9 +172,10 @@ function initialize_map()
 	      						 {
 	      						  currentBlockIndex = currentBlockIndex;
 	      						 });
-	      
-	      currentBlock.bindPopup(getHTML_block_popup());
-	    
+	     
+	     // BIND THE POPUP WITH AN INPUT-TEXT TO INSERT THE NAME FOR THAT BLOCK 
+	     // currentBlock.bindPopup(getHTML_block_popup()); 
+	     /*
 	      currentBlock.openPopup();
 	      $('#map').on('click', '#add-button'+p, function(e) 
 	         {
@@ -177,8 +183,8 @@ function initialize_map()
 	          blocks[currentBlockIndex].bindLabel(message); 
 	          blocks[currentBlockIndex].closePopup();
 	         });
-	       
-	      currentBlock.on('mouseover', function(e){e.target.setStyle( {fillOpacity: 0.6} ); });   		 
+	     */
+	      currentBlock.on('mouseover', function(e){e.target.setStyle( {fillOpacity: COVERED_BLOCK_FILL_OPACITY} ); });   		 
 	      currentBlock.on('mouseout', function(e){e.target.setStyle( {fillOpacity: 0} ); }); 
 	      alert(polygonToJSON(circles_to_draw, ''));   	   
 	     }
@@ -205,11 +211,9 @@ function checkVertexesCovered(marker_latlng, blockIndex)
 		 vertex[blockIndex].splice(m, 1); // remove the vertex covered
 		 m--;
 		 if (vertex[blockIndex].length==0)
-		   { // all the vertexwa have been covered
-			 blocks[blockIndex].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
-			 blocks[blockIndex].setStyle( {color: COVERED_BLOCK_STROKE_COLOR} );
-			 blocks[blockIndex].setStyle( {fillOpacity: 0.7} );					     	 
-			 completed_blocks.push(blocks[blockIndex]);
+		   { // all the vertexes have been covered
+			 setCleanedBlock(blockIndex);
+			 db_cleaned_block(TRIP_ID, id_blocks[blockIndex]);
 			 console.log('compliments, you have completed '+completed_blocks.length+' blocks');
 			}
 	   }

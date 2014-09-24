@@ -8,7 +8,7 @@
 * http://jquery.org/license
 *
 */
-
+  
 
 /* Globals */
 /* Font
@@ -212,7 +212,7 @@ html .ui-alt-icon .ui-radio-off:after {
 }
 /* Loader */
 .ui-icon-loading {
-	background: url("./loader.gif");
+	background: url("../media/loader.gif");
 	background-size: 2.875em 2.875em;
 }
 /* Swatches */

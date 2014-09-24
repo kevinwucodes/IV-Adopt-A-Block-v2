@@ -1,3 +1,23 @@
+function db_get_all_images()
+{
+  loading();
+ $.ajax(
+ {
+  url: "https://iv-adopt-a-block-v2.jit.su/image",
+  type: "GET",
+  success: function(response)
+  			 { alert('db_get_all_images: '+JSON.stringify(response));  
+  			 },
+  error: function(response) 
+  			{  
+  			   alert('db_get_all_images: '+JSON.stringify(response)); 
+  			}
+ });
+}
+
+
+ 
+
 /*
  {
     start: #:start#,
@@ -59,13 +79,14 @@ function db_get_all_trips(from, to)
 */
 function db_get_all_current_trips()
 {
+   loading();
  $.ajax(
  {
   url: "https://iv-adopt-a-block-v2.jit.su/users/incomplete/today",
   success: function(response)
-  			 {db_get_all_current_trips_callback(response); },
+  			 {  stopLoading(); db_get_all_current_trips_callback(response); },
   error: function(response) 
-  			{ alert('db_get_all_current_trips: '+JSON.stringify(response)); }
+  			{ stopLoading(); alert('db_get_all_current_trips: '+JSON.stringify(response)); }
  });
 }
 
@@ -97,8 +118,7 @@ function db_get_waypoints(tripID)
   type: "GET",
   url: "https://iv-adopt-a-block-v2.jit.su/users/waypoints/"+tripID,
   success: function(response)
-  			 {alert('db_get_waypoints: '+JSON.stringify(response));
-  			  db_get_waypoints_callback(response); },
+  			 { db_get_waypoints_callback(response); },
   error: function(response) 
   			{ alert('db_get_waypoints: '+JSON.stringify(response)); }
  });
@@ -137,22 +157,6 @@ function db_get_last_waypoint(tripID)
  });
 }
 
-
-
-
-function db_get_all_volunteer_trips(name, surname)
-{
- $.ajax(
- {
-  url: "https://iv-adopt-a-block-v2.jit.su/users",
-  data: '{"name":'+start+', "surname":'+end+'}',
-  type: "GET",
-  success: function(response)
-  			 {db_get_all_volunteer_trips_callback(response); },
-  error: function(response) 
-  			{ alert('db_get_all_volunteer_trips: '+JSON.stringify(response)); }
- });
-}
 
 
 

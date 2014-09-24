@@ -11,7 +11,7 @@ A segmen is long #SEGMENT_DISTANCE. Only when I've reached that distance,
 pacman starts walking upon that segment.
 To smooth the zig-zag movements, a segment is not made by all the relevated points.
 I consider just points far #POINT_DISTANCE among eachother.
-
+ 
 Example: 
 global var SEGMENT_DISTANCE=20;
 global var POINT_DISTANCE=5;
@@ -78,14 +78,9 @@ for (p=0; p<polygons_json.polygons.length; p++)
 	   	}
 	   	
 	addBlock(latlng_coordinates, polygons_json.polygons[p].polygon.name, polygons_json.polygons[p].polygon.id);
-    
-    // if (polygons_json.polygons[p].polygon.pacman.length > 0)
-	//    {  addPacManLine(polygons_json.polygons[currentBlockIndex].polygon.pacman);	 }
   }
-
-  
-
 }
+
 
 
 
@@ -211,6 +206,37 @@ function addCoveredPath(current_point)
 	     addSegmentToBeCoveredByPacman(segment_to_cover);
 		}
    }
+}
+
+
+/**
+* color a cleand block of green, and add its index
+* to completed_blocks[]
+*/
+function  setCleanedBlock(blockIndex)
+{
+ if (completed_blocks.indexOf(id_blocks[blockIndex]) >= 0)
+  {return; /*block already set cleaned*/}
+ else
+  { 
+	blocks[blockIndex].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
+	blocks[blockIndex].setStyle( {color: COVERED_BLOCK_STROKE_COLOR} );
+	blocks[blockIndex].setStyle( {fillOpacity: 0.7} );					     	 
+	completed_blocks.push(id_blocks[blockIndex]); 
+  } 
+}
+
+/**
+* color a  block of not-cleaned color, and remove its index
+* from completed_blocks[]
+*/
+function  setNotCleanedBlock(blockIndex)
+{
+ blocks[blockIndex].setStyle( {fillColor: BLOCK_FILL_COLOR} );
+ blocks[blockIndex].setStyle( {color: BLOCK_STROKE_COLOR} );
+ blocks[blockIndex].setStyle( {fillOpacity: BLOCK_FILL_OPACITY} );					     	 
+ completed_blocks.splice( completed_blocks.indexOf(id_blocks[blockIndex]), 1);
+
 }
 
 

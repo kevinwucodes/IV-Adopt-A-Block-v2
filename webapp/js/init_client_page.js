@@ -3,16 +3,27 @@ function init_page_PacMan()
 {
  console.log("init_client_page.js#init_page_PacMan()");
  pacman_layer.addTo(map);	
- navigator.geolocation.getCurrentPosition
-                     (
-                      function (pos) 	
- 						{
- 						 set_gps_signal_icon(pos.coords.accuracy);
- 						 map.setView(L.latLng(pos.coords.latitude,pos.coords.longitude), 18);
- 						},
- 					  function onerror(error) {console.log(error.message);}, 
- 					    {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
- 					 );
+ // I check gps position to center the map and show to the user the current the accuracy
+ // I will destroy this watch once I start a new trip (look at the SIGN IN popup)
+ watchGPS =  navigator.geolocation.watchPosition
+    (//onsuccess
+     function (pos)
+      {
+       set_gps_signal_icon(pos.coords.accuracy);
+       map.setView(L.latLng(pos.coords.latitude,pos.coords.longitude), 18);
+      },
+       //onerror
+     function (error)
+      {
+       console.log(error.message);
+       if (error.code == error.PERMISSION_DENIED)
+        {
+         console.log("geolocalization not allowed");
+         alert(GPS_NOT_ALLOWED);
+        }
+      },
+     {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500}
+    );
  // fix the zoom at 18! so, with a big PacMan and a thick line,  it's easyer cover all the points
  map.touchZoom.disable();
  map.doubleClickZoom.disable();
@@ -52,7 +63,7 @@ function init_page_PacMan()
 function db_start_trip_callback (name, surname, type)
 {
   // start tracking my position
-  timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); 
+  start_tracking(); 
   $('#popupSignin').popup('close');
   $('#popupSignin').popup('close'); // BUG... 2 times are required  i don't know why
   
@@ -73,7 +84,7 @@ function db_start_trip_callback (name, surname, type)
 
 function db_pause_trip_callback ()
 {
- clearInterval(timer); // pause tracking my position 
+  stop_tracking(); // pause tracking my position
  
   $('#menu_pause').attr("id","menu_resume");
   $('#menu_resume').attr("data-icon","recycle");
@@ -88,7 +99,7 @@ function db_pause_trip_callback ()
 function db_resume_trip_callback ()
 {
  // resume tracking my position
- timer = setInterval(function(){set_position();}, POSITION_TIME_INTERVAL); 
+  start_tracking();
  
   $('#menu_resume').attr("id","menu_pause");
   $('#menu_pause').attr("data-icon","minus");
@@ -104,7 +115,7 @@ function db_resume_trip_callback ()
 
 function db_complete_trip_callback ()
 {
- // clearInterval(timer); // stop tracking my position but it's already done in the bucket page
+ // stop_tracking(); // stop tracking my position but it's already done in the bucket page
  $("body").pagecontainer("change", "#main-page", { transition:'pop' });
  
  $('#menu_resume').attr("id","menu_start");
@@ -126,7 +137,7 @@ function db_complete_trip_callback ()
   covered_points=[];
   completed_blocks=[];
   LAST_POSITION = false;
-  timer=false;
+  watchGPS=false;
   destroyPacman();
  
 }
@@ -145,7 +156,7 @@ function db_post_image_callback ()
 
 function loadSummary(tripId, bucket, comment, blocks)
 {
- clearInterval(timer); /* stop tracking my position */
+ stop_tracking(); /* stop tracking my position */
  $('#summary_tripid').text(tripId);
  $('#summary_bucket').text(bucket);
  $('#summary_block').text(blocks);  

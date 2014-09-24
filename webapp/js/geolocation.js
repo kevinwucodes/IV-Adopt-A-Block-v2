@@ -1,15 +1,23 @@
+var lastPositionTime = 0;
 
 
-function set_position()
-{  
-	 if (navigator.geolocation)
-    	{
-    	 navigator.geolocation.getCurrentPosition(handle_gps, handleError,
-    	                                 {'enableHighAccuracy':true,'timeout':10000,'maximumAge':500});
-         } 
-   else
-   		{ alert("geolocalization not supported");} 
- }
+
+function start_tracking() 
+{
+    if (navigator.geolocation)
+    {
+        watchGPS =  navigator.geolocation.watchPosition(handle_gps, handleError,
+                                                        {'enableHighAccuracy':true,'timeout':5000,'maximumAge':500});
+    }
+    else
+    { alert("geolocalization not supported");}
+}
+
+
+function stop_tracking()
+{
+    navigator.geolocation.clearWatch(watchGPS);
+}
  
  
  
@@ -41,13 +49,15 @@ function handleError(error)
 function handle_gps(pos)
 {
  set_gps_signal_icon(pos.coords.accuracy);
- lat = pos.coords.latitude;
- lng = pos.coords.longitude;
- currentPoint = L.latLng([lat,lng]);
- // if you want to consider just GPS points into Isla Vista
- // delete the 'true' into the IF of the function global.js#add_new_position()
- add_new_position(currentPoint);
-			 
+ if (new Date().getTime() - lastPositionTime > POSITION_TIME_INTERVAL)
+   {
+	 lat = pos.coords.latitude;
+	 lng = pos.coords.longitude;
+	 currentPoint = L.latLng([lat,lng]);
+	 // if you want to consider just GPS points into Isla Vista
+	 // delete the 'true' into the IF of the function global.js#add_new_position()
+	 add_new_position(currentPoint);
+    }
 }	
 
 

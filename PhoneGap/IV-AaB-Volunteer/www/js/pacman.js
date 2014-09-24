@@ -67,7 +67,7 @@ function createPacman(point)
     map.setView(pacman.getLatLng()); 	
 	createLine(point);
     
-    audio_chomp= new Media('http://danielefani.altervista.org/cleanItUp/CITRIX/webapp/pacman_chomp.wav',
+    audio_chomp= new Media('http://danielefani.altervista.org/cleanItUp/CITRIX/webapp/media/pacman_chomp.wav',
                            mediaSuccess,
                            function (err) { console.log("playAudio():Audio Error: " + err); }
                           );

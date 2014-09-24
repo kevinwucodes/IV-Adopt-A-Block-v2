@@ -78,9 +78,6 @@ for (p=0; p<polygons_json.polygons.length; p++)
 	   	}
 	   	
 	addBlock(latlng_coordinates, polygons_json.polygons[p].polygon.name);
-    
-    // if (polygons_json.polygons[p].polygon.pacman.length > 0)
-	//    {  addPacManLine(polygons_json.polygons[currentBlockIndex].polygon.pacman);	 }
   }
 
   
@@ -159,6 +156,7 @@ function addBlock(latlng_coordinates, name)
     shape.bindPopup(getHTML_block_popup());
 
     blocks.push(shape);
+    id_blocks.push(block_id);
     
     //when click on a polygon, save it as currentBlock
     shape.on('click', function(e)
@@ -210,6 +208,36 @@ function addCoveredPath(current_point)
 	     addSegmentToBeCoveredByPacman(segment_to_cover);
 		}
    }
+}
+
+/**
+ * color a cleand block of green, and add its index
+ * to completed_blocks[]
+ */
+function  setCleanedBlock(blockIndex)
+{
+    if (completed_blocks.indexOf(id_blocks[blockIndex]) >= 0)
+    {return; /*block already set cleaned*/}
+    else
+    {
+        blocks[blockIndex].setStyle( {fillColor: COVERED_BLOCK_FILL_COLOR} );
+        blocks[blockIndex].setStyle( {color: COVERED_BLOCK_STROKE_COLOR} );
+        blocks[blockIndex].setStyle( {fillOpacity: 0.7} );
+        completed_blocks.push(id_blocks[blockIndex]);
+    }
+}
+
+/**
+ * color a  block of not-cleaned color, and remove its index
+ * from completed_blocks[]
+ */
+function  setNotCleanedBlock(blockIndex)
+{
+    blocks[blockIndex].setStyle( {fillColor: BLOCK_FILL_COLOR} );
+    blocks[blockIndex].setStyle( {color: BLOCK_STROKE_COLOR} );
+    blocks[blockIndex].setStyle( {fillOpacity: BLOCK_FILL_OPACITY} );
+    completed_blocks.splice( completed_blocks.indexOf(id_blocks[blockIndex]), 1);
+    
 }
 
 

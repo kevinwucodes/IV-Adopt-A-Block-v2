@@ -3,7 +3,7 @@
   */
  function polygonToJSON(points, name)
  {
-  var json = '{"polygon": {"name":"'+name+'", "coordinates": [';
+  var json = '{"polygon": {"name":"'+name+'", "id":"", "coordinates": [';
   for (i=0; i<points.length; i++)
    {
     point = points[i];

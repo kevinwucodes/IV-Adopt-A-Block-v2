@@ -16,10 +16,10 @@
 <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script> 
 <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile.structure-1.4.3.min.css" />
-<link rel="stylesheet" href="./theme.css" />
-<link rel="stylesheet" href="./jquery.mobile.icons.min.css"/>
+<link rel="stylesheet" href="./css/theme.css" />
+<link rel="stylesheet" href="./css/jquery.mobile.icons.min.css"/>
 <!-- upload photo-->
-<link rel="stylesheet" href="./upload_photos.css"/>
+<link rel="stylesheet" href="./css/upload_photos.css"/>
 
 <!-- tool do draw polygons-->
 <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
@@ -31,16 +31,16 @@
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-pip/v0.0.2/leaflet-pip.js'></script>
 
 <!-- pacman -->
-<script src="./pacman.js"></script>
-<link rel="stylesheet" href="./pacman.css" />
+<script src="./js/pacman.js"></script>
+<link rel="stylesheet" href="./css/pacman.css" />
 <!-- my js functions -->
-<script src="./messages.js"></script>
-<script src="./global.js"></script>
-<script src="./mapDrawings.js"></script>
-<script src="./geolocation.js"></script>
-<script src="./objectToJson.js"></script>
-<script src="./db_handler.js"></script>
-<script src="./init_client_page.js"></script>
+<script src="./js/messages.js"></script>
+<script src="./js/global.js"></script>
+<script src="./js/mapDrawings.js"></script>
+<script src="./js/geolocation.js"></script>
+<script src="./js/objectToJson.js"></script>
+<script src="./js/db_handler.js"></script>
+<script src="./js/init_client_page.js"></script>
 
 <style>
   body { margin:0; padding:0; }
@@ -94,10 +94,10 @@
 	
 				<label for="select-choice-1" class="select">type of volunteer:</label>
 				<select name="select-choice-1" id="voltype">
-				    <option value="type1">type1</option>
-				    <option value="type2">type2</option>
-				    <option value="type3">type3</option>
-				    <option value="type4">type4</option>
+				    <option value="individual">Individual</option>
+				    <option value="staff">Staff</option>
+				    <option value="csw">CSW</option>
+				    <option value="other">Other</option>
 				</select>
 			    
 			    <input type="button" data-icon="check" value="START" 
@@ -138,7 +138,7 @@
 
 <!-- ## PAGE3  summary ## -->
 <div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="summary-page"  style="backgrond-color:grey;">   
- <div class="ui-content" role="main" style="padding:60px; color:white;">
+ <div class="ui-content" role="main" style="padding:40px; color:black;">
      <div id="summary" style="margin-left:auto; margin-right:auto; display:block; text-align:center;">
        <div>
             COMPLIMENTS!<br>in your trip <div id="summary_tripid"></div>
@@ -155,7 +155,7 @@
 
 
 <!-- ## FOOTER ## -->
-<div data-role="footer" data-position="fixed">
+<div data-role="footer" data-position="fixed" data-fullscreen="false">
 		<div data-role="navbar">
             <ul>
                 <li>
