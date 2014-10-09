@@ -131,7 +131,10 @@ server.get({
   version: '1.0.0'
 }, r.getImageIdDetails);
 
-
+server.get({
+  path: '/users/images',
+  version: '1.0.0'
+}, r.getUsersImages);
 
 
 

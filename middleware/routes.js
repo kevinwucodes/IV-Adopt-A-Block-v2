@@ -512,6 +512,20 @@ module.exports.getImageIdDetails = function(req, res, next) {
       res.send(200, result);
     }
   });
+}
 
+module.exports.getUsersImages = function(req, res, next) {
+  //no payload expected
 
+  //retrieve from DB
+  db.getUsersImages(function(err, result) {
+    if (err) {
+      res.send(500, {
+        status: "error",
+        message: "something went horribly wrong"
+      });
+    } else {
+      res.send(200, result);
+    }
+  });
 }

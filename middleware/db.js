@@ -640,3 +640,45 @@ module.exports.getImageIdDetails = function(payload, callback) {
     }); //db.collection('users')
   }); //MongoClient.connect
 }
+
+module.exports.getUsersImages = function(callback) {
+
+  MongoClient.connect(config.MONGO_URI, function(err, db) {
+    if (err) throw err;
+
+    db.collection('users', function(err, collection) {
+
+      collection.aggregate([{
+        $match: {
+          trips: {
+            $elemMatch: {
+              images: {
+                $exists: true
+              }
+            }
+          }
+        }
+      }, {
+        $unwind: "$trips"
+      }, {
+        $unwind: "$trips.images"
+      }, {
+        $project: {
+          "_id": 0,
+          "trips.tripID": 1,
+          "trips.images": 1
+        }
+      }], function(err, result) {
+
+        if (err) throw err; // test this?
+
+        result = _(result).map(function(trip) {
+          return trip.trips;
+        });
+
+        callback(err, result);
+
+      });
+    }); //db.collection('users')
+  }); //MongoClient.connect
+}
