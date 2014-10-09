@@ -176,3 +176,14 @@ This returns all the waypoints from a :tripID
     }
   }
 ```
+GET /users/images
+```
+[
+  {
+    tripID: #tripID#,
+    images: {
+      ...(all the image schema attributes are here)
+    }
+  }, ...
+]
+```
