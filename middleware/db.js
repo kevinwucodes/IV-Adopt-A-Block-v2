@@ -12,6 +12,16 @@ var mediafire = require('./mediafire');
 // mongo collections config
 var db = mongojs(config.MONGO_URI);
 
+// this is the connection to the official mongodb driver, we need to reuse connection
+var clientDB;
+var collection;
+
+
+MongoClient.connect(config.MONGO_URI, function(err, db) {
+  if (err) throw err;
+  clientDB = db;
+  collection = db.collection('users');
+});
 
 
 
@@ -401,74 +411,67 @@ module.exports.saveUsersValidatedBlocks = function(payload, callback) {
 
 module.exports.getCompletedRoutesWithRange = function(payload, callback) {
 
-  MongoClient.connect(config.MONGO_URI, function(err, db) {
-    if (err) throw err;
-
-    db.collection('users', function(err, collection) {
-
-      collection.aggregate([{
-        $match: {
-          "trips": {
-            $elemMatch: {
-              "completed": {
-                $exists: true
-              }
-            }
+  collection.aggregate([{
+    $match: {
+      "trips": {
+        $elemMatch: {
+          "completed": {
+            $exists: true
           }
         }
-      }, {
-        $project: {
-          firstname: "$firstname",
-          lastname: "$lastname",
-          "trips.completed": 1,
-          "trips.tripID": 1,
-          "trips.created": 1,
-          "trips.buckets": 1,
-          "trips.blocks": 1
-        }
-      }, {
-        $unwind: "$trips"
-      }, {
-        $match: {
-          "trips.completed": {
-            $gte: payload.start,
-            $lte: payload.end
-          }
-        }
-      }, {
-        $sort: {
-          "trips.completed": 1
-        }
-      }, {
-        $group: {
-          _id: {
-            _id: "$_id",
-            firstname: "$firstname",
-            lastname: "$lastname"
-          },
-          trips: {
-            $push: "$trips"
-          }
-        }
-      }], function(err, result) {
+      }
+    }
+  }, {
+    $project: {
+      firstname: "$firstname",
+      lastname: "$lastname",
+      "trips.completed": 1,
+      "trips.tripID": 1,
+      "trips.created": 1,
+      "trips.buckets": 1,
+      "trips.blocks": 1
+    }
+  }, {
+    $unwind: "$trips"
+  }, {
+    $match: {
+      "trips.completed": {
+        $gte: payload.start,
+        $lte: payload.end
+      }
+    }
+  }, {
+    $sort: {
+      "trips.completed": 1
+    }
+  }, {
+    $group: {
+      _id: {
+        _id: "$_id",
+        firstname: "$firstname",
+        lastname: "$lastname"
+      },
+      trips: {
+        $push: "$trips"
+      }
+    }
+  }], function(err, result) {
 
-        var formattedResult = [];
+    var formattedResult = [];
 
-        //lets clean up the result a bit better
-        result.forEach(function(user) {
-          var newobj = {
-            firstname: user._id.firstname,
-            lastname: user._id.lastname,
-            trips: user.trips
-          }
-          formattedResult.push(newobj);
-        })
+    //lets clean up the result a bit better
+    result.forEach(function(user) {
+      var newobj = {
+        firstname: user._id.firstname,
+        lastname: user._id.lastname,
+        trips: user.trips
+      }
+      formattedResult.push(newobj);
+    })
 
-        callback(err, formattedResult);
-        db.close();
-      });
-    }); //db.collection('users')
-  }); //MongoClient.connect
+    callback(err, formattedResult);
+    db.close();
+  });
 }
 
 
@@ -478,207 +481,181 @@ module.exports.getIncompleteToday = function(callback) {
   //todays date at top of midnight
   now.setHours(0, 0, 0, 0);
 
-  MongoClient.connect(config.MONGO_URI, function(err, db) {
-    if (err) throw err;
-
-    db.collection('users', function(err, collection) {
-
-      collection.aggregate([{
-        $match: {
-          "trips": {
-            $elemMatch: {
-              "completed": {
-                $exists: false
-              }
-            }
-          }
-        }
-      }, {
-        $project: {
-          firstname: "$firstname",
-          lastname: "$lastname",
-          "trips.tripID": 1,
-          "trips.created": 1
-        }
-      }, {
-        $unwind: "$trips"
-      }, {
-        $match: {
-          "trips.completed": {
+  collection.aggregate([{
+    $match: {
+      "trips": {
+        $elemMatch: {
+          "completed": {
             $exists: false
-          },
-          "trips.created": {
-            $gte: now.getTime()
           }
         }
-      }, {
-        $sort: {
-          "trips.created": 1
-        }
-      }, {
-        $group: {
-          _id: {
-            _id: "$_id",
-            firstname: "$firstname",
-            lastname: "$lastname"
-          },
-          trips: {
-            $push: "$trips"
-          }
-        }
-      }], function(err, result) {
+      }
+    }
+  }, {
+    $project: {
+      firstname: "$firstname",
+      lastname: "$lastname",
+      "trips.tripID": 1,
+      "trips.created": 1
+    }
+  }, {
+    $unwind: "$trips"
+  }, {
+    $match: {
+      "trips.completed": {
+        $exists: false
+      },
+      "trips.created": {
+        $gte: now.getTime()
+      }
+    }
+  }, {
+    $sort: {
+      "trips.created": 1
+    }
+  }, {
+    $group: {
+      _id: {
+        _id: "$_id",
+        firstname: "$firstname",
+        lastname: "$lastname"
+      },
+      trips: {
+        $push: "$trips"
+      }
+    }
+  }], function(err, result) {
 
-        var formattedResult = [];
+    var formattedResult = [];
 
-        //lets clean up the result a bit better
-        result.forEach(function(user) {
-          var newobj = {
-            firstname: user._id.firstname,
-            lastname: user._id.lastname,
-            trips: user.trips
-          }
-          formattedResult.push(newobj);
-        })
+    //lets clean up the result a bit better
+    result.forEach(function(user) {
+      var newobj = {
+        firstname: user._id.firstname,
+        lastname: user._id.lastname,
+        trips: user.trips
+      }
+      formattedResult.push(newobj);
+    })
 
-        callback(err, formattedResult, now.getTime());
-        db.close();
-      });
+    callback(err, formattedResult, now.getTime());
+    db.close();
+  });
 
-    }); //db.collection('users')
-  }); //MongoClient.connect
+
 }
 
 module.exports.getTripIdDetails = function(payload, callback) {
 
-  MongoClient.connect(config.MONGO_URI, function(err, db) {
-    if (err) throw err;
-
-    db.collection('users', function(err, collection) {
-
-      collection.aggregate([{
-        $match: {
-          "trips": {
-            $elemMatch: {
-              "tripID": payload.tripID
-            }
-          }
+  collection.aggregate([{
+    $match: {
+      "trips": {
+        $elemMatch: {
+          "tripID": payload.tripID
         }
-      }, {
-        $unwind: "$trips"
-      }, {
-        $match: {
-          "trips.tripID": payload.tripID
-        }
-      }], function(err, result) {
+      }
+    }
+  }, {
+    $unwind: "$trips"
+  }, {
+    $match: {
+      "trips.tripID": payload.tripID
+    }
+  }], function(err, result) {
 
-        callback(err, result[0]);
-        db.close();
-      });
-    }); //db.collection('users')
-  }); //MongoClient.connect
+    callback(err, result[0]);
+    db.close();
+  });
+
 }
 
 
 module.exports.getImageIdDetails = function(payload, callback) {
 
-  MongoClient.connect(config.MONGO_URI, function(err, db) {
-    if (err) throw err;
-
-    db.collection('users', function(err, collection) {
-
-      collection.aggregate([{
-        $match: {
-          trips: {
+  collection.aggregate([{
+    $match: {
+      trips: {
+        $elemMatch: {
+          images: {
             $elemMatch: {
-              images: {
-                $elemMatch: {
-                  mediafireFileKey: {
-                    $exists: true
-                  },
-                  imageID: payload.imageID
-                }
-              }
+              mediafireFileKey: {
+                $exists: true
+              },
+              imageID: payload.imageID
             }
           }
         }
-      }, {
-        $unwind: "$trips"
-      }, {
-        $unwind: "$trips.images"
-      }, {
-        $match: {
-          "trips.images.imageID": payload.imageID
-        }
-      }, {
-        $project: {
-          "_id": 0,
-          "trips.tripID": 1,
-          "trips.images.imageID": 1,
-          "trips.images.imageType": 1,
-          "trips.images.type": 1,
-          "trips.images.size": 1,
-          "trips.images.comment": 1,
-          "trips.images.point": 1,
-          "trips.images.mediafireFileKey": 1,
-          "trips.images.received": 1
-        }
-      }], function(err, result) {
+      }
+    }
+  }, {
+    $unwind: "$trips"
+  }, {
+    $unwind: "$trips.images"
+  }, {
+    $match: {
+      "trips.images.imageID": payload.imageID
+    }
+  }, {
+    $project: {
+      "_id": 0,
+      "trips.tripID": 1,
+      "trips.images.imageID": 1,
+      "trips.images.imageType": 1,
+      "trips.images.type": 1,
+      "trips.images.size": 1,
+      "trips.images.comment": 1,
+      "trips.images.point": 1,
+      "trips.images.mediafireFileKey": 1,
+      "trips.images.received": 1
+    }
+  }], function(err, result) {
 
-        if (err) throw err; // test this?
+    if (err) throw err; // test this?
 
-        var mediafireFileKey = result[0].trips.images.mediafireFileKey;
-        mediafire.getFileLink(mediafireFileKey, function(err, fileKey) {
-          if (err) throw err; // test this?
+    var mediafireFileKey = result[0].trips.images.mediafireFileKey;
+    mediafire.getFileLink(mediafireFileKey, function(err, fileKey) {
+      if (err) throw err; // test this?
 
-          // assign the URL to the imageURL key
-          result[0].trips.images.imageURL = fileKey;
+      // assign the URL to the imageURL key
+      result[0].trips.images.imageURL = fileKey;
 
-          callback(err, result[0]);
-          db.close();
-        }); //mediafire.getFileLink
-      });
-    }); //db.collection('users')
-  }); //MongoClient.connect
+      callback(err, result[0]);
+      db.close();
+    }); //mediafire.getFileLink
+  });
 }
 
 module.exports.getUsersImages = function(callback) {
 
-  MongoClient.connect(config.MONGO_URI, function(err, db) {
-    if (err) throw err;
-
-    db.collection('users', function(err, collection) {
-
-      collection.aggregate([{
-        $match: {
-          trips: {
-            $elemMatch: {
-              images: {
-                $exists: true
-              }
-            }
+  collection.aggregate([{
+    $match: {
+      trips: {
+        $elemMatch: {
+          images: {
+            $exists: true
           }
         }
-      }, {
-        $unwind: "$trips"
-      }, {
-        $unwind: "$trips.images"
-      }, {
-        $project: {
-          "_id": 0,
-          "trips.tripID": 1,
-          "trips.images": 1
-        }
-      }], function(err, result) {
+      }
+    }
+  }, {
+    $unwind: "$trips"
+  }, {
+    $unwind: "$trips.images"
+  }, {
+    $project: {
+      "_id": 0,
+      "trips.tripID": 1,
+      "trips.images": 1
+    }
+  }], function(err, result) {
 
-        if (err) throw err; // test this?
+    if (err) throw err; // test this?
 
-        result = _(result).map(function(trip) {
-          return trip.trips;
-        });
+    result = _(result).map(function(trip) {
+      return trip.trips;
+    });
 
-        callback(err, result);
+    callback(err, result);
 
-      });
-    }); //db.collection('users')
-  }); //MongoClient.connect
+  });
 }
