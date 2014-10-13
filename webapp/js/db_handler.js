@@ -1,5 +1,5 @@
 
-function db_start_trip(name, surname, type)
+function db_start_trip(name, surname, type) 
 {
  if (!name || !surname || !type)
    {return;}
@@ -10,7 +10,7 @@ function db_start_trip(name, surname, type)
  $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users",
+	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users",
 	  data: '{ "firstname":"'+name+'", "lastname":"'+surname+'", "tripCategory":"'+type+'"}',
 	  headers:{
 	           "Content-Type": "application/json",
@@ -45,7 +45,7 @@ function db_resume_trip(tripId)
  $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/resumed",
+	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/resumed",
 	  data: '{ "tripID": "'+tripId+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ function db_complete_trip(tripId, bucket, comment, blocks)
  $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/completed",
+	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/completed",
 	  data: '{ "tripID": "'+tripId+'", "buckets": '+bucket+',  "blocks": '+blocks+', "comments": "'+comment+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ function db_pause_trip(tripId)
  $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/paused",
+	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/paused",
 	  data: '{ "tripID": "'+tripId+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -139,7 +139,7 @@ function db_post_waypoint(tripId, point)
  $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/waypoints",
+	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/waypoints",
 	  data: '{"tripID": "'+tripId+'","point": {"lat": '+point.lat+',"long": '+point.lng+',"epoch": '+new Date().getTime()+' } }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -164,7 +164,7 @@ function db_post_image(formData)
  $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/images",
+	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/images",
 	  data: formData,	          
       contentType: false,
       cache: false,
@@ -206,7 +206,7 @@ function db_cleaned_block(tripId, blockID)
  $.ajax(
   {
 	  type: "POST",
-	  url: "https://iv-adopt-a-block-v2.jit.su/users/validatedBlocks",
+	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/validatedBlocks",
 	  data: '{ "tripID": "'+tripId+'", "validatedBlocks" : "'+blockID+'" }',
 	  headers: {
 	           "Content-Type": "application/json",

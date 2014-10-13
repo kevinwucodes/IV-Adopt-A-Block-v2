@@ -15,12 +15,15 @@ around the streets, fitting pacman paths
 
 */
 
-
+var REFRESH_TIME=10000;
+var VOLUNTEER_TRIP_COLOR = '#B00000';
+var VOLUNTEER_TRIP_WEIGHT = 5;
+var VOLUNTEER_MARKER_COLOR = '#E4287C';
 
 var currentVolunteersLayer; // markers of volunteer that are cleaning now
+var photosLayer; // markers of photos of trash to pick up
 var volunteerTripLayer; // trip choosen clicking on the table of page2
-var currentCompletedBlock;
-
+var currentCompletedBlocks; //[real-time page] counts how many blocks have been cleaned so far today
 var timer_realtime_position;
 
 
@@ -42,13 +45,10 @@ function init_page_editor()
  try{clearInterval(timer_realtime_position); timer_realtime_position=false;}catch(timer_not_present){/*ignore*/}
  try {map.removeLayer(pacman_layer);}        catch(layer_not_present){/*ignore*/}
  try {map.removeControl(drawControl);}       catch(control_not_present){/*ignore*/}
- try {currentVolunteersLayer.setGeoJSON(
-  				 {"type": "FeatureCollection",
-  				  "features": []
-  				 }
-  				)} catch(layer_not_present){/*ignore*/}
+ try {currentVolunteersLayer.clearLayers();} catch(layer_not_present){/*ignore*/}
+ try {photosLayer.clearLayers();}            catch(layer_not_present){/*ignore*/}  				
  try {volunteerTripLayer.clearLayers();}     catch(layer_not_present){/*ignore*/}
-    currentCompletedBlock=0;
+    currentCompletedBlocks=0;
  $("#trip_statistics_buckets").text("-");
  $("#trip_statistics_blocks").text("-");
  $("#trip_statistics_time").text("-"); 
@@ -129,7 +129,7 @@ function init_page_Map()
    {initialize_map();}
  if (!timer_realtime_position)
      //update volunteers' position each 10sec
-  {timer_realtime_position = setInterval(function(){init_page_Map();}, 10000);} 
+  {timer_realtime_position = setInterval(function(){init_page_Map();}, REFRESH_TIME);} 
  console.log("init_admin_pages.js#init_page_Map().");
   /*restore all the blocks to the not-cleaned color*/
   for (i=0; i<completed_blocks.length; i++)
@@ -140,23 +140,66 @@ function init_page_Map()
  try {map.removeLayer(pacman_layer);}    catch(layer_not_present){/*ignore*/}
  try {map.removeControl(drawControl);}   catch(layer_not_present){/*ignore*/}
  try {volunteerTripLayer.clearLayers();} catch(layer_not_present){/*ignore*/}
- try {currentVolunteersLayer.setGeoJSON(
-  				 {"type": "FeatureCollection",
-  				  "features": []
-  				 }
-  				)} catch(layer_not_present){/*ignore*/}
-  
-  if(!currentVolunteersLayer)
+ 
+ if(!currentVolunteersLayer)
      { 
       currentVolunteersLayer =  L.mapbox.featureLayer();
       currentVolunteersLayer.addTo(map);
-     }   
+      currentVolunteersLayer.on('layeradd', 
+    	function(e) 
+    	  {
+    	   //use a custom icon if defined, otherwise use the default MapBox marker
+	       var marker = e.layer;
+           if (!marker.feature.properties.icon) {return;}
+           else
+           		{
+	           	 feature = marker.feature;
+	           	 marker.setIcon(L.icon(feature.properties.icon));	           		
+           		}
+           });
+
+      }
+  currentVolunteersLayer.setGeoJSON(
+  				 {"type": "FeatureCollection",
+  				  "features": []
+  				 }
+  				);
+  				
+ if(!photosLayer)
+     { 
+      photosLayer =  L.mapbox.featureLayer();
+      photosLayer.addTo(map);
+      photosLayer.on('layeradd', 
+    	function(e) 
+    	  {
+    	   //use a custom icon if defined, otherwise use the default MapBox marker
+	       var marker = e.layer;
+           if (!marker.feature.properties.icon) {return;}
+           else
+           		{
+	           	 feature = marker.feature;
+	           	 marker.setIcon(L.icon(feature.properties.icon));	           		
+           		}
+           });
+      photosLayer.on('click',
+             function(e)
+             	{
+	             var marker = e.layer;
+	             db_get_image(marker.feature.properties.id);
+             	});
+      }
+  photosLayer.setGeoJSON(
+  				 {"type": "FeatureCollection",
+  				  "features": []
+  				 }
+  				);  				
+        
  $("#trip_statistics_buckets").text("-");
  $("#trip_statistics_blocks").text("-");
  $("#trip_statistics_time").text("-");   
- currentCompletedBlock=0;     
+ currentCompletedBlocks=0;     
  db_get_all_current_trips();
-  // db_get_all_images();
+ db_get_all_images();
  $( "#left-panel" ).panel( "close" ); 
 }
 
@@ -173,6 +216,7 @@ function init_page_dailyReport ()
  try {map.removeControl(drawControl);}   catch(layer_not_present){/*ignore*/}
  try {volunteerTripLayer.clearLayers();} catch(layer_not_present){/*ignore*/}
  try {currentVolunteersLayer.clearLayers();} catch(layer_not_present){/*ignore*/}
+ try {photosLayer.clearLayers();} catch(layer_not_present){/*ignore*/} 
   
   if(!volunteerTripLayer)
      { 
@@ -201,6 +245,12 @@ function init_page_dailyReport ()
 
 var tableTools; // contains the button to export the table in pdf, excel, ...
 
+
+
+/**
+for each trip got, it adds a row to the table $('#table_daily') and 
+then uses DataTable.js to make the table interactive
+*/
 function db_get_all_trips_callback (result)
 {
  console.log("db_get_all_trips_callback()");
@@ -251,7 +301,10 @@ function db_get_all_trips_callback (result)
 
 
 
-
+/**
+get all the not-completed trip of today (so current trips) and,
+for each one, ask the db for the last relevated waypoint
+*/
 function db_get_all_current_trips_callback (result)
 {
    console.log("init_admin_pages.js#db_get_all_current_trips_callback().");
@@ -262,6 +315,7 @@ function db_get_all_current_trips_callback (result)
   	}
   $('body').pagecontainer('change', '#map-page', {transition: 'slide',}); 
 }
+
 
 
 
@@ -286,19 +340,22 @@ function db_get_last_waypoint_callback (result)
 					    properties: 
 					      { 
 					        title: name,
-	                        'marker-color' : "#E4287C"
+	                        'marker-color' : VOLUNTEER_MARKER_COLOR
 					      }
 					}; 
  
-  	 markers_json = currentVolunteersLayer.getGeoJSON();
-  	 markers_json.features.push(marker_json);
+  	 var markers_json = currentVolunteersLayer.getGeoJSON();
+  	 if (markers_json.features === undefined)  
+  	 	{markers_json = marker_json;}
+  	 else
+  	 	{markers_json.features.push(marker_json);}
   	currentVolunteersLayer.setGeoJSON(markers_json); 
   	
   
 
   //############# map.fitBounds(currentVolunteersLayer.getBounds());  #############
-  currentCompletedBlock += result.trips.blocks;
-  //############# $("#trip_statistics_blocks").text(currentCompletedBlock); ###############
+  currentCompletedBlocks += result.trips.blocks;
+  //############# $("#trip_statistics_blocks").text(currentCompletedBlocks); ###############
   // color green the completed blocks
   if (result.trips.validatedBlocks)
       {
@@ -328,21 +385,10 @@ function db_get_waypoints_callback (result)
  var latlng_coordinates = [];
  for (i=0; i<result.trips.points.length; i++)
    { latlng_coordinates.push([result.trips.points[i].lat, result.trips.points[i].long]); } //get all the points
- 
-  // create the line
-  tripPath = L.polyline(latlng_coordinates,
-                    {
-					   color: '#B00000',
-					   weight: 5,
-					   opacity: COVERED_BLOCK_FILL_OPACITY,
-					   clickable: false,
-					   smoothFactor:1
-					  }
-				    );	
-  volunteerTripLayer.addLayer(tripPath);			    
-  map.fitBounds(latlng_coordinates);	 
+ 	 
      
  // create the start marker				    
+ var start_time = new Date(result.trips.created).customFormat( "#MMM#/#DD#/#YY# - #hh#:#mm#" );
  var start_marker_json  = {
 					    type: "Feature",
 					    geometry: 
@@ -352,12 +398,13 @@ function db_get_waypoints_callback (result)
 					      },
 					    properties: 
 					      { 
-					        title: new Date(result.trips.created).customFormat( "#MMM#/#DD#/#YY# - #hh#:#mm#" ),
+					        title: start_time,
 	                        'marker-color' : '#009900'
 					      }
 					};
   
    // create the end marker				    
+ var end_time = new Date(result.trips.completed).customFormat( "#MMM#/#DD#/#YY# - #hh#:#mm#" );
  var end_marker_json  = {
 					    type: "Feature",
 					    geometry: 
@@ -367,12 +414,25 @@ function db_get_waypoints_callback (result)
 					      },
 					    properties: 
 					      { 
-					        title: new Date(result.trips.completed).customFormat( "#MMM#/#DD#/#YY# - #hh#:#mm#" ),
+					        title: end_time,
 	                        'marker-color' : '#cc0000'                     
 					      }
 					};
   volunteerTripLayer.setGeoJSON([start_marker_json,end_marker_json]);
-  volunteerTripLayer.addLayer(tripPath);
+  
+  // create the line for the trip
+  tripPath = L.polyline(latlng_coordinates,
+                    {
+					   color: VOLUNTEER_TRIP_COLOR,
+					   weight: VOLUNTEER_TRIP_WEIGHT,
+					   opacity: COVERED_BLOCK_FILL_OPACITY,
+					   clickable: false,
+					   smoothFactor:1
+					  }
+				    );	
+  volunteerTripLayer.addLayer(tripPath);				    
+  map.fitBounds(latlng_coordinates);
+  
 				    
 				    
 	num_buckets = result.trips.buckets;
@@ -399,4 +459,43 @@ function db_get_waypoints_callback (result)
     
 	$('body').pagecontainer('change', '#map-page', {transition: 'slide',}); 
 	 map.invalidateSize(); 
+}
+
+
+function db_get_all_images_callback(result)
+{
+ if (!result || result.length==0) 
+ 	{return;}
+ for (i=0; i<result.length; i++)
+ 	{
+	 trip = result[i];
+	 image = trip.images;
+     var time = new Date(image.received).customFormat( "#MMM#/#DD#/#YY# - #hh#:#mm#" );
+	 var photo_marker_json  = 
+		  	{
+			 type: "Feature",
+			 geometry: 
+			  {
+			   type: "Point",
+			   coordinates: [ image.point.long, image.point.lat ] 
+			  },
+			 properties: 
+			  { 
+			   id:image.imageID,
+			   title: time,
+			   description:image.comment,
+			   icon : 
+			   	{"iconUrl" : "./images/trash.png",
+				 "iconSize": [30,30]  	
+			   	}
+			  }
+			};
+  	 var markers_json = photosLayer.getGeoJSON();
+  	 if (markers_json.features === undefined)  
+  	 	{markers_json = photo_marker_json;}
+  	 else
+  	 	{markers_json.features.push(photo_marker_json);}
+  	photosLayer.setGeoJSON(markers_json);  	
+ 	}
+ 
 }
