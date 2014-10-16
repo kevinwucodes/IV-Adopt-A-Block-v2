@@ -51,7 +51,8 @@ module.exports.users = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(result.statusCode, {
@@ -103,7 +104,8 @@ module.exports.usersWaypoints = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(result.statusCode, {
@@ -141,7 +143,8 @@ module.exports.usersResumed = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(result.statusCode, {
@@ -179,7 +182,8 @@ module.exports.usersPaused = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(result.statusCode, {
@@ -225,7 +229,8 @@ module.exports.usersCompleted = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(result.statusCode, {
@@ -346,7 +351,8 @@ module.exports.usersImages = function(req, res, next) {
         if (err) {
           res.send(500, {
             status: "error",
-            message: "something went horribly wrong"
+            message: "something went horribly wrong",
+            error: err
           });
         } else {
           res.send(result.statusCode, {
@@ -392,7 +398,8 @@ module.exports.usersValidatedBlocks = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(result.statusCode, {
@@ -429,7 +436,8 @@ module.exports.getCompletedRoutesWithRange = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(200, {
@@ -449,7 +457,8 @@ module.exports.getIncompleteToday = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(200, {
@@ -479,7 +488,8 @@ module.exports.getTripIdDetails = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(200, result);
@@ -506,7 +516,8 @@ module.exports.getImageIdDetails = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(200, result);
@@ -522,7 +533,8 @@ module.exports.getUsersImages = function(req, res, next) {
     if (err) {
       res.send(500, {
         status: "error",
-        message: "something went horribly wrong"
+        message: "something went horribly wrong",
+        error: err
       });
     } else {
       res.send(200, result);

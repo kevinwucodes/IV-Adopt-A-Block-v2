@@ -54,7 +54,7 @@ module.exports.saveUsers = function(payload, callback) {
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
-      callback("error", null);
+      callback(err, null);
     }
 
     // confirm that everything was truly saved by validating the doc object
@@ -78,7 +78,7 @@ module.exports.saveUsers = function(payload, callback) {
 
     } else {
       // uh oh, we couldn't save this in the db
-      callback("error", null);
+      callback(err, null);
     }
   });
 };
@@ -111,7 +111,7 @@ module.exports.saveUsersWaypoints = function(payload, callback) {
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
-      callback("error", null);
+      callback(err, null);
     }
 
     // can we find the tripID at all?
@@ -163,7 +163,7 @@ module.exports.saveUsersResumed = function(payload, callback) {
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
-      callback("error", null);
+      callback(err, null);
     }
 
     // can we find the tripID at all?
@@ -215,7 +215,7 @@ module.exports.saveUsersPaused = function(payload, callback) {
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
-      callback("error", null);
+      callback(err, null);
     }
 
     // can we find the tripID at all?
@@ -270,7 +270,7 @@ module.exports.saveUsersCompleted = function(payload, callback) {
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
-      callback("error", null);
+      callback(err, null);
     }
 
     // can we find the tripID at all?
@@ -333,7 +333,7 @@ module.exports.saveUsersImages = function(payload, callback) {
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
-      callback("error", null);
+      callback(err, null);
     }
 
     // can we find the tripID at all?
@@ -382,7 +382,7 @@ module.exports.saveUsersValidatedBlocks = function(payload, callback) {
   }, function(err, doc, lastErrorObject) {
 
     if (err) {
-      callback("error", null);
+      callback(err, null);
     }
 
     // can we find the tripID at all?
@@ -610,11 +610,15 @@ module.exports.getImageIdDetails = function(payload, callback) {
     }
   }], function(err, result) {
 
-    if (err) throw err; // test this?
+    if (err) {
+      callback(err, null);
+    }
 
     var mediafireFileKey = result[0].trips.images.mediafireFileKey;
     mediafire.getFileLink(mediafireFileKey, function(err, fileKey) {
-      if (err) throw err; // test this?
+      if (err) {
+        callback(err, null);
+      }
 
       // assign the URL to the imageURL key
       result[0].trips.images.imageURL = fileKey;
@@ -649,7 +653,9 @@ module.exports.getUsersImages = function(callback) {
     }
   }], function(err, result) {
 
-    if (err) throw err; // test this?
+    if (err) {
+      callback(err, null);
+    }
 
     result = _(result).map(function(trip) {
       return trip.trips;
