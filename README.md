@@ -1,5 +1,4 @@
 
-########################################################################### 
        Copyright 2014
 
        Daniele Fanì (daniele.fani@unicam.it)
@@ -21,7 +20,7 @@
 
        You should have received a copy of the GNU General Public License
        along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
-#######################################################################################
+
 
 
 ### IV Adopt-A-Block v2 ###
