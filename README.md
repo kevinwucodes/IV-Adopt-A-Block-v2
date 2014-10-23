@@ -1,6 +1,7 @@
 
 ########################################################################### 
 Copyright 2014
+
        Daniele Fanì (daniele.fani@unicam.it)
        Kevin Wu (kevin.wu@gmail.com)
        Thomas Quo (qwertypi@gmail.com)
