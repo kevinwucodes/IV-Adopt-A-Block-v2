@@ -1,4 +1,25 @@
 /*
+   Copyright 2014 Daniele Fanì (daniele.fani@unicam.it)
+
+   This file is part of IV-Adopt-A-Block-v2 software.
+   Its source code is available at https://github.com/ginxwar/IV-Adopt-A-Block-v2
+
+    IV-Adopt-A-Block-v2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    IV-Adopt-A-Block-v2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+/*
 [
   {
     tripID: #tripID#,
@@ -13,7 +34,7 @@ function db_get_all_images()
   loading();
  $.ajax(
  {
-  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/images",
+  url: MONGO_SERVER_URL+"/users/images",
   type: "GET",
   success: function(response)
   			 { db_get_all_images_callback(response); },
@@ -31,11 +52,10 @@ function db_get_image(imageId)
 {
  $.ajax(
  {
-  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/image/"+imageId,
+  url: MONGO_SERVER_URL+"/image/"+imageId,
   type: "GET",
   success: function(response)
-  			 {  alert("I should visualize the image "+imageId+". there is still some problem with the mediafire url... this is what I can get now:\n\n\n"+'db_get_image: '+JSON.stringify(response)); },
-  	//		 { db_get_image_callback(response); },
+  			 { db_get_image_callback(response); },
   error: function(response) 
   			{  alert('db_get_image: '+JSON.stringify(response)); }
  });
@@ -72,7 +92,7 @@ function db_get_all_trips(from, to)
   loading();
  $.ajax(
  {
-  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/completed/"+from+"/"+to,
+  url: MONGO_SERVER_URL+"/users/completed/"+from+"/"+to,
   type: "GET",
   success: function(response)
   			 { db_get_all_trips_callback(response); 
@@ -110,7 +130,7 @@ function db_get_all_current_trips()
    loading();
  $.ajax(
  {
-  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/incomplete/today",
+  url: MONGO_SERVER_URL+"/users/incomplete/today",
   success: function(response)
   			 {  stopLoading(); db_get_all_current_trips_callback(response); },
   error: function(response) 
@@ -144,7 +164,7 @@ function db_get_waypoints(tripID)
  $.ajax(
  {
   type: "GET",
-  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/waypoints/"+tripID,
+  url: MONGO_SERVER_URL+"/users/waypoints/"+tripID,
   success: function(response)
   			 { db_get_waypoints_callback(response); },
   error: function(response) 
@@ -177,7 +197,7 @@ function db_get_last_waypoint(tripID)
  $.ajax(
  {
   type: "GET",
-  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/waypoints/"+tripID,
+  url: MONGO_SERVER_URL+"/users/waypoints/"+tripID,
   success: function(response)
   			 { db_get_last_waypoint_callback(response); },
   error: function(response) 

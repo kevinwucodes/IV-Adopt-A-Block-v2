@@ -1,3 +1,25 @@
+/*
+   Copyright 2014 Daniele Fanì (daniele.fani@unicam.it)
+
+   This file is part of IV-Adopt-A-Block-v2 software.
+   Its source code is available at https://github.com/ginxwar/IV-Adopt-A-Block-v2
+
+    IV-Adopt-A-Block-v2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    IV-Adopt-A-Block-v2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
 // ====== VARIABLES ======
 //$.support.cors = true; // tell $.ajax to load cross-domain pages.  
 //$.mobile.allowCrossDomainPages = true;
@@ -13,6 +35,7 @@ var USERNAME;
 var USERSURNAME; 
 var USERTYPE;
 var HIGH_ACCURACY = 10; // min accuracy (in meters) to be considered high
+var MONGO_SERVER_URL = "https://iv-adopt-a-block-v2.jit.su" ;
  
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks
@@ -54,7 +77,7 @@ var VERTEX_STROKE_OPACITY = 0.8;
 var VERTEX_STROKE_WEIGHT = 4;
 var VERTEX_FILL_COLOR = '#FF9900';
 var VERTEX_FILL_OPACITY = 0.8;
-var VERTEX_RADIUS = "4";
+var VERTEX_RADIUS = 4;
 
 
 var COVERED_BLOCK_STROKE_COLOR = 'rgb(52,123,79)';

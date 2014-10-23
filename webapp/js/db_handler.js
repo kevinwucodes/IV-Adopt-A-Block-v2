@@ -1,3 +1,22 @@
+/*
+   Copyright 2014 Daniele Fanì (daniele.fani@unicam.it)
+
+   This file is part of IV-Adopt-A-Block-v2 software.
+   Its source code is available at https://github.com/ginxwar/IV-Adopt-A-Block-v2
+
+    IV-Adopt-A-Block-v2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    IV-Adopt-A-Block-v2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 function db_start_trip(name, surname, type) 
 {
@@ -10,7 +29,7 @@ function db_start_trip(name, surname, type)
  $.ajax(
   {
 	  type: "POST",
-	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users",
+	  url: MONGO_SERVER_URL+"/users",
 	  data: '{ "firstname":"'+name+'", "lastname":"'+surname+'", "tripCategory":"'+type+'"}',
 	  headers:{
 	           "Content-Type": "application/json",
@@ -45,7 +64,7 @@ function db_resume_trip(tripId)
  $.ajax(
   {
 	  type: "POST",
-	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/resumed",
+	  url: MONGO_SERVER_URL+"/users/resumed",
 	  data: '{ "tripID": "'+tripId+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -76,7 +95,7 @@ function db_complete_trip(tripId, bucket, comment, blocks)
  $.ajax(
   {
 	  type: "POST",
-	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/completed",
+	  url: MONGO_SERVER_URL+"/users/completed",
 	  data: '{ "tripID": "'+tripId+'", "buckets": '+bucket+',  "blocks": '+blocks+', "comments": "'+comment+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -110,7 +129,7 @@ function db_pause_trip(tripId)
  $.ajax(
   {
 	  type: "POST",
-	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/paused",
+	  url: MONGO_SERVER_URL+"/users/paused",
 	  data: '{ "tripID": "'+tripId+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -139,7 +158,7 @@ function db_post_waypoint(tripId, point)
  $.ajax(
   {
 	  type: "POST",
-	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/waypoints",
+	  url: MONGO_SERVER_URL+"/users/waypoints",
 	  data: '{"tripID": "'+tripId+'","point": {"lat": '+point.lat+',"long": '+point.lng+',"epoch": '+new Date().getTime()+' } }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -164,7 +183,7 @@ function db_post_image(formData)
  $.ajax(
   {
 	  type: "POST",
-	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/images",
+	  url: MONGO_SERVER_URL+"/users/images",
 	  data: formData,	          
       contentType: false,
       cache: false,
@@ -206,7 +225,7 @@ function db_cleaned_block(tripId, blockID)
  $.ajax(
   {
 	  type: "POST",
-	  url: "http://iv-aab-v2-132969.usw1.nitrousbox.com/users/validatedBlocks",
+	  url: MONGO_SERVER_URL+"/users/validatedBlocks",
 	  data: '{ "tripID": "'+tripId+'", "validatedBlocks" : "'+blockID+'" }',
 	  headers: {
 	           "Content-Type": "application/json",
@@ -455,7 +474,7 @@ function db_read_blocks()
 
 {"polygon": {"name":"Estero", "id":"111", "coordinates": [ {"lat":"34.41367656586549", "lng":"-119.86464858055116"}, {"lat":"34.413672140335194", "lng":"-119.86639469861984"}, {"lat":"34.413557076465665", "lng":"-119.86640006303787"}, {"lat":"34.413554863697414", "lng":"-119.86464589834212"}, {"lat":"34.413667714804696", "lng":"-119.86464589834212"}]}},
 
-{"polygon": {"name":"Abrego 5", "id":"112", "coordinates": [ {"lat":"34.4142430318082", "lng":"-119.8626261949539"}, {"lat":"34.414247457308264", "lng":"-119.86290514469145"}, {"lat":"34.41453068882588", "lng":"-119.86343085765837"}, {"lat":"34.41450856139809", "lng":"-119.86655294895172"}, {"lat":"34.41438907318698", "lng":"-119.86656367778778"}, {"lat":"34.41440677515495", "lng":"-119.86504554748534"}, {"lat":"34.41439792417144", "lng":"-119.86346304416656"}, {"lat":"34.41413239423026", "lng":"-119.86291050910948"}, {"lat":"34.41413239423026", "lng":"-119.86261546611786"}]}},
+{"polygon": {"name":"Abrego 5", "id":"112", "coordinates": [ {"lat":"34.4142430318082", "lng":"-119.8626261949539"}, {"lat":"34.414247457308264", "lng":"-119.86290514469145"}, {"lat":"34.41453068882588", "lng":"-119.86343085765837"}, {"lat":"34.41450856139809", "lng":"-119.86655294895172"}, {"lat":"34.41438907318698", "lng":"-119.86656367778778"}, {"lat":"34.41440677515495", "lng":"-119.86504554748534"}, {"lat":"34.41439792417144", "lng":"-119.86346304416656"}, {"lat":"34.41413239423026", "lng":"-119.86291050910948"}, {"lat":"34.41413239423026", "lng":"-119.86261546611786"}]}} ,
 
 
 
@@ -465,7 +484,7 @@ function db_read_blocks()
                                
 
      /*Villa Rosa (Italy)*/
-
+     
 {"polygon": {"name":"", "id":"", "coordinates": [ {"lat":"42.83829566853746", "lng":"13.916979432106018"}, {"lat":"42.838374340421346", "lng":"13.917424678802488"}, {"lat":"42.838453012205086", "lng":"13.917864561080933"}, {"lat":"42.838508082394085", "lng":"13.91812205314636"}, {"lat":"42.83837827401291", "lng":"13.918154239654541"}, {"lat":"42.83827993414865", "lng":"13.917601704597473"}, {"lat":"42.83818159412788", "lng":"13.917000889778137"}]}},
                                
                                {"polygon": {"name":"", "id":"", "coordinates": [ {"lat":"42.838677226239156", "lng":"13.916839957237244"}, {"lat":"42.838787366168454", "lng":"13.91744077205658"}, {"lat":"42.83890930657547", "lng":"13.918127417564392"}, {"lat":"42.838787366168454", "lng":"13.918164968490599"}, {"lat":"42.83873229622837", "lng":"13.917778730392456"}, {"lat":"42.838626089776696", "lng":"13.91719937324524"}, {"lat":"42.83856708611356", "lng":"13.916861414909363"}]}},
@@ -475,7 +494,6 @@ function db_read_blocks()
                                {"polygon": {"name":"", "id":"", "coordinates": [ {"lat":"42.83916105375122", "lng":"13.916705846786499"}, {"lat":"42.83875196406974", "lng":"13.916813135147095"}, {"lat":"42.838421543503586", "lng":"13.91690969467163"}, {"lat":"42.83817372691944", "lng":"13.916995525360107"}, {"lat":"42.83717064964024", "lng":"13.917312026023865"}, {"lat":"42.83719425164564", "lng":"13.917489051818848"}, {"lat":"42.83766628986035", "lng":"13.917328119277954"}, {"lat":"42.83831927011314", "lng":"13.917108178138733"}, {"lat":"42.83920038915478", "lng":"13.916834592819214"}]}},
                                
                                {"polygon": {"name":"", "id":"", "coordinates": [ {"lat":"42.83827993414865", "lng":"13.91695261001587"}, {"lat":"42.83823666455881", "lng":"13.916582465171814"}, {"lat":"42.838177660523804", "lng":"13.916501998901367"}, {"lat":"42.837623019840805", "lng":"13.916636109352112"}, {"lat":"42.83766235622347", "lng":"13.916775584220886"}, {"lat":"42.83812259004031", "lng":"13.916636109352112"}, {"lat":"42.83818552773173", "lng":"13.916995525360107"}]}}
-
  
   ]};
 

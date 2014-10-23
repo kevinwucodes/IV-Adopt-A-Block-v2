@@ -8,7 +8,7 @@
 * http://jquery.org/license
 *
 */
-  
+
 
 /* Globals */
 /* Font
@@ -145,8 +145,8 @@ label.ui-btn {
 .ui-btn-icon-top:after,
 .ui-btn-icon-bottom:after,
 .ui-btn-icon-notext:after {
-	background-color: #a6c082 /*{global-icon-color}*/;
-	background-color: rgba(166,192,130,0.4) /*{global-icon-disc}*/;
+	background-color: #343ACC /*{global-icon-color}*/;
+	background-color: rgba(52,58,204,0.4) /*{global-icon-disc}*/;
 	background-position: center center;
 	background-repeat: no-repeat;
 	-webkit-border-radius: 1em;
@@ -159,8 +159,8 @@ html .ui-alt-icon.ui-checkbox-off:after,
 html .ui-alt-icon.ui-radio-off:after,
 html .ui-alt-icon .ui-checkbox-off:after,
 html .ui-alt-icon .ui-radio-off:after {
-	background-color: #a6c082 /*{global-icon-color}*/;
-	background-color: rgba(166,192,130,0.4) /*{global-icon-disc}*/;
+	background-color: #343ACC /*{global-icon-color}*/;
+	background-color: rgba(52,58,204,0.4) /*{global-icon-disc}*/;
 }
 /* No disc */
 .ui-nodisc-icon.ui-btn:after,
@@ -212,7 +212,7 @@ html .ui-alt-icon .ui-radio-off:after {
 }
 /* Loader */
 .ui-icon-loading {
-	background: url("../media/loader.gif");
+	background: url("images/ajax-loader.gif");
 	background-size: 2.875em 2.875em;
 }
 /* Swatches */
@@ -224,8 +224,8 @@ html .ui-alt-icon .ui-radio-off:after {
 html .ui-bar-a .ui-bar-inherit,
 html .ui-body-a .ui-bar-inherit,
 html body .ui-group-theme-a .ui-bar-inherit {
-	background-color: #402b1c /*{a-bar-background-color}*/;
-	border-color: #35271c /*{a-bar-border}*/;
+	background-color: #B26E4E /*{a-bar-background-color}*/;
+	border-color: #FF8F5A /*{a-bar-border}*/;
 	color: #ffffff /*{a-bar-color}*/;
 	text-shadow: 2px /*{a-bar-shadow-x}*/ 2px /*{a-bar-shadow-y}*/ 3px /*{a-bar-shadow-radius}*/ #000000 /*{a-bar-shadow-color}*/;
 	font-weight: bold;
@@ -250,8 +250,8 @@ html .ui-bar-a .ui-body-inherit,
 html .ui-body-a .ui-body-inherit,
 html body .ui-group-theme-a .ui-body-inherit,
 html .ui-panel-page-container-a {
-	background-color: #a6c082 /*{a-body-background-color}*/;
-	border-color: #2c5e2e /*{a-body-border}*/;
+	background-color: #B3FF95 /*{a-body-background-color}*/;
+	border-color: #363BB2 /*{a-body-border}*/;
 	color: #000000 /*{a-body-color}*/;
 	text-shadow: 0 /*{a-body-shadow-x}*/ 0 /*{a-body-shadow-y}*/ 0 /*{a-body-shadow-radius}*/ #e8dfce /*{a-body-shadow-color}*/;
 }
@@ -264,7 +264,7 @@ html .ui-panel-page-container-a {
 html .ui-bar-a a,
 html .ui-body-a a,
 html body .ui-group-theme-a a {
-	color: #26ba46 /*{a-link-color}*/;
+	color: #FF3200 /*{a-link-color}*/;
 	font-weight: bold;
 }
 .ui-page-theme-a a:visited,
@@ -297,8 +297,8 @@ html .ui-bar-a .ui-btn:visited,
 html .ui-body-a .ui-btn:visited,
 html body .ui-group-theme-a .ui-btn:visited,
 html head + body .ui-btn.ui-btn-a:visited {
-	background-color: #402b1c /*{a-bup-background-color}*/;
-	border-color: #593c27 /*{a-bup-border}*/;
+	background-color: #B26E4E /*{a-bup-background-color}*/;
+	border-color: #FF8F5A /*{a-bup-border}*/;
 	color: #ffffff /*{a-bup-color}*/;
 	text-shadow: 2px /*{a-bup-shadow-x}*/ 2px /*{a-bup-shadow-y}*/ 3px /*{a-bup-shadow-radius}*/ #000000 /*{a-bup-shadow-color}*/;
 }
@@ -348,8 +348,8 @@ html .ui-bar-a .ui-slider-track .ui-btn-active,
 html .ui-body-a .ui-slider-track .ui-btn-active,
 html body .ui-group-theme-a .ui-slider-track .ui-btn-active,
 html body div.ui-slider-track.ui-body-a .ui-btn-active {
-	background-color: #956441 /*{a-active-background-color}*/;
-	border-color: #9bcf9c /*{a-active-border}*/;
+	background-color: #FF8F5A /*{a-active-background-color}*/;
+	border-color: #B26E4E /*{a-active-border}*/;
 	color: #ffffff /*{a-active-color}*/;
 	text-shadow: 2px /*{a-active-shadow-x}*/ 2px /*{a-active-shadow-y}*/ 3px /*{a-active-shadow-radius}*/ #000000 /*{a-active-shadow-color}*/;
 }
@@ -359,7 +359,7 @@ html .ui-bar-a .ui-radio-on:after,
 html .ui-body-a .ui-radio-on:after,
 html body .ui-group-theme-a .ui-radio-on:after,
 .ui-btn.ui-radio-on.ui-btn-a:after {
-	border-color: #956441 /*{a-active-background-color}*/;
+	border-color: #FF8F5A /*{a-active-background-color}*/;
 }
 /* Focus */
 .ui-page-theme-a .ui-btn:focus,
@@ -374,9 +374,9 @@ html .ui-body-a .ui-focus,
 html body .ui-group-theme-a .ui-focus,
 html head + body .ui-btn-a.ui-focus,
 html head + body .ui-body-a.ui-focus {
-	-webkit-box-shadow: 0 0 12px #956441 /*{a-active-background-color}*/;
-	-moz-box-shadow: 0 0 12px #956441 /*{a-active-background-color}*/;
-	box-shadow: 0 0 12px #956441 /*{a-active-background-color}*/;
+	-webkit-box-shadow: 0 0 12px #FF8F5A /*{a-active-background-color}*/;
+	-moz-box-shadow: 0 0 12px #FF8F5A /*{a-active-background-color}*/;
+	box-shadow: 0 0 12px #FF8F5A /*{a-active-background-color}*/;
 }
 /* B
 -----------------------------------------------------------------------------------------------------------*/

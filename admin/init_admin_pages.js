@@ -1,3 +1,25 @@
+/*
+   Copyright 2014 Daniele Fanì (daniele.fani@unicam.it)
+
+   This file is part of IV-Adopt-A-Block-v2 software.
+   Its source code is available at https://github.com/ginxwar/IV-Adopt-A-Block-v2
+
+    IV-Adopt-A-Block-v2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    IV-Adopt-A-Block-v2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Nome-Programma.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+
 /**
 
 even if I logically consider several different pages, there is just one page with the map
@@ -15,7 +37,7 @@ around the streets, fitting pacman paths
 
 */
 
-var REFRESH_TIME=10000;
+var REFRESH_TIME=15000;
 var VOLUNTEER_TRIP_COLOR = '#B00000';
 var VOLUNTEER_TRIP_WEIGHT = 5;
 var VOLUNTEER_MARKER_COLOR = '#E4287C';
@@ -126,7 +148,7 @@ function init_page_editor()
 function init_page_Map()
 {
  if (!map)
-   {initialize_map();}
+   {initialize_map();}   
  if (!timer_realtime_position)
      //update volunteers' position each 10sec
   {timer_realtime_position = setInterval(function(){init_page_Map();}, REFRESH_TIME);} 
@@ -200,7 +222,7 @@ function init_page_Map()
  currentCompletedBlocks=0;     
  db_get_all_current_trips();
  db_get_all_images();
- $( "#left-panel" ).panel( "close" ); 
+ $( "#left-panel" ).panel( "close" );  
 }
 
 
@@ -498,4 +520,12 @@ function db_get_all_images_callback(result)
   	photosLayer.setGeoJSON(markers_json);  	
  	}
  
+}
+
+
+function db_get_image_callback(result)
+{
+ alert('open '+result.trips.images.imageURL);
+ window.open(result.trips.images.imageURL);
+
 }
