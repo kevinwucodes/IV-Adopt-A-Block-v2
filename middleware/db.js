@@ -277,8 +277,9 @@ module.exports.saveUsersImages = function(payload, callback) {
         type: payload.type,
         size: payload.size,
         comment: payload.comment,
+        url: payload.url,
         point: payload.point,
-        mediafireFileKey: payload.fileKey,
+        // mediafireFileKey: payload.fileKey,
         received: payload.received
       }
     }
@@ -547,7 +548,8 @@ module.exports.getImageIdDetails = function(payload, callback) {
       "trips.images.size": 1,
       "trips.images.comment": 1,
       "trips.images.point": 1,
-      "trips.images.mediafireFileKey": 1,
+      // "trips.images.mediafireFileKey": 1,
+      "trips.images.url": 1,
       "trips.images.received": 1
     }
   }], function(err, result) {
@@ -556,17 +558,17 @@ module.exports.getImageIdDetails = function(payload, callback) {
       callback(err, null);
     }
 
-    var mediafireFileKey = result[0].trips.images.mediafireFileKey;
-    mediafire.getFileLink(mediafireFileKey, function(err, fileKey) {
-      if (err) {
-        callback(err, null);
-      }
+    // var mediafireFileKey = result[0].trips.images.mediafireFileKey;
+    // mediafire.getFileLink(mediafireFileKey, function(err, fileKey) {
+    //   if (err) {
+    //     callback(err, null);
+    //   }
 
-      // assign the URL to the imageURL key
-      result[0].trips.images.imageURL = fileKey;
+    //   // assign the URL to the imageURL key
+    //   result[0].trips.images.imageURL = fileKey;
 
       callback(err, result[0]);      
-    }); //mediafire.getFileLink
+    // }); //mediafire.getFileLink
   });
 }
 

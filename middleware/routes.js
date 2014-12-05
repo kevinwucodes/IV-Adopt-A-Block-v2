@@ -277,7 +277,9 @@ module.exports.usersImages = function(req, res, next) {
     point: point,
 
     received: new Date().getTime(),
-    imageID: uuid.v4()
+    imageID: uuid.v4(),
+
+    url: req.body.url
   }
 
   // checking require inputs, we check this after due to JSON parsing issues
@@ -339,12 +341,12 @@ module.exports.usersImages = function(req, res, next) {
     // upload to mediafire
     ///// 
 
-    mediafire.upload(newBaseName, function(err, details) {
-      if (err) throw err;
+    // mediafire.upload(newBaseName, function(err, details) {
+    //   if (err) throw err;
 
-      console.log("mediafire upload details: ", details);
+    //   console.log("mediafire upload details: ", details);
 
-      payload.fileKey = details.fileKey;
+    //   payload.fileKey = details.fileKey;
 
       // now save the details (filekey) to the db
       db.saveUsersImages(payload, function(err, result) {
@@ -361,7 +363,7 @@ module.exports.usersImages = function(req, res, next) {
           });
         }
       }); //db.saveUsersImages
-    }); //mediafire.upload
+    // }); //mediafire.upload
   }); //fs.rename
 
 

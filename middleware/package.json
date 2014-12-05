@@ -1,6 +1,6 @@
 {
   "name": "iv-aab-middleware",
-  "version": "0.0.0-25",
+  "version": "0.0.0-26",
   "description": "REST layer for iv-aab",
   "main": "index.js",
   "scripts": {
