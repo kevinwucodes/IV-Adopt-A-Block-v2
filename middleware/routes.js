@@ -323,12 +323,15 @@ module.exports.usersImages = function(req, res, next) {
     var emailText = "comment: " + payload.comment + "\n";
     emailText += "Link to location: \n\n";
     emailText += "http://maps.google.com/maps?&z=10&q=" + point.lat + "+" + point.long + "&ll=" + point.lat + "+" + point.long;
+    emailText += "\n\n";
+    emailText += payload.url;
+
 
     // send email to administrator
     mailer.sendmail({
       subject: "IV AAB system-mailer: hazard image",
-      text: emailText,
-      attachment: newBaseName
+      text: emailText
+      // attachment: newBaseName
     }, function(err, result) {
       if (err) throw err;
       console.log("sendmail err ", err);
