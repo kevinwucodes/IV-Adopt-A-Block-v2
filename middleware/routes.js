@@ -255,7 +255,7 @@ module.exports.usersImages = function(req, res, next) {
   {
     tripID: "a23e5bed-658c-4d0d-8622-8ea8a6e9c8ae",
     imageType: "JPG",
-    blob: <multipart representation>,
+                              blob: <multipart representation>,   // NO LONGER NEEDED DUE TO REFACTOR
     type: "hazard",
     comment: "bring something to clean up glass please",
     point: {
@@ -287,7 +287,7 @@ module.exports.usersImages = function(req, res, next) {
     payload.imageType === undefined || payload.imageType.length === 0 ||
 
     // blob requirements need to be here too
-    req.files.blob.path === undefined || req.files.blob.path === 0 ||
+    // req.files.blob.path === undefined || req.files.blob.path === 0 ||
 
     payload.type === undefined || payload.type.length === 0 ||
     payload.point.lat === undefined || payload.point.lat.length === 0 ||
@@ -300,17 +300,17 @@ module.exports.usersImages = function(req, res, next) {
   }
 
   // get the byte size of the image
-  payload.size = req.files.blob.size;
+  // payload.size = req.files.blob.size;
 
   // current full path of the image, including basename
-  var currentPath = path.dirname(req.files.blob.path);
+  // var currentPath = path.dirname(req.files.blob.path);
 
   // new full path of the image, using the UUID as name
-  var newBaseName = currentPath + "/" + payload.imageID;
+  // var newBaseName = currentPath + "/" + payload.imageID;
 
   // renaming the file from current to new full path name
-  fs.rename(req.files.blob.path, newBaseName, function(err) {
-    if (err) throw err;
+  // fs.rename(req.files.blob.path, newBaseName, function(err) {
+    // if (err) throw err;
 
 
     // TODO: delete the /tmp/ file
@@ -364,7 +364,7 @@ module.exports.usersImages = function(req, res, next) {
         }
       }); //db.saveUsersImages
     // }); //mediafire.upload
-  }); //fs.rename
+  // }); //fs.rename
 
 
   // res.send('done');
