@@ -60,164 +60,182 @@
 
 
 <body>
-
-<!-- header -->
-  <div data-role="header" data-position="fixed" data-fullscreen="false"> 
-       <h1 id="sitename">IV AaB Volunteer Page</h1>
-       <a href="#" id ="gps-signal" style="color:red;" class="ui-btn-left">no gps</a>       
-  </div><!-- /header -->
-
- 
-<!-- ## PAGE1 ## -->
-<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="main-page"  style="backgrond-color:grey;">   
- <div class="ui-content" role="main">
-
-<!-- PHOTO POPUP -->
-<div data-role="popup"  id="popupPhoto" data-theme="a"
-    class="ui-corner-all"
-    style="width:250px; height:100%; padding:20px; box-shadow: 0px 0px 100px #000;" >
-    <div id="show-picture" class="photos">
-        <img id="hazardPhoto" height="200px"/> <!-- image preview -->
-        <div class="uploading"> <!-- progress bar -->
-	        <span class="progress"><span id="progressElement"></span></span>
-        </div>
-    </div>
-</div>
-
-
-<!-- SIGN IN -->
-	<div data-role="popup" style="box-shadow: 0px 0px 100px #000;"   id="popupSignin" data-theme="a" class="ui-corner-all" 
-	     style="width:250px; height:100%;" >
-	     <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left" onclick="$('#popupSignin').popup('close');">Close</a>
-        <div style="padding:20px;"> 
-            <label for="text-basic">Name:</label>
-            <input type="text" name="text-basic" id="volname" value="">
-
-            <label for="text-basic">Surname:</label>
-            <input type="text" name="text-basic" id="volsurname" value="">
-
-			<label for="select-choice-1" class="select">type of volunteer:</label>
-			<select name="select-choice-1" id="voltype">
-                <option value="individual">Individual</option>
-                <option value="staff">Staff</option>
-                <option value="csw">CSW</option>
-                <option value="other">Other</option>
-			</select>
-		    
-		    <input type="button" data-icon="check" value="START" 
-		           onclick="stop_tracking(); // stop old watch used to center the map
-                            db_start_trip($('#volname').val(), 
-                                          $('#volsurname').val(), 
-                                          $('#voltype').val()
-                                         );">
-        </div>
-   </div>   
-
-
-
-
-   <!-- map -->
-       <div id="map"></div>
-   </div>
-
-</div><!-- /page1 -->        
-
-
-
-
-<!-- ## PAGE2  bucket number## -->
-<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="bucket-page"  style="backgrond-color:grey;">
-    <div class="ui-content" role="main" style="padding:60px;">
-        <label for="text-basic">How many buckets:</label>
-        <input type="text" id="buckets" name="text-basic" id="text-basic" value="">
-        <label for="text-basic">comment:</label>
-        <input type="text" id="comment" name="text-basic" id="text-basic" value="">
-                
-        <a href="#summary-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a" data-transition="slide"
-                    onclick="loadSummary(TRIP_ID, $('#buckets').val(), $('#comment').val(), completed_blocks.length);">Ok</a>
-    </div>
-</div>
-
-
-
-
-<!-- ## PAGE3  summary ## -->
-<div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="summary-page"  style="backgrond-color:grey;">
-    <div class="ui-content" role="main" style="padding:40px; color:black;">
-        <div id="summary" style="margin-left:auto; margin-right:auto; display:block; text-align:center;">
-            <div>
-                COMPLIMENTS!<br>in your trip <div id="summary_tripid"></div>
-                you have filled <div id="summary_bucket"></div> buckets, cleaning
-                <div id="summary_block"></div> blocks <br> <br>
-                <div id="summary_comment"></div>
+    
+    <!-- header -->
+    <div data-role="header" data-position="fixed" data-fullscreen="false">
+        <h1 id="sitename">IV AaB Volunteer Page</h1>
+        <a href="#" id ="gps-signal" style="color:red;" class="ui-btn-left">no gps</a>
+    </div><!-- /header -->
+    
+    
+    <!-- ## PAGE1 ## -->
+    <div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="main-page"  style="backgrond-color:grey;">
+        <div class="ui-content" role="main">
+            
+            <!-- PHOTO POPUP -->
+            <div data-role="popup"  id="popupPhoto" data-theme="a"
+                class="ui-corner-all"
+                style="width:250px; height:100%; padding:20px; box-shadow: 0px 0px 100px #000;" >
+                <div id="show-picture" class="photos">
+                    <img id="hazardPhoto" height="200px"/> <!-- image preview -->
+                    <div class="uploading"> <!-- progress bar -->
+                        <span class="progress"><span id="progressElement"></span></span>
+                    </div>
+                </div>
             </div>
+            
+            <!-- PHOTO COMMENT POPUP -->
+            <div data-role="popup"  id="popupCommentPhoto" data-theme="a"
+                class="ui-corner-all ui-content" data-dismissible="false"
+                style="width:250px; height:100%; padding:20px; box-shadow: 0px 0px 100px #000;" >
+                <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left"
+                    onclick="$('#popupCommentPhoto').popup('close');
+                    $('#popupCommentPhoto').popup('close');">Close</a>
+                <label for="text-3">Describe the trash</label>
+                <input type="text" data-clear-btn="true"
+                    id="photoComment" value="" placeholder="or leave it blank">
+                    <input type="button" data-icon="check" value="take the photo"
+                        onclick="$('#popupCommentPhoto').popup('close');
+                        $('#take-picture').click();">
+                        </div>
+            
+            
+            <!-- SIGN IN -->
+            <div data-role="popup" style="box-shadow: 0px 0px 100px #000;"   id="popupSignin" data-theme="a" class="ui-corner-all"
+                style="width:250px; height:100%;" >
+                <a class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left" onclick="$('#popupSignin').popup('close');">Close</a>
+                <div style="padding:20px;">
+                    <form>
+                        <label for="text-basic">Name:</label>
+                        <input type="text" name="text-basic" id="volname" value="">
+                            
+                            <label for="text-basic">Surname:</label>
+                            <input type="text" name="text-basic" id="volsurname" value="">
+                                
+                                <label for="select-choice-1" class="select">type of volunteer:</label>
+                                <select name="select-choice-1" id="voltype">
+                                    <option value="individual">Individual</option>
+                                    <option value="staff">Staff</option>
+                                    <option value="csw">CSW</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                
+                                <input type="button" data-icon="check" value="START"
+                                    onclick="db_start_trip($('#volname').val(),
+                                    $('#volsurname').val(),
+                                    $('#voltype').val()
+			                                 );">
+                                    </form>
+                </div>
+            </div>
+            
+            
+            
+            
+            <!-- map -->
+            <div id='map'></div>
         </div>
-        <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a"
-            onclick="db_complete_trip(TRIP_ID, $('#buckets').val(), $('#comment').val(), completed_blocks.length);"
-            data-transition="slide">Save</a>
+        
+    </div><!-- /page1 -->
+    
+    
+    
+    
+    <!-- ## PAGE2  bucket number## -->
+    <div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="bucket-page"  style="backgrond-color:grey;">
+        <div class="ui-content" role="main" style="padding:60px;">
+            <label for="text-basic">How many buckets:</label>
+            <input type="text" id="buckets" name="text-basic" id="text-basic" value="">
+                <label for="text-basic">comment:</label>
+                <input type="text" id="comment" name="text-basic" id="text-basic" value="">
+                    
+                    <a href="#summary-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a" data-transition="slide"
+                        onclick="loadSummary(TRIP_ID, $('#buckets').val(), $('#comment').val(), completed_blocks.length);">Ok</a>
+                    </div>
     </div>
-</div>
-
-
-<!-- ## FOOTER ## -->
-<div data-role="footer" data-position="fixed" data-fullscreen="false">
-		<div data-role="navbar">
+    
+    
+    
+    <!-- ## PAGE3  summary ## -->
+    <div data-role="page" class="ui-body" data-title="IV AaB Volunteer" id="summary-page"  style="backgrond-color:grey;">
+        <div class="ui-content" role="main" style="padding:40px; color:black;">
+            <div id="summary" style="margin-left:auto; margin-right:auto; display:block; text-align:center;">
+                <div>
+                    COMPLIMENTS!<br>in your trip <div id="summary_tripid"></div>
+                    you have filled <div id="summary_bucket"></div> buckets,
+                    picking up about <div id="summary_weight"></div> lbs of trash,
+                    cleaning
+                    <div id="summary_block"></div> blocks <br> <br>
+                    <div id="summary_comment"></div>
+                </div>
+            </div>
+            <a href="#main-page" class="ui-btn ui-corner-all ui-shadow ui-btn-a"
+                onclick="db_complete_trip(TRIP_ID, $('#buckets').val(), $('#comment').val(), completed_blocks.length);"
+                data-transition="slide">Save</a>
+        </div>
+    </div>
+    
+    
+    <!-- ## FOOTER ## -->
+    <div data-role="footer" data-position="fixed" data-fullscreen="false">
+        <div data-role="navbar">
             <ul>
                 <li>
-                   <a id="menu_start"
-                      href="#popupSignin" data-icon="navigation" 
-                      data-rel="popup" data-position-to="window" 
-                      data-transition="pop">start</a>
+                    <a id="menu_start"
+                        href="#popupSignin" data-icon="navigation"
+                        data-rel="popup" data-position-to="window"
+                        data-transition="pop">start</a>
                 </li>
                 <li>
-                  <a id="menu_camera"
-                     href="#" data-icon="camera" 
-                     data-rel="popup" data-position-to="window" 
-                     data-transition="pop"
-                     onclick="$('#take-picture').click();">camera</a>
+                    <a id="menu_camera"
+                        href="#" data-icon="camera"
+                        data-rel="popup" data-position-to="window"
+                        data-transition="pop"
+                        class="ui-disabled"
+                        onclick="$('#photoComment').val('');
+                        $('#popupCommentPhoto').popup('open');">camera</a>
                 </li>
                 <li>
-                     <a id="menu_stop" 
-                        href="#bucket-page" data-icon="check" disabled="" data-transition="slide" 
-                        onclick=" $('#menu_resume').addClass('ui-disabled'); 
-                                  $('#menu_pause').addClass('ui-disabled');
-                                  $('#menu_stop').addClass('ui-disabled'); 
-                                  $('#menu_camera').addClass('ui-disabled');"
+                    <a id="menu_stop"
+                        href="#bucket-page" data-icon="check"
+                        data-transition="slide"
+                        onclick=" $('#menu_resume').addClass('ui-disabled');
+                        $('#menu_pause').addClass('ui-disabled');
+                        $('#menu_stop').addClass('ui-disabled'); 
+                        $('#menu_camera').addClass('ui-disabled');"
                         class="ui-btn ui-disabled">stop</a>
                 </li>
             </ul>
         </div><!-- /navbar -->
-	</div><!-- /footer -->
-	
-	
-	
-	<!-- hidden div with the real input button for the camera -->
-	<div style="visibility:hidden;">
-           <!--<input type="button" id="take-picture" value="camera" onclick=""/> -->
-           <input id="take-picture" type="file" accept="image/*;capture=camera" capture="camera" />
-    </div>
+    </div><!-- /footer -->
+    
+    
+    
+    <!-- hidden div with the real input button for the camera -->
+    <form id="form-take-picture" enctype="multipart/form-data" style="visibility:hidden;">
+        <input id="take-picture" type="file" accept="image/*;capture=camera" capture="camera" />
+    </form>
     
     <!-- black panel -->
     <div id ="blackPanel" style="position:fixed; left:0px; top:0px; width:100%; height:2000px; background-color:rgba(3, 3, 3, 0.7);  z-index:-1;">
- </div>
-
-
-
-
-<script>	 
-       $( '#main-page' ).on( "pageshow", function() 
-         {
-	      $( "[data-role='header'], [data-role='footer']" ).toolbar({ theme: "a" });
-	       // if already initialized, return
-           if (!map) 
-            {
-             app.initialize();
-             initialize_map();   
-             init_page_PacMan(); 
-            }
-         });	 
-               	           
- </script>
-
+    </div>
+    
+    
+    
+    
+    <script>	 
+        $( '#main-page' ).on( "pageshow", function() 
+                             {
+                             // if already initialized, return
+                             if (!map) 
+                             {
+                             $( "[data-role='header'], [data-role='footer']" ).toolbar({ theme: "a" });
+                             initialize_map();   
+                             init_page_PacMan(); 
+                             }
+                             });	 
+                             
+        </script>
+    
 </body>
 </html>

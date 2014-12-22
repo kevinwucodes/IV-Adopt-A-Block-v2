@@ -46,8 +46,10 @@ function db_get_all_images()
 
 
 
-
-
+ 
+/* right now is not used... I alrady have the url
+   it was used with mediafire
+*/
 function db_get_image(imageId)
 {
  $.ajax(

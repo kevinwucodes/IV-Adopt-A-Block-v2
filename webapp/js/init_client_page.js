@@ -96,7 +96,8 @@ function db_start_trip_callback (name, surname, type)
   $('#menu_pause').attr('data-icon', "minus");
   $('#menu_pause').addClass('ui-icon-minus')
   $('#menu_pause').removeClass('ui-icon-navigation');
-    
+
+  $('#menu_camera').removeClass('ui-disabled');   // enable photo taking    
   $('#menu_stop').removeClass('ui-disabled');   // enable stop
 }
 
@@ -106,6 +107,7 @@ function db_pause_trip_callback ()
 {
   stop_tracking(); // pause tracking my position
  
+  $('#menu_camera').addClass('ui-disabled');   // disable photo taking   
   $('#menu_pause').attr("id","menu_resume");
   $('#menu_resume').attr("data-icon","recycle");
   $('#menu_resume').addClass('ui-icon-recycle')
@@ -121,6 +123,7 @@ function db_resume_trip_callback ()
  // resume tracking my position
   start_tracking();
  
+  $('#menu_camera').removeClass('ui-disabled');   // enable photo taking 
   $('#menu_resume').attr("id","menu_pause");
   $('#menu_pause').attr("data-icon","minus");
   $('#menu_pause').addClass('ui-icon-minus');
@@ -141,7 +144,7 @@ function db_complete_trip_callback ()
  $('#menu_resume').attr("id","menu_start");
  $('#menu_pause').attr("id","menu_start");
 
- $('#menu_camera').removeClass('ui-disabled');
+ $('#menu_camera').addClass('ui-disabled');
  
  $('#menu_start').removeClass('ui-icon-recycle');  
  $('#menu_start').removeClass('ui-icon-minus');  
@@ -179,6 +182,7 @@ function loadSummary(tripId, bucket, comment, blocks)
  stop_tracking(); /* stop tracking my position */
  $('#summary_tripid').text(tripId);
  $('#summary_bucket').text(bucket);
+ $('#summary_weight').text(bucket*7.92);
  $('#summary_block').text(blocks);  
  $('#summary_comment').text(comment);   
 }
@@ -229,11 +233,14 @@ function handle_photo(event)
 	     
           // prepare the formData to POST to the server
 	      var formData = new FormData();
-		  formData.append("tripID", TRIP_ID);                                        
-          formData.append("point", '{"lat": '+photo_lat+', "long": '+photo_lng+', "epoch": '+new Date().getTime()+'}');
+		  formData.append("tripID", TRIP_ID); 
+		  //formData.append("point", '{"lat":"'+photo_lat+'", "long":"'+photo_lng+'", "epoch":"'+new Date().getTime()+'"}'); 		  
+		  formData.append("lat", photo_lat); 
+		  formData.append("lng", photo_lng); 
+		  formData.append("epoch", ''+new Date().getTime()); 		  		  		                                         
 		  formData.append("imageType", "JPG");
 		  formData.append("type", "hazard");
-		  formData.append("comment", "this is a comment");			        			        
+		  formData.append("comment",  $('#photoComment').val());
 		  formData.append("blob", file);				        
 		  db_post_image(formData);
 	     

@@ -196,19 +196,30 @@ function init_page_Map()
     	  {
     	   //use a custom icon if defined, otherwise use the default MapBox marker
 	       var marker = e.layer;
-           if (!marker.feature.properties.icon) {return;}
+	       feature = marker.feature;
+           if (!feature.properties.icon) {/*use default icon*/}
            else
            		{
-	           	 feature = marker.feature;
 	           	 marker.setIcon(L.icon(feature.properties.icon));	           		
            		}
+           // Create custom popup content
+           var popupContent =  '<p>'+feature.properties.description+'</p>'+
+            				   '<a target="_blank" class="popup" '+
+                               '   href="' + feature.properties.imageUrl + '">' +
+                                   '<img width="200px" src="' + feature.properties.imageUrl + '" />' +
+                               '</a>'+
+                               '<p>'+feature.properties.date+'</p>';
+
+           marker.bindPopup(popupContent,{closeButton: false,});
            });
+      /*  used when I used to ask the url to mediafire     
       photosLayer.on('click',
              function(e)
              	{
 	             var marker = e.layer;
 	             db_get_image(marker.feature.properties.id);
              	});
+      */
       }
   photosLayer.setGeoJSON(
   				 {"type": "FeatureCollection",
@@ -284,11 +295,15 @@ function db_get_all_trips_callback (result)
  	   {
  	     trip = trips_of_volunteer[k];
 	 	 tbody+="<tr>";
-	     tbody+="  <td>"+result.data[j].firstname+" "+result.data[j].lastname+"</td>"; 	
-		 tbody+="  <td>"+new Date(trip.created).customFormat( "#MMM#/#DD#/#YYYY# <br> #hh#:#mm#" )+"</td>";
-		 tbody+="  <td>"+new Date(trip.completed).customFormat( "#MMM#/#DD#/#YYYY# <br> #hh#:#mm#" )+"</td>";
+	     tbody+="  <td>"+result.data[j].firstname+" "+result.data[j].lastname+"</td>"; 
+		 tbody+="  <td>"+trip.blocks+"</td>";	
+		 var time = (new Date(trip.completed).valueOf()- new Date(trip.created).valueOf())/1000;	
+		 var hour = Math.floor(time/3600);
+		 var minute =  Math.floor((time - (hour*3600))/60);
+		 tbody+="  <td>"+hour+":"+minute+"</td>";
 		 tbody+="  <td>"+trip.buckets+"</td>";
-		 tbody+="  <td>"+trip.blocks+"</td>";
+		 tbody+="  <td>"+new Date(trip.created).customFormat( "#MMM#/#DD#/#YYYY# <br> #hh#:#mm#" )+"</td>";
+		 tbody+="  <td>"+trip.completed+"</td>";		 
 		 // last column has a button to show the trip on the map_page
 		 tbody+="  <td> "+
 		        "      <a href=\"#\" onclick=\"db_get_waypoints('"+trip.tripID+"');\"> "+
@@ -300,7 +315,25 @@ function db_get_all_trips_callback (result)
  	} 	
     
  $('#table_daily_tbody').html(tbody);
- $('#table_daily').DataTable();
+ 
+ 
+ if ( $.fn.dataTable.isDataTable('#table_daily') ) 
+   {
+	// table already initializated
+	$('#table_daily').dataTable();
+   }
+else 
+   { 
+	 // table initialization
+    dt = $('#table_daily').dataTable( {
+	 								"columnDefs": [
+							            {
+							                "targets": [ 5 ],
+							                "visible": false,
+							                "searchable": false
+							            }]});
+    dt.fnSort( [ [5,'desc']]);
+   }
  if (!tableTools)
    {
 	  tableTools = new $.fn.dataTable.TableTools( $('#table_daily'), 
@@ -483,7 +516,7 @@ function db_get_waypoints_callback (result)
 	 map.invalidateSize(); 
 }
 
-
+  
 function db_get_all_images_callback(result)
 {
  if (!result || result.length==0) 
@@ -493,7 +526,7 @@ function db_get_all_images_callback(result)
 	 trip = result[i];
 	 image = trip.images;
      var time = new Date(image.received).customFormat( "#MMM#/#DD#/#YY# - #hh#:#mm#" );
-	 var photo_marker_json  = 
+	 var photo_marker_json  =  
 		  	{
 			 type: "Feature",
 			 geometry: 
@@ -504,7 +537,8 @@ function db_get_all_images_callback(result)
 			 properties: 
 			  { 
 			   id:image.imageID,
-			   title: time,
+			   imageUrl: image.url,
+			   date: time,
 			   description:image.comment,
 			   icon : 
 			   	{"iconUrl" : "./images/trash.png",
@@ -512,6 +546,7 @@ function db_get_all_images_callback(result)
 			   	}
 			  }
 			};
+     //markers_json.bindPopup(getHTML_block_popup()); 
   	 var markers_json = photosLayer.getGeoJSON();
   	 if (markers_json.features === undefined)  
   	 	{markers_json = photo_marker_json;}

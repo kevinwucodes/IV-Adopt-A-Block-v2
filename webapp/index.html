@@ -99,6 +99,21 @@
         </div>
    </div>
    
+<!-- PHOTO COMMENT POPUP -->
+	<div data-role="popup"  id="popupCommentPhoto" data-theme="a"
+	     class="ui-corner-all ui-content" data-dismissible="false"
+	     style="width:250px; height:100%; padding:20px; box-shadow: 0px 0px 100px #000;" >
+	   <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-left" 
+	      onclick="$('#popupCommentPhoto').popup('close');
+		           $('#popupCommentPhoto').popup('close');">Close</a>	 
+       <label for="text-3">Describe the trash</label>
+       <input type="text" data-clear-btn="true" 
+              id="photoComment" value="" placeholder="or leave it blank">
+       <input type="button" data-icon="check" value="take the photo" 
+			   onclick="$('#popupCommentPhoto').popup('close');
+			            $('#take-picture').click();">
+   </div>   
+   
    
 <!-- SIGN IN -->
 	<div data-role="popup" style="box-shadow: 0px 0px 100px #000;"   id="popupSignin" data-theme="a" class="ui-corner-all" 
@@ -162,7 +177,9 @@
      <div id="summary" style="margin-left:auto; margin-right:auto; display:block; text-align:center;">
        <div>
             COMPLIMENTS!<br>in your trip <div id="summary_tripid"></div>
-            you have filled <div id="summary_bucket"></div> buckets, cleaning
+            you have filled <div id="summary_bucket"></div> buckets, 
+            picking up about <div id="summary_weight"></div> lbs of trash,
+            cleaning
             <div id="summary_block"></div> blocks <br> <br>
             <div id="summary_comment"></div>
        </div>                           
@@ -189,11 +206,14 @@
                      href="#" data-icon="camera" 
                      data-rel="popup" data-position-to="window" 
                      data-transition="pop"
-                     onclick="$('#take-picture').click();">camera</a>
+	                 class="ui-disabled"
+                     onclick="$('#photoComment').val('');
+                              $('#popupCommentPhoto').popup('open');">camera</a>
                 </li>
                 <li>
                      <a id="menu_stop" 
-                        href="#bucket-page" data-icon="check" disabled="" data-transition="slide" 
+                        href="#bucket-page" data-icon="check" 
+	                    data-transition="slide" 
                         onclick=" $('#menu_resume').addClass('ui-disabled'); 
                                   $('#menu_pause').addClass('ui-disabled');
                                   $('#menu_stop').addClass('ui-disabled'); 
@@ -206,12 +226,12 @@
 	
 	
 	
-	!-- hidden div with the real input button for the camera -->
+	<!-- hidden div with the real input button for the camera -->
 	  <form id="form-take-picture" enctype="multipart/form-data" style="visibility:hidden;">
            <input id="take-picture" type="file" accept="image/*;capture=camera" capture="camera" />
       </form>
     
-    !-- black panel -->
+    <!-- black panel -->
     <div id ="blackPanel" style="position:fixed; left:0px; top:0px; width:100%; height:2000px; background-color:rgba(3, 3, 3, 0.7);  z-index:-1;">
  </div>
 

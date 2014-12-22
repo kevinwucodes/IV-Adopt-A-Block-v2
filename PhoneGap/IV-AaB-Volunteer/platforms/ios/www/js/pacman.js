@@ -72,7 +72,7 @@ function createPacman(point)
                            function (err) { console.log("playAudio():Audio Error: " + err); }
                           );
     audio_chomp.play(/*{ playAudioWhenScreenIsLocked : true }*/);
-    audio_chomp.setVolume(1.0);
+    audio_chomp.setVolume(0.5);
 }
 
 function mediaSuccess()
