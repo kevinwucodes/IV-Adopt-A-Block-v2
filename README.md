@@ -3,7 +3,7 @@
 
        Daniele Fanì (daniele.fani@unicam.it)
        Kevin Wu (kevin.wu@gmail.com)
-       Thomas Quo (qwertypi@gmail.com)
+       Thomas Kuo (qwertypi@gmail.com)
 
        This file is part of IV-Adopt-A-Block-v2 software.
        Its source code is available at https://github.com/ginxwar/IV-Adopt-A-Block-v2
