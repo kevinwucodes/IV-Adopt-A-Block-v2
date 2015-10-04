@@ -5,7 +5,7 @@ var crypto = require('crypto');
 var sha1 = crypto.createHash('sha1');
 
 // config http
-module.exports.NODEPORT = process.env.NITROUS_PORT || process.env.JITSU_PORT || process.env.OPENSHIFT_PORT || 3000;
+module.exports.NODEPORT = process.env.NITROUS_PORT || process.env.JITSU_PORT || process.env.OPENSHIFT_PORT || process.env.PORT || 3000;
 module.exports.SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 module.exports.SSL_KEY_PATH = process.env.SSL_KEY_PATH;
 
