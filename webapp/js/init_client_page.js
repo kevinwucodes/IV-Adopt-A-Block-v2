@@ -29,7 +29,7 @@ function init_page_PacMan()
     (//onsuccess
      function (pos)
       {
-       set_gps_signal_icon(pos.coords.accuracy);
+       set_accuracy(pos.coords.accuracy);
        map.setView(L.latLng(pos.coords.latitude,pos.coords.longitude), 18);
       },
        //onerror

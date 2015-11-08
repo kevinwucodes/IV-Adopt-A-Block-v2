@@ -136,10 +136,14 @@
 				</select>
 			    
 			    <input type="button" data-icon="check" value="START" 
-			           onclick="db_start_trip($('#volname').val(), 
-			                                  $('#volsurname').val(), 
-			                                  $('#voltype').val()
-			                                 );">
+			           onclick=" if (GPS_ACCURACY<1)
+			           					{alert(GPS_NOT_AVAILABLE);}
+			           			 else 
+			           			 		{db_start_trip($('#volname').val(), 
+			                                         $('#volsurname').val(), 
+			                                         $('#voltype').val()
+			                                         )
+			                            };"> 
 	          </form>
         </div>
    </div>   

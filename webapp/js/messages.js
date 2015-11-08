@@ -26,7 +26,8 @@ var NO_TRIP_FOUND = "Trip not yet started";
 var WRONG_FILE = "wrong file type";
 
 /* geolocation */
-var GPS_NOT_ALLOWED = "turn on your GPS service!";
-var GPS_NOT_AVAILABLE= "position not available right now, I try again";
+var GPS_NOT_ALLOWED = "turn on your GPS service, and be sure this permission has perms to use it";
+var GPS_POSITION_NOT_AVAILABLE= "position not available right now, I try again";
+var GPS_NOT_AVAILABLE="low gps accuracy. go outside and wait for the gps icon to become green"
 var GPS_TIMEOUT = "geolocalization timeout";
 var GPS_UNK_ERR = "geolocalization UNKNOWN_ERROR";

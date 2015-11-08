@@ -20,7 +20,7 @@
 
 
 var lastPositionTime = 0;
-
+var GPS_ACCURACY = -1;  // <1 no gps, 0 low gps, +1 high gps
 
 
 function start_tracking() 
@@ -53,7 +53,7 @@ function handleError(error)
 			alert(GPS_NOT_ALLOWED);
 			break;
 		case error.POSITION_UNAVAILABLE:
-			console.log(GPS_NOT_AVAILABLE);
+			console.log(GPS_POSITION_NOT_AVAILABLE);
 			break;
 		case error.TIMEOUT:
 			console.log(GPS_TIMEOUT);
@@ -69,7 +69,7 @@ function handleError(error)
 	
 function handle_gps(pos)
 {
- set_gps_signal_icon(pos.coords.accuracy);
+ set_accuracy(pos.coords.accuracy);
  if (new Date().getTime() - lastPositionTime > POSITION_TIME_INTERVAL)
    {
 	 lat = pos.coords.latitude;
@@ -82,14 +82,14 @@ function handle_gps(pos)
 }	
 
 
-function set_gps_signal_icon(accuracy)
+function set_gps_signal_icon()
 {
- if (accuracy <= 0)
+ if (GPS_ACCURACY < 0)
   {
    $('#gps-signal').css('color', 'red');    
    $('#gps-signal').html('no-gps');     	  
   }
- else if (accuracy <= HIGH_ACCURACY)
+ else if (GPS_ACCURACY > 0)
   {
    $('#gps-signal').css('color', 'green');    
    $('#gps-signal').html('h-gps');
@@ -99,6 +99,28 @@ function set_gps_signal_icon(accuracy)
    $('#gps-signal').css('color', 'rgb(241,142,11)');            
    $('#gps-signal').html('low-gps');
   }
+}
+
+
+
+/*
+   medium=0  low<0   high>0	
+*/
+function set_accuracy(accuracy)
+{
+ if (accuracy <= 0)
+  {
+   GPS_ACCURACY=-1;    	  
+  }
+ else if (accuracy <= HIGH_ACCURACY)
+  {
+   GPS_ACCURACY=1;
+  }  
+ else
+  {
+   GPS_ACCURACY=0;
+  }
+  set_gps_signal_icon();
 }
 
 
