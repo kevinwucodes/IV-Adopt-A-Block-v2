@@ -35,7 +35,8 @@ var USERNAME;
 var USERSURNAME; 
 var USERTYPE;
 var HIGH_ACCURACY = 10; // min accuracy (in meters) to be considered high
-var MONGO_SERVER_URL = "https://iv-adopt-a-block-v2.jit.su" ;
+var MONGO_SERVER_URL = "https://ivaabmiddleware-52331.onmodulus.net";
+                        // old server = "https://iv-adopt-a-block-v2.jit.su" ;
  
 // ====== ARRAYS ======
 var blocks=[]; //array of all the blocks
